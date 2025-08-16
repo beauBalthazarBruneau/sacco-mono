@@ -16,9 +16,9 @@ export const theme = createTheme({
       '#14532d',
     ],
   },
-  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  fontFamily: '"Montserrat", sans-serif',
   headings: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily: '"Montserrat", sans-serif',
     fontWeight: '700',
     sizes: {
       h1: { fontSize: '4.5rem', lineHeight: '1.1', fontWeight: '800' },
