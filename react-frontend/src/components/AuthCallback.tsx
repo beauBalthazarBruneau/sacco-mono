@@ -6,11 +6,10 @@ import {
   Text, 
   Button, 
   Stack, 
-  Alert,
   ThemeIcon,
   Box
 } from '@mantine/core'
-import { IconLock, IconAlertCircle, IconCheck, IconLoader } from '@tabler/icons-react'
+import { IconAlertCircle, IconLoader } from '@tabler/icons-react'
 import { supabase } from '../lib/supabase'
 
 export const AuthCallback: React.FC = () => {

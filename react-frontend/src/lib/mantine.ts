@@ -1,7 +1,6 @@
 import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
-  colorScheme: 'dark',
   primaryColor: 'green',
   colors: {
     green: [
@@ -20,12 +19,12 @@ export const theme = createTheme({
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   headings: {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    fontWeight: 700,
+    fontWeight: '700',
     sizes: {
-      h1: { fontSize: '4.5rem', lineHeight: 1.1, fontWeight: 800 },
-      h2: { fontSize: '3rem', lineHeight: 1.2, fontWeight: 700 },
-      h3: { fontSize: '2rem', lineHeight: 1.3, fontWeight: 600 },
-      h4: { fontSize: '1.5rem', lineHeight: 1.4, fontWeight: 600 },
+      h1: { fontSize: '4.5rem', lineHeight: '1.1', fontWeight: '800' },
+      h2: { fontSize: '3rem', lineHeight: '1.2', fontWeight: '700' },
+      h3: { fontSize: '2rem', lineHeight: '1.3', fontWeight: '600' },
+      h4: { fontSize: '1.5rem', lineHeight: '1.4', fontWeight: '600' },
     },
   },
   components: {
