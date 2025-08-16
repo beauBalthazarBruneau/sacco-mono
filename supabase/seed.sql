@@ -101,32 +101,3 @@ INSERT INTO player_stats (player_name, position, team, season, games_played, pas
 ('Trey McBride', 'TE', 'ARI', 2023, 17, 0, 0, 0, 0, 0, 825, 3, 81, 210.8, 170.5, 190.7),
 ('Evan Engram', 'TE', 'JAX', 2023, 17, 0, 0, 0, 0, 0, 963, 4, 114, 205.4, 165.1, 185.3),
 ('Jake Ferguson', 'TE', 'DAL', 2023, 17, 0, 0, 0, 0, 0, 761, 5, 71, 200.1, 160.8, 180.5);
-
--- Insert sample user preferences (for testing)
-INSERT INTO user_preferences (user_id, league_type, team_count, draft_position, preferred_strategy, auto_pick_enabled, notifications_enabled) VALUES
-('00000000-0000-0000-0000-000000000001', 'PPR', 12, 3, 'Best Available', false, true),
-('00000000-0000-0000-0000-000000000002', 'Standard', 10, 7, 'Zero RB', true, false),
-('00000000-0000-0000-0000-000000000003', 'Half-PPR', 14, 1, 'Hero RB', false, true);
-
--- Insert sample draft sessions (for testing)
-INSERT INTO draft_sessions (user_id, league_name, platform, draft_date, team_count, draft_position, status, settings) VALUES
-('00000000-0000-0000-0000-000000000001', 'Fantasy Football League 2024', 'ESPN', '2024-08-15 20:00:00+00', 12, 3, 'active', '{"ppr": true, "teams": 12}'),
-('00000000-0000-0000-0000-000000000002', 'Work League', 'Yahoo', '2024-08-20 19:00:00+00', 10, 7, 'active', '{"ppr": false, "teams": 10}'),
-('00000000-0000-0000-0000-000000000003', 'Friends League', 'Sleeper', '2024-08-25 21:00:00+00', 14, 1, 'active', '{"ppr": 0.5, "teams": 14}');
-
--- Insert sample draft picks (for testing)
-INSERT INTO draft_picks (draft_session_id, round, pick_number, player_name, position, team, recommended, recommendation_reason) VALUES
--- Draft session 1 picks
-('00000000-0000-0000-0000-000000000001', 1, 3, 'Christian McCaffrey', 'RB', 'SF', true, 'Best available player, elite RB1'),
-('00000000-0000-0000-0000-000000000001', 2, 22, 'CeeDee Lamb', 'WR', 'DAL', true, 'Value pick, WR1 potential'),
-('00000000-0000-0000-0000-000000000001', 3, 27, 'Sam LaPorta', 'TE', 'DET', false, 'Early TE, but good value'),
-
--- Draft session 2 picks
-('00000000-0000-0000-0000-000000000002', 1, 7, 'Tyreek Hill', 'WR', 'MIA', true, 'Zero RB strategy, elite WR'),
-('00000000-0000-0000-0000-000000000002', 2, 14, 'Garrett Wilson', 'WR', 'NYJ', true, 'Stacking WRs, Rodgers upgrade'),
-('00000000-0000-0000-0000-000000000002', 3, 27, 'Rachaad White', 'RB', 'TB', true, 'First RB, lead back role'),
-
--- Draft session 3 picks
-('00000000-0000-0000-0000-000000000003', 1, 1, 'Bijan Robinson', 'RB', 'ATL', true, 'Hero RB strategy, elite talent'),
-('00000000-0000-0000-0000-000000000003', 2, 28, 'Puka Nacua', 'WR', 'LAR', true, 'Value WR, Stafford connection'),
-('00000000-0000-0000-0000-000000000003', 3, 29, 'Josh Allen', 'QB', 'BUF', true, 'Early QB, dual threat upside');
