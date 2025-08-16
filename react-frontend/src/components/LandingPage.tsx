@@ -17,6 +17,7 @@ import wafflesImg from '../assets/landing_page_gallery/waffles.png'
 
 export const LandingPage: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [showEmailInput, setShowEmailInput] = useState(false)
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -194,30 +195,60 @@ export const LandingPage: React.FC = () => {
            </Title>
         </motion.div>
 
-        <Button 
-          size="lg" 
-          variant="filled"
-          style={{
-            fontSize: '1.25rem',
-            padding: '16px 32px',
-            borderRadius: '12px',
-            fontWeight: 700,
-            backgroundColor: '#38bd7d',
-            border: 'none',
-            color: 'white',
-            fontFamily: '"Montserrat", sans-serif',
-            boxShadow: '0 8px 24px rgba(255, 255, 255, 0.4)',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              backgroundColor: '#16a34a',
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center' }}>
+          <motion.div
+            initial={{ opacity: 0, x: 50, width: 0 }}
+            animate={{ 
+              opacity: showEmailInput ? 1 : 0, 
+              x: showEmailInput ? 0 : 50,
+              width: showEmailInput ? '300px' : 0
+            }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            style={{ overflow: 'hidden' }}
+          >
+            <input
+              type="email"
+              placeholder="Enter your email"
+              style={{
+                padding: '12px 16px',
+                fontSize: '1rem',
+                borderRadius: '8px',
+                border: '2px solid rgba(255, 255, 255, 0.2)',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontFamily: '"Montserrat", sans-serif',
+                width: '250px',
+                outline: 'none'
+              }}
+            />
+          </motion.div>
+
+          <Button 
+            size="lg" 
+            variant="filled"
+            onClick={() => setShowEmailInput(!showEmailInput)}
+            style={{
+              fontSize: '1.25rem',
+              padding: '16px 32px',
+              borderRadius: '12px',
+              fontWeight: 700,
+              backgroundColor: '#38bd7d',
               border: 'none',
-              transform: 'translateY(-2px)',
-              boxShadow: '0 12px 32px rgba(255, 255, 255, 0.6)'
-            }
-          }}
-        >
-          Try Sacco
-        </Button>
+              color: 'white',
+              fontFamily: '"Montserrat", sans-serif',
+              boxShadow: '0 8px 24px rgba(255, 255, 255, 0.4)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: '#16a34a',
+                border: 'none',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 12px 32px rgba(255, 255, 255, 0.6)'
+              }
+            }}
+          >
+            {showEmailInput ? 'Sign Up' : 'Try Sacco'}
+          </Button>
+        </div>
       </Container>
     </Box>
   )
