@@ -5,6 +5,7 @@ import {
   Button, 
   Box
 } from '@mantine/core'
+import { motion } from 'framer-motion'
 
 // Import images
 import datenightImg from '../assets/landing_page_gallery/datenight.png'
@@ -40,7 +41,7 @@ export const LandingPage: React.FC = () => {
       }}
     >
       {/* Scattered Images */}
-      <img
+      <motion.img
         src={datenightImg}
         alt="Date night"
         style={{
@@ -51,60 +52,68 @@ export const LandingPage: React.FC = () => {
           height: 'auto',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          transform: 'rotate(-5deg)',
           zIndex: 1
         }}
+        initial={{ rotate: -5 }}
+        whileHover={{ scale: 1.2, rotate: -5 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       />
       
-      <img
+      <motion.img
         src={calendarImg}
         alt="Calendar"
         style={{
           position: 'absolute',
-          top: '10%',
+          top: '5%',
           left: '50%',
-          transform: 'translateX(-50%) rotate(8deg)',
-          width: '220px',
+          width: '300px',
           height: 'auto',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           zIndex: 1
         }}
+        initial={{ x: '-50%', rotate: 8 }}
+        whileHover={{ scale: 1.2, rotate: 8 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       />
       
-      <img
+      <motion.img
         src={highwayImg}
         alt="Highway"
         style={{
           position: 'absolute',
-          bottom: '12%',
+          bottom: '5%',
           left: '35%',
-          width: '260px',
+          width: '350px',
           height: 'auto',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          transform: 'rotate(-12deg)',
           zIndex: 1
         }}
+        initial={{ rotate: -12 }}
+        whileHover={{ scale: 1.2, rotate: -12 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       />
       
-      <img
+      <motion.img
         src={lemonadeImg}
         alt="Lemonade"
         style={{
           position: 'absolute',
           bottom: '8%',
           right: '3%',
-          width: '240px',
+          width: '400px',
           height: 'auto',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          transform: 'rotate(15deg)',
           zIndex: 1
         }}
+        initial={{ rotate: 15 }}
+        whileHover={{ scale: 1.2, rotate: 15 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       />
       
-      <img
+      <motion.img
         src={satsImg}
         alt="SATs"
         style={{
@@ -115,12 +124,14 @@ export const LandingPage: React.FC = () => {
           height: 'auto',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          transform: 'rotate(8deg)',
           zIndex: 1
         }}
+        initial={{ rotate: 8 }}
+        whileHover={{ scale: 1.2, rotate: 8 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       />
       
-      <img
+      <motion.img
         src={wafflesImg}
         alt="Waffles"
         style={{
@@ -131,9 +142,11 @@ export const LandingPage: React.FC = () => {
           height: 'auto',
           borderRadius: '12px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          transform: 'rotate(3deg)',
           zIndex: 1
         }}
+        initial={{ rotate: 3 }}
+        whileHover={{ scale: 1.2, rotate: 3 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       />
 
       {/* Cursor Glow */}
@@ -160,22 +173,26 @@ export const LandingPage: React.FC = () => {
           textAlign: 'center'
         }}
       >
-        <Title 
-          order={1} 
-          size="6rem" 
-          fw={900}
-          style={{ 
-            lineHeight: 1.1,
-            background: 'linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            marginBottom: '3rem',
-            textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          STOP SUCKING AT FANTASY
-        </Title>
+                     <Title 
+             order={1} 
+             fw={900}
+             style={{ 
+               fontSize: '6rem',
+               lineHeight: 1.1,
+               color: 'white',
+               marginBottom: '1rem',
+               textShadow: '0 8px 32px rgba(12, 12, 12, 0.8), 0 4px 16px rgba(12, 12, 12, 0.6)',
+               fontFamily: '"Montserrat", sans-serif'
+             }}
+           >
+             STOP SUCKING AT FANTASY
+           </Title>
+        </motion.div>
 
         <Button 
           size="lg" 
