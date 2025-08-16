@@ -1,0 +1,48 @@
+{
+  "name": "sacco-monorepo",
+  "version": "1.0.0",
+  "description": "Sacco - A comprehensive web application with Chrome extension, React frontend, and backend API",
+  "private": true,
+  "workspaces": [
+    "chrome-extension",
+    "react-frontend",
+    "backend-api"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:extension\" \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:extension": "npm run dev --workspace=chrome-extension",
+    "dev:frontend": "npm run dev --workspace=react-frontend",
+    "dev:backend": "npm run dev --workspace=backend-api",
+    "build": "npm run build --workspaces",
+    "build:extension": "npm run build:prod --workspace=chrome-extension",
+    "build:frontend": "npm run build --workspace=react-frontend",
+    "build:backend": "npm run build --workspace=backend-api",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "clean": "npm run clean --workspaces && rm -rf node_modules",
+    "install:all": "npm install && npm run install:extension && npm run install:frontend && npm run install:backend",
+    "install:extension": "npm install --workspace=chrome-extension",
+    "install:frontend": "npm install --workspace=react-frontend",
+    "install:backend": "npm install --workspace=backend-api"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-repo/sacco.git"
+  },
+  "keywords": [
+    "sacco",
+    "chrome-extension",
+    "react",
+    "api",
+    "monorepo"
+  ],
+  "author": "Sacco Team",
+  "license": "MIT"
+}
