@@ -29,7 +29,7 @@ export const AuthCallback: React.FC = () => {
         } else {
           setError('No session found')
         }
-      } catch (err) {
+      } catch {
         setError('An unexpected error occurred')
       } finally {
         setLoading(false)

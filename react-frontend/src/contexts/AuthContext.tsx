@@ -1,12 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 // Define types based on what we get from auth
 interface User {
   id: string
   email?: string
-  user_metadata?: any
-  app_metadata?: any
+  user_metadata?: Record<string, unknown>
+  app_metadata?: Record<string, unknown>
   aud?: string
   created_at?: string
 }
@@ -27,13 +27,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}
+export { AuthContext }
 
 interface AuthProviderProps {
   children: React.ReactNode

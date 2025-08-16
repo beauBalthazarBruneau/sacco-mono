@@ -40,7 +40,7 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
         setMessage('Check your email for the magic link!')
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       setMessageType('error')
       setMessage('An unexpected error occurred. Please try again.')
     } finally {

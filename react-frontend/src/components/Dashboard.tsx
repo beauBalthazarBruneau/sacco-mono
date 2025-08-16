@@ -23,7 +23,7 @@ import {
   IconLogout,
   IconUser
 } from '@tabler/icons-react'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 
 export const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth()
