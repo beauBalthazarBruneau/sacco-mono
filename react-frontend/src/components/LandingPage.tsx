@@ -6,6 +6,8 @@ import {
   Box
 } from '@mantine/core'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { signInWithMagicLink } from '../lib/supabase'
 
 // Import images
 import datenightImg from '../assets/landing_page_gallery/datenight.png'
@@ -18,6 +20,9 @@ import wafflesImg from '../assets/landing_page_gallery/waffles.png'
 export const LandingPage: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [showEmailInput, setShowEmailInput] = useState(false)
+  const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -27,6 +32,34 @@ export const LandingPage: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove)
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
+
+  const handleSignUp = async () => {
+    if (!email) return
+    
+    setIsLoading(true)
+    try {
+      const { error } = await signInWithMagicLink(email)
+      if (error) {
+        console.error('Error sending magic link:', error)
+        // You could add error handling here
+      } else {
+        // Redirect to signup page
+        navigate('/signup')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleButtonClick = () => {
+    if (showEmailInput) {
+      handleSignUp()
+    } else {
+      setShowEmailInput(true)
+    }
+  }
 
   return (
     <Box
@@ -209,6 +242,9 @@ export const LandingPage: React.FC = () => {
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSignUp()}
               style={{
                 padding: '12px 16px',
                 fontSize: '1rem',
@@ -226,7 +262,8 @@ export const LandingPage: React.FC = () => {
           <Button 
             size="lg" 
             variant="filled"
-            onClick={() => setShowEmailInput(!showEmailInput)}
+            onClick={handleButtonClick}
+            disabled={isLoading}
             style={{
               fontSize: '1.25rem',
               padding: '16px 32px',
@@ -238,6 +275,7 @@ export const LandingPage: React.FC = () => {
               fontFamily: '"Montserrat", sans-serif',
               boxShadow: '0 8px 24px rgba(255, 255, 255, 0.4)',
               transition: 'all 0.3s ease',
+              opacity: isLoading ? 0.7 : 1,
               '&:hover': {
                 backgroundColor: '#16a34a',
                 border: 'none',
@@ -246,7 +284,7 @@ export const LandingPage: React.FC = () => {
               }
             }}
           >
-            {showEmailInput ? 'Sign Up' : 'Try Sacco'}
+            {isLoading ? 'Sending...' : (showEmailInput ? 'Sign Up' : 'Try Sacco')}
           </Button>
         </div>
       </Container>

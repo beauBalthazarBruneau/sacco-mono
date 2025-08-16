@@ -1,116 +1,121 @@
 import React, { useEffect, useState } from 'react'
-import { 
-  Container, 
-  Paper, 
-  Title, 
-  Text, 
-  Button, 
-  Stack, 
-  ThemeIcon,
-  Box
-} from '@mantine/core'
-import { IconAlertCircle, IconLoader } from '@tabler/icons-react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { Container, Title, Text, Box, Loader } from '@mantine/core'
 
 export const AuthCallback: React.FC = () => {
-  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  const [isProcessing, setIsProcessing] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Get the session from the URL
         const { data, error } = await supabase.auth.getSession()
         
         if (error) {
-          setError(error.message)
-        } else if (data.session) {
-          // Successfully authenticated, redirect to dashboard
-          window.location.href = '/dashboard'
-        } else {
-          setError('No session found')
+          setError('Authentication failed. Please try again.')
+          setIsProcessing(false)
+          return
         }
-      } catch {
-        setError('An unexpected error occurred')
-      } finally {
-        setLoading(false)
-      }
+
+        if (data.session) {
+          // Successfully authenticated, redirect to signup with auth state
+          navigate('/signup?authenticated=true', { replace: true })
+        } else {
+          setError('No session found. Please try the magic link again.')
+          setIsProcessing(false)
+        }
+              } catch {
+          setError('An unexpected error occurred.')
+          setIsProcessing(false)
+        }
     }
 
     handleAuthCallback()
-  }, [])
+  }, [navigate])
 
-  if (loading) {
-    return (
-      <Container size="xs" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-        <Paper 
-          radius="lg" 
-          p="xl" 
-          withBorder 
-          style={{ width: '100%' }}
-          bg="var(--mantine-color-dark-7)"
-        >
-          <Stack gap="lg" align="center">
-            <ThemeIcon 
-              size={80} 
-              radius="xl" 
-              variant="gradient"
-              gradient={{ from: 'green.6', to: 'green.7' }}
+  return (
+    <Box
+      style={{
+        height: '100vh',
+        width: '100vw',
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0c0c0c 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <Container size="lg" style={{ textAlign: 'center' }}>
+        {isProcessing ? (
+          <>
+            <Loader size="lg" color="green" style={{ marginBottom: '2rem' }} />
+            <Title 
+              order={1} 
+              size="2rem" 
+              fw={700}
+              style={{ 
+                color: 'white',
+                marginBottom: '1rem',
+                fontFamily: '"Montserrat", sans-serif'
+              }}
             >
-              <IconLoader size={40} style={{ animation: 'spin 1s linear infinite' }} />
-            </ThemeIcon>
-            
-            <Box ta="center">
-              <Title order={1} size="h2" mb="xs">
-                Completing sign in...
-              </Title>
-              <Text c="dimmed">
-                Please wait while we authenticate you
-              </Text>
-            </Box>
-          </Stack>
-        </Paper>
+              Verifying Your Email
+            </Title>
+            <Text 
+              size="lg" 
+              style={{ 
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontFamily: '"Montserrat", sans-serif'
+              }}
+            >
+              Please wait while we authenticate your email...
+            </Text>
+          </>
+        ) : (
+          <>
+            <Title 
+              order={1} 
+              size="2rem" 
+              fw={700}
+              style={{ 
+                color: '#ef4444',
+                marginBottom: '1rem',
+                fontFamily: '"Montserrat", sans-serif'
+              }}
+            >
+              Authentication Failed
+            </Title>
+            <Text 
+              size="lg" 
+              style={{ 
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontFamily: '"Montserrat", sans-serif',
+                marginBottom: '2rem'
+              }}
+            >
+              {error}
+            </Text>
+            <button
+              onClick={() => navigate('/')}
+              style={{
+                padding: '12px 24px',
+                backgroundColor: '#38bd7d',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: 600,
+                fontFamily: '"Montserrat", sans-serif',
+                cursor: 'pointer'
+              }}
+            >
+              Back to Home
+            </button>
+          </>
+        )}
       </Container>
-    )
-  }
-
-  if (error) {
-    return (
-      <Container size="xs" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-        <Paper 
-          radius="lg" 
-          p="xl" 
-          withBorder 
-          style={{ width: '100%' }}
-          bg="var(--mantine-color-dark-7)"
-        >
-          <Stack gap="lg" align="center">
-            <ThemeIcon 
-              size={80} 
-              radius="xl" 
-              color="red"
-            >
-              <IconAlertCircle size={40} />
-            </ThemeIcon>
-            
-            <Box ta="center">
-              <Title order={1} size="h2" mb="xs">
-                Sign in failed
-              </Title>
-              <Text c="dimmed" mb="lg">{error}</Text>
-            </Box>
-
-            <Button
-              variant="gradient"
-              gradient={{ from: 'green.6', to: 'green.7' }}
-              onClick={() => window.location.href = '/'}
-            >
-              Try again
-            </Button>
-          </Stack>
-        </Paper>
-      </Container>
-    )
-  }
-
-  return null
+    </Box>
+  )
 }

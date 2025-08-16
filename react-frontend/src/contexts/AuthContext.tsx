@@ -1,22 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
+import type { User, Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
-
-// Define types based on what we get from auth
-interface User {
-  id: string
-  email?: string
-  user_metadata?: Record<string, unknown>
-  app_metadata?: Record<string, unknown>
-  aud?: string
-  created_at?: string
-}
-
-interface Session {
-  user: User | null
-  access_token: string
-  refresh_token: string
-  expires_at?: number
-}
 
 interface AuthContextType {
   user: User | null
@@ -63,6 +47,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut()
+    setUser(null)
+    setSession(null)
   }
 
   const value = {
