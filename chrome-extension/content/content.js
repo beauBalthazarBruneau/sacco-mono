@@ -1,18 +1,27 @@
 // Content script for Sacco Chrome Extension
 // Use IIFE to prevent global scope pollution and duplicate initialization
 (function() {
-    // Check if already initialized
-    if (window.saccoContentScriptInitialized) {
-        console.log('[Sacco] Content script already initialized');
+    // Use a more unique identifier to prevent conflicts
+    const SACCO_ID = 'sacco_fantasy_football_extension_v1';
+    
+    // Check if already initialized with a more robust check
+    if (window[SACCO_ID] && window[SACCO_ID].initialized) {
+        console.log('[Sacco] Content script already initialized, skipping');
         return;
     }
 
+    // Initialize the global object if it doesn't exist
+    if (!window[SACCO_ID]) {
+        window[SACCO_ID] = {};
+    }
+
     // Mark as initialized immediately
-    window.saccoContentScriptInitialized = true;
+    window[SACCO_ID].initialized = true;
 
     class ContentScript {
         constructor() {
             this.isEnabled = true;
+            this.extensionId = SACCO_ID;
             this.init();
         }
 
@@ -125,7 +134,10 @@
         }
     }
 
-    // Initialize content script
+    // Initialize content script and store reference
     const contentScript = new ContentScript();
+    window[SACCO_ID].contentScript = contentScript;
+    
+    // Also store a reference for backward compatibility
     window.saccoContentScript = contentScript;
 })();
