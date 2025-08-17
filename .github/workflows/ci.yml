@@ -59,7 +59,7 @@ jobs:
       run: npm run install:extension
       
     - name: Build Chrome Extension
-      run: npm run build:prod --workspace=chrome-extension
+      run: npm run build --workspace=chrome-extension
       
     - name: Upload Extension Build
       uses: actions/upload-artifact@v4
