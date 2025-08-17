@@ -2,15 +2,14 @@
   "name": "chrome-extension",
   "displayName": "Chrome extension",
   "version": "0.0.1",
-  "description": "Sacco: Stop Sucking At Fantasy",
-  "author": "beauroccobruneau@gmail.com",
+  "description": "Sacco Fantasy Football Assistant",
+  "author": "Beau's Ideas",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
     "package": "plasmo package"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.55.0",
     "plasmo": "0.90.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"

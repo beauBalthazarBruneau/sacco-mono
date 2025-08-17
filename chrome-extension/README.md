@@ -1,70 +1,33 @@
-# Sacco Chrome Extension
+This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
 
-A Chrome extension for Sacco that handles authentication with Supabase and will eventually read ESPN fantasy football pages.
+## Getting Started
 
-## Features
+First, run the development server:
 
-- ✅ **Authentication Status Display** - Shows whether user is authenticated with Supabase
-- ✅ **Magic Link Authentication** - Sign in with email magic link
-- 🔄 **Future: ESPN Page Reading** - Read ESPN fantasy football pages (with user permission)
-
-## Setup
-
-### 1. Install Dependencies
 ```bash
-npm install
-```
-
-### 2. Configure Supabase
-Edit `lib/supabase.ts` and replace the placeholder values with your actual Supabase credentials:
-```typescript
-const supabaseUrl = 'YOUR_SUPABASE_URL'
-const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'
-```
-
-### 3. Development
-```bash
+pnpm dev
+# or
 npm run dev
 ```
 
-### 4. Build for Production
+Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+
+You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+
+For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+
+## Making production build
+
+Run the following:
+
 ```bash
+pnpm build
+# or
 npm run build
 ```
 
-### 5. Load Extension in Chrome
-1. Open Chrome and go to `chrome://extensions/`
-2. Enable "Developer mode"
-3. Click "Load unpacked"
-4. Select the `build/chrome-mv3-dev` folder (after running `npm run dev`)
+This should create a production bundle for your extension, ready to be zipped and published to the stores.
 
-## Project Structure
+## Submit to the webstores
 
-```
-├── popup.tsx          # Main popup interface
-├── background.ts      # Background script for auth management
-├── content.ts         # Content script for page reading
-├── lib/
-│   └── supabase.ts    # Supabase client configuration
-└── assets/            # Extension icons and assets
-```
-
-## Development
-
-- **Plasmo Framework** - React-based Chrome extension framework
-- **TypeScript** - Type-safe development
-- **Supabase** - Authentication and backend
-- **Hot Reload** - Automatic reloading during development
-
-## Future Features
-
-- ESPN fantasy football page data extraction
-- User permission management for page reading
-- Data synchronization with backend
-- Advanced fantasy football analytics
-
-## Troubleshooting
-
-- Make sure your Supabase URL and anon key are correctly configured
-- Check the browser console for any error messages
-- Ensure the extension has the necessary permissions in Chrome
+The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
