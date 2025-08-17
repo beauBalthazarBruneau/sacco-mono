@@ -1,6 +1,6 @@
 {
-  "name": "chrome-extension",
-  "displayName": "Chrome extension",
+  "name": "Sacco",
+  "displayName": "Sacco",
   "version": "0.0.1",
   "description": "Sacco Fantasy Football Assistant",
   "author": "Beau's Ideas",
@@ -26,6 +26,16 @@
   "manifest": {
     "host_permissions": [
       "https://*/*"
-    ]
+    ],
+    "permissions": [
+      "sidePanel",
+      "windows"
+    ],
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+    "action": {
+      "default_title": "Sacco Fantasy Football Assistant"
+    }
   }
 }
