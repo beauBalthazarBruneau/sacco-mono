@@ -1,41 +1,41 @@
 {
-  "name": "sacco-chrome-extension",
-  "version": "1.0.0",
-  "description": "A Chrome extension for Sacco",
-  "main": "manifest.json",
+  "name": "Sacco",
+  "displayName": "Sacco",
+  "version": "0.0.1",
+  "description": "Sacco Fantasy Football Assistant",
+  "author": "Beau's Ideas",
   "scripts": {
-    "build": "npm run build:dev",
-    "build:dev": "echo 'Building development version...' && npm run copy-files && npm run minify:dev",
-    "build:prod": "echo 'Building production version...' && npm run copy-files && npm run minify:prod",
-    "copy-files": "mkdir -p dist && cp -r manifest.json popup content background options icons dist/",
-    "minify:dev": "echo 'Development build complete - no minification'",
-    "minify:prod": "echo 'Production build complete - add minification here'",
-    "clean": "rm -rf dist",
-    "watch": "npm run build:dev && echo 'Watching for changes...' && nodemon --watch popup --watch content --watch background --ext js,css,html --exec 'npm run build:dev'",
-    "dev": "npm run build:dev && echo 'Extension ready for development. Load dist/ folder in Chrome.'",
-    "zip": "npm run build:prod && cd dist && zip -r ../sacco-extension.zip . && cd .. && echo 'Extension packaged as sacco-extension.zip'",
-    "lint": "echo 'Linting Chrome extension...' && echo 'No linter configured yet - add ESLint for JavaScript files'",
-    "lint:fix": "echo 'Linting Chrome extension...' && echo 'No linter configured yet - add ESLint for JavaScript files'"
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package"
   },
-  "keywords": [
-    "chrome-extension",
-    "sacco",
-    "browser-extension"
-  ],
-  "author": "Sacco Team",
-  "license": "MIT",
+  "dependencies": {
+    "plasmo": "0.90.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@types/chrome": "0.0.258",
+    "@types/node": "20.11.5",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
+    "prettier": "3.2.4",
+    "typescript": "5.3.3"
   },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-repo/sacco.git"
-  },
-  "bugs": {
-    "url": "https://github.com/your-repo/sacco/issues"
-  },
-  "homepage": "https://github.com/your-repo/sacco#readme"
+  "manifest": {
+    "host_permissions": [
+      "https://*/*"
+    ],
+    "permissions": [
+      "sidePanel",
+      "windows"
+    ],
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+    "action": {
+      "default_title": "Sacco Fantasy Football Assistant"
+    }
+  }
 }
