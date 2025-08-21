@@ -1,48 +1,35 @@
-import { useState } from "react"
+import { MantineProvider } from '@mantine/core'
+import { AuthProvider } from './contexts/AuthContext'
+import { useAuth } from './hooks/useAuth'
+import { Login } from './components/Login'
+import { UserProfile } from './components/UserProfile'
+import { Loader, Center } from '@mantine/core'
+
+function AuthenticatedApp() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <Center style={{ height: '100vh' }}>
+        <Loader size="lg" />
+      </Center>
+    )
+  }
+
+  if (!user) {
+    return <Login />
+  }
+
+  return <UserProfile />
+}
 
 function IndexSidePanel() {
-  const [data, setData] = useState("")
-
   return (
-    <div
-      style={{
-        padding: 16,
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5"
-      }}>
-      <h2>
-        Welcome to your{" "}
-        <a href="https://www.plasmo.com" target="_blank">
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input 
-        onChange={(e) => setData(e.target.value)} 
-        value={data}
-        placeholder="Enter some data..."
-        style={{
-          width: "100%",
-          padding: "8px",
-          marginBottom: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px"
-        }}
-      />
-      <div style={{ marginBottom: "16px" }}>
-        <strong>Current data:</strong> {data || "No data entered"}
-      </div>
-      <a 
-        href="https://docs.plasmo.com" 
-        target="_blank"
-        style={{
-          color: "#007bff",
-          textDecoration: "none"
-        }}
-      >
-        View Docs
-      </a>
-    </div>
+    <MantineProvider>
+      <AuthProvider>
+        <AuthenticatedApp />
+      </AuthProvider>
+    </MantineProvider>
   )
 }
 
