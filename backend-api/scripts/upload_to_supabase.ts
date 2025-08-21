@@ -60,7 +60,7 @@ async function uploadToSupabase() {
     console.log('Reading global player pool data...')
     
     // Read the CSV file
-    const csvPath = path.join(process.cwd(), 'data', 'global_player_pool.csv')
+    const csvPath = path.join(process.cwd(), 'backend-api/data', 'global_player_pool.csv')
     const csvContent = fs.readFileSync(csvPath, 'utf-8')
     
     // Parse CSV (simple parsing for this format)
@@ -134,8 +134,6 @@ async function uploadToSupabase() {
       player_name: player.player_name,
       position: player.pos.toUpperCase() as 'QB' | 'RB' | 'WR' | 'TE',
       team: player.team,
-      rank: Math.round(player.NFC_ADP), // Use ADP as rank
-      tier: null, // Let analytics backend handle tiering based on fantasy points per game
       adp: player.NFC_ADP,
       ppr_points: calculatePPRPoints(player),
       standard_points: calculateStandardPoints(player),
@@ -143,8 +141,6 @@ async function uploadToSupabase() {
       ppr_points_per_game: player.G > 0 ? calculatePPRPoints(player) / player.G : 0,
       standard_points_per_game: player.G > 0 ? calculateStandardPoints(player) / player.G : 0,
       half_ppr_points_per_game: player.G > 0 ? calculateHalfPPRPoints(player) / player.G : 0,
-      injury_status: null,
-      news: null,
       last_updated: new Date().toISOString()
     }))
     
@@ -160,47 +156,47 @@ async function uploadToSupabase() {
     
     console.log(`Successfully inserted ${rankingData?.length || 0} players into player_rankings`)
     
-    // Insert into player_stats table
-    console.log('Inserting into player_stats table...')
-    const statsInserts = players.map(player => ({
-      player_name: player.player_name,
-      position: player.pos.toUpperCase() as 'QB' | 'RB' | 'WR' | 'TE',
-      team: player.team,
-      season: 2025,
-      games_played: player.G,
-      passing_yards: player.PYds || null,
-      passing_tds: player.PTD || null,
-      passing_ints: player.INT || null,
-      rushing_yards: player.RuYds || null,
-      rushing_tds: player.RuTD || null,
-      receiving_yards: player.ReYds || null,
-      receiving_tds: player.ReTD || null,
-      receptions: player.Rec || null,
-      fantasy_points_ppr: calculatePPRPoints(player),
-      fantasy_points_standard: calculateStandardPoints(player),
-      fantasy_points_half_ppr: calculateHalfPPRPoints(player),
-      ppr_points_per_game: player.G > 0 ? calculatePPRPoints(player) / player.G : 0,
-      standard_points_per_game: player.G > 0 ? calculateStandardPoints(player) / player.G : 0,
-      half_ppr_points_per_game: player.G > 0 ? calculateHalfPPRPoints(player) / player.G : 0,
-      created_at: new Date().toISOString()
-    }))
+  //   // Insert into player_stats table
+  //   console.log('Inserting into player_stats table...')
+  //   const statsInserts = players.map(player => ({
+  //     player_name: player.player_name,
+  //     position: player.pos.toUpperCase() as 'QB' | 'RB' | 'WR' | 'TE',
+  //     team: player.team,
+  //     season: 2025,
+  //     games_played: player.G,
+  //     passing_yards: player.PYds || null,
+  //     passing_tds: player.PTD || null,
+  //     passing_ints: player.INT || null,
+  //     rushing_yards: player.RuYds || null,
+  //     rushing_tds: player.RuTD || null,
+  //     receiving_yards: player.ReYds || null,
+  //     receiving_tds: player.ReTD || null,
+  //     receptions: player.Rec || null,
+  //     fantasy_points_ppr: calculatePPRPoints(player),
+  //     fantasy_points_standard: calculateStandardPoints(player),
+  //     fantasy_points_half_ppr: calculateHalfPPRPoints(player),
+  //     ppr_points_per_game: player.G > 0 ? calculatePPRPoints(player) / player.G : 0,
+  //     standard_points_per_game: player.G > 0 ? calculateStandardPoints(player) / player.G : 0,
+  //     half_ppr_points_per_game: player.G > 0 ? calculateHalfPPRPoints(player) / player.G : 0,
+  //     created_at: new Date().toISOString()
+  //   }))
     
-    const { data: statsData, error: statsError } = await supabase
-      .from('player_stats')
-      .insert(statsInserts)
-      .select()
+  //   const { data: statsData, error: statsError } = await supabase
+  //     .from('player_stats')
+  //     .insert(statsInserts)
+  //     .select()
     
-    if (statsError) {
-      console.error('Error inserting into player_stats:', statsError)
-      return
-    }
+  //   if (statsError) {
+  //     console.error('Error inserting into player_stats:', statsError)
+  //     return
+  //   }
     
-    console.log(`Successfully inserted ${statsData?.length || 0} players into player_stats`)
-    console.log('✅ Upload to Supabase completed successfully!')
+  //   console.log(`Successfully inserted ${statsData?.length || 0} players into player_stats`)
+  //   console.log('✅ Upload to Supabase completed successfully!')
     
-  } catch (error) {
-    console.error('Error uploading to Supabase:', error)
-  }
+  // } catch (error) {
+  //   console.error('Error uploading to Supabase:', error)
+  // }
 }
 
 // Note: Tiers are now calculated dynamically by the analytics backend
