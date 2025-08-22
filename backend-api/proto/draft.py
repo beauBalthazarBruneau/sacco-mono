@@ -246,10 +246,10 @@ def main():
         rows, hazards, E_drain, pred_ix = show_recs(
             df, draft,
             topN=24,         # how many rows to display
-            N_window=20,     # ESPN top-N window for attention
-            eta=0.7,         # softmax sharpness toward top of board
+            N_window=24,     # ESPN top-N window for attention
+            eta=0.8,         # softmax sharpness toward top of board
             alpha=0.9,       # DAVAR weight on pos-wait cost
-            beta=1.0         # DAVAR cross-pos hedge weight
+            beta=0.6         # DAVAR cross-pos hedge weight
         )
 
         print(f"\nPick {draft.current_pick} is Team {owner}.")
