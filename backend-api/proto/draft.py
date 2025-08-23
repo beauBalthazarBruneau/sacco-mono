@@ -211,8 +211,8 @@ def show_recs(df, draft, topN=12, N_window=10, eta=0.4, alpha=0.9, beta=0.6):
 
 
 
-DATA = "data/player_rankings.csv"
-ESPN = "data/espn_rankings_final.csv"
+DATA = "/Users/rjdp3/Documents/Personal/sacco-mono/backend-api/proto/data/player_rankings.csv"
+ESPN = "/Users/rjdp3/Documents/Personal/sacco-mono/backend-api/proto/data/espn_rankings_final.csv"
 N_TEAMS, ROUNDS, USER_TEAM = 12, 15, 4  # user is team 0 (change as needed)
 
 def available_indices(df, taken):
