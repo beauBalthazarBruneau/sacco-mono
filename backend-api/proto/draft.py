@@ -4,6 +4,42 @@ import pandas as pd
 from tabulate import tabulate
 from util import load_players, positional_lists, load_espn_ranks, attach_espn_ranks_inplace, report_espn_match_coverage
 from models import DraftState, LINEUP
+import configparser
+import os
+
+# Load configuration from proto/config.cfg
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.cfg")
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH)
+
+def _g(section, option, cast=str, fallback=None):
+    try:
+        val = config.get(section, option)
+        if cast is bool:
+            return val.lower() in ("1", "true", "yes", "on")
+        return cast(val)
+    except Exception:
+        return fallback
+
+# If your file already defines DATA, ESPN, N_TEAMS, ROUNDS, USER_TEAM as defaults,
+# call _g with those defaults so config overrides them when present.
+DATA = _g("paths", "data", str, globals().get("DATA"))
+ESPN = _g("paths", "espn", str, globals().get("ESPN"))
+
+N_TEAMS = _g("draft", "n_teams", int, globals().get("N_TEAMS", 12))
+ROUNDS = _g("draft", "rounds", int, globals().get("ROUNDS", 15))
+USER_TEAM = _g("draft", "user_team", int, globals().get("USER_TEAM", 0))
+
+TOPN = _g("display", "topN", int, 24)
+
+N_WINDOW = _g("esbn", "n_window", int, 24)
+ETA = _g("esbn", "eta", float, 0.8)
+
+ALPHA = _g("davar", "alpha", float, 0.9)
+BETA = _g("davar", "beta", float, 0.6)
+RISK_PENALTY = _g("davar", "risk_penalty", float, 0.0)
+
+ESPN_MERGE_VERBOSE = _g("debug", "espn_merge_verbose", bool, False)
 
 
 from demand import (
@@ -240,16 +276,14 @@ def main():
 
         print_user_roster(df, draft)
 
-
-
         # Always show recs as if it's YOUR pick next (returns hazards for upcoming h picks)
         rows, hazards, E_drain, pred_ix = show_recs(
             df, draft,
-            topN=24,         # how many rows to display
-            N_window=24,     # ESPN top-N window for attention
-            eta=0.8,         # softmax sharpness toward top of board
-            alpha=0.9,       # DAVAR weight on pos-wait cost
-            beta=0.6         # DAVAR cross-pos hedge weight
+            topN=TOPN,         # how many rows to display
+            N_window=N_WINDOW,     # ESPN top-N window for attention
+            eta=ETA,         # softmax sharpness toward top of board
+            alpha=ALPHA,       # DAVAR weight on pos-wait cost
+            beta=BETA         # DAVAR cross-pos hedge weight
         )
 
         print(f"\nPick {draft.current_pick} is Team {owner}.")
