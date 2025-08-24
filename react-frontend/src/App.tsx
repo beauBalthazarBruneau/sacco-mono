@@ -5,12 +5,9 @@ import { AuthProvider } from './contexts/AuthContext'
 import { LandingPage } from './components/LandingPage'
 import { SignUp } from './components/SignUp'
 import { AuthCallback } from './components/AuthCallback'
+import { PlayerBrowser } from './components/PlayerBrowser'
+import { ProtectedRoute } from './components/ProtectedRoute'
 function App() {
-  console.log('🎨 App component rendering...')
-  console.log('⚙️ Mantine theme loaded')
-  console.log('🔑 AuthProvider initializing')
-  console.log('🗺 Router setup complete')
-  
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <AuthProvider>
@@ -19,13 +16,19 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route 
+              path="/players" 
+              element={
+                <ProtectedRoute>
+                  <PlayerBrowser />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </Router>
       </AuthProvider>
     </MantineProvider>
   )
 }
-
-console.log('✅ App component exported')
 
 export default App

@@ -11,7 +11,7 @@ export const AuthCallback: React.FC = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Get the session from the URL
+        // Handle the magic link callback
         const { data, error } = await supabase.auth.getSession()
         
         if (error) {
@@ -27,10 +27,11 @@ export const AuthCallback: React.FC = () => {
           setError('No session found. Please try the magic link again.')
           setIsProcessing(false)
         }
-              } catch {
-          setError('An unexpected error occurred.')
-          setIsProcessing(false)
-        }
+      } catch (err) {
+        console.error('Unexpected auth callback error:', err)
+        setError('An unexpected error occurred.')
+        setIsProcessing(false)
+      }
     }
 
     handleAuthCallback()

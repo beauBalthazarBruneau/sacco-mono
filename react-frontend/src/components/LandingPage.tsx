@@ -6,8 +6,6 @@ import { HowItWorksSection } from './sections/HowItWorksSection'
 import { TestimonialsSection } from './sections/TestimonialsSection'
 
 export const LandingPage: React.FC = () => {
-  console.log('🏠 LandingPage component mounting...')
-  
   return (
     <Box
       style={{

@@ -21,16 +21,23 @@ import {
   IconPlus, 
   IconHistory,
   IconLogout,
-  IconUser
+  IconUser,
+  IconDatabase
 } from '@tabler/icons-react'
 import { useAuth } from '../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 export const Dashboard: React.FC = () => {
   const { user, signOut } = useAuth()
+  const navigate = useNavigate()
 
   const handleSignOut = async () => {
     await signOut()
     window.location.href = '/'
+  }
+
+  const handleBrowsePlayers = () => {
+    navigate('/players')
   }
 
   const features = [
@@ -145,18 +152,29 @@ export const Dashboard: React.FC = () => {
             <Stack gap="lg">
               <Title order={3} size="h3">Quick Actions</Title>
               <Grid>
-                <Grid.Col span={{ base: 12, md: 6 }}>
+                <Grid.Col span={{ base: 12, md: 4 }}>
                   <Button
                     fullWidth
                     size="lg"
                     variant="gradient"
                     gradient={{ from: 'green.6', to: 'green.7' }}
+                    leftSection={<IconDatabase size={20} />}
+                    onClick={handleBrowsePlayers}
+                  >
+                    Browse Players
+                  </Button>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 4 }}>
+                  <Button
+                    fullWidth
+                    size="lg"
+                    variant="outline"
                     leftSection={<IconPlus size={20} />}
                   >
                     Start New Draft
                   </Button>
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 6 }}>
+                <Grid.Col span={{ base: 12, md: 4 }}>
                   <Button
                     fullWidth
                     size="lg"

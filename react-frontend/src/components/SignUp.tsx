@@ -1,12 +1,17 @@
 import React from 'react'
 import { Container, Title, Text, Box, Button } from '@mantine/core'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
 export const SignUp: React.FC = () => {
   const [searchParams] = useSearchParams()
   const { user } = useAuth()
+  const navigate = useNavigate()
   const isAuthenticated = searchParams.get('authenticated') === 'true' || !!user
+
+  const handleGetStarted = () => {
+    navigate('/players')
+  }
 
   return (
     <Box
@@ -57,6 +62,7 @@ export const SignUp: React.FC = () => {
             <Button 
               size="lg"
               variant="filled"
+              onClick={handleGetStarted}
               style={{
                 fontSize: '1.25rem',
                 padding: '16px 32px',
@@ -68,7 +74,7 @@ export const SignUp: React.FC = () => {
                 fontFamily: '"Montserrat", sans-serif'
               }}
             >
-              Get Started
+              Browse Player Database
             </Button>
           </>
         ) : (
