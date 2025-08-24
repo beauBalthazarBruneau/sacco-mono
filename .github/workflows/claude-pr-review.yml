@@ -1,0 +1,277 @@
+name: Claude Code PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, staging]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend-changed: ${{ steps.changes.outputs.frontend }}
+      extension-changed: ${{ steps.changes.outputs.extension }}
+      backend-changed: ${{ steps.changes.outputs.backend }}
+      supabase-changed: ${{ steps.changes.outputs.supabase }}
+      root-changed: ${{ steps.changes.outputs.root }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'react-frontend/**'
+            extension:
+              - 'chrome-extension/**'
+            backend:
+              - 'backend-api/**'
+            supabase:
+              - 'supabase/**'
+            root:
+              - '*.md'
+              - '*.json'
+              - '*.js'
+              - '*.ts'
+              - '.github/**'
+
+  review-frontend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files in frontend
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: react-frontend/**
+          separator: ","
+
+      - name: Review Frontend Changes
+        uses: anthropics/claude-github-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          claude-model: "claude-3-5-sonnet-20241022"
+          context-files: |
+            react-frontend/CLAUDE.md
+            CLAUDE.md
+          changed-files: ${{ steps.changed-files.outputs.all_changed_files }}
+          review-prompt: |
+            Please review the React frontend changes in this PR. Focus on:
+            
+            1. **Code Quality**: TypeScript usage, React best practices, component structure
+            2. **Mantine UI**: Proper use of Mantine components and theme
+            3. **Authentication**: Supabase auth integration and security
+            4. **Routing**: React Router implementation
+            5. **Performance**: Bundle size, lazy loading, render optimization
+            6. **Accessibility**: ARIA attributes, keyboard navigation
+            7. **Error Handling**: Proper error boundaries and user feedback
+            
+            Reference the react-frontend/CLAUDE.md for specific project guidelines.
+            Only comment on the changed files, not the entire codebase.
+
+  review-extension:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.extension-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files in extension
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: chrome-extension/**
+          separator: ","
+
+      - name: Review Extension Changes
+        uses: anthropics/claude-github-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          claude-model: "claude-3-5-sonnet-20241022"
+          context-files: |
+            chrome-extension/CLAUDE.md
+            CLAUDE.md
+          changed-files: ${{ steps.changed-files.outputs.all_changed_files }}
+          review-prompt: |
+            Please review the Chrome extension changes in this PR. Focus on:
+            
+            1. **Plasmo Framework**: Proper use of Plasmo APIs and conventions
+            2. **Manifest V3**: Compliance with MV3 requirements and permissions
+            3. **Security**: Content script security, message passing, CSP compliance
+            4. **Performance**: Background script efficiency, memory usage
+            5. **UI Components**: Mantine integration in extension context
+            6. **Authentication**: Supabase integration within extension boundaries
+            7. **Browser APIs**: Proper use of Chrome extension APIs
+            
+            Reference the chrome-extension/CLAUDE.md for specific project guidelines.
+            Only comment on the changed files, not the entire codebase.
+
+  review-backend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files in backend
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: backend-api/**
+          separator: ","
+
+      - name: Review Backend Changes
+        uses: anthropics/claude-github-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          claude-model: "claude-3-5-sonnet-20241022"
+          context-files: |
+            backend-api/CLAUDE.md
+            CLAUDE.md
+          changed-files: ${{ steps.changed-files.outputs.all_changed_files }}
+          review-prompt: |
+            Please review the backend API changes in this PR. Focus on:
+            
+            1. **Express.js**: Route structure, middleware usage, error handling
+            2. **TypeScript**: Type safety, interface definitions
+            3. **Data Processing**: CSV parsing, data transformation scripts
+            4. **Database Integration**: Supabase connections, queries
+            5. **Security**: Input validation, authentication, authorization
+            6. **Performance**: Query optimization, caching strategies
+            7. **API Design**: RESTful principles, response formats
+            
+            Reference the backend-api/CLAUDE.md for specific project guidelines.
+            Only comment on the changed files, not the entire codebase.
+
+  review-supabase:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.supabase-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files in supabase
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: supabase/**
+          separator: ","
+
+      - name: Review Supabase Changes
+        uses: anthropics/claude-github-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          claude-model: "claude-3-5-sonnet-20241022"
+          context-files: |
+            supabase/CLAUDE.md
+            CLAUDE.md
+          changed-files: ${{ steps.changed-files.outputs.all_changed_files }}
+          review-prompt: |
+            Please review the Supabase changes in this PR. Focus on:
+            
+            1. **Database Schema**: Table structure, relationships, indexes
+            2. **Migrations**: Migration safety, rollback procedures
+            3. **Row Level Security**: RLS policies, security rules
+            4. **Functions**: Database functions, triggers
+            5. **Types**: TypeScript type generation
+            6. **Performance**: Query performance, index usage
+            7. **Data Integrity**: Constraints, validation rules
+            
+            Reference the supabase/CLAUDE.md for specific project guidelines.
+            Only comment on the changed files, not the entire codebase.
+
+  review-root:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.root-changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files in root
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            *.md
+            *.json
+            *.js
+            *.ts
+            .github/**
+          separator: ","
+
+      - name: Review Root Changes
+        uses: anthropics/claude-github-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          claude-model: "claude-3-5-sonnet-20241022"
+          context-files: |
+            CLAUDE.md
+          changed-files: ${{ steps.changed-files.outputs.all_changed_files }}
+          review-prompt: |
+            Please review the root-level changes in this PR. Focus on:
+            
+            1. **Monorepo Configuration**: Package.json workspaces, dependencies
+            2. **Documentation**: README, CLAUDE.md updates
+            3. **CI/CD**: GitHub Actions workflows
+            4. **Project Structure**: Root-level configuration files
+            5. **Dependencies**: Cross-workspace dependency management
+            6. **Build Configuration**: Root-level build scripts
+            
+            Reference the root CLAUDE.md for overall project guidelines.
+            Only comment on the changed files, not the entire codebase.
+
+  security-check:
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Security Review
+        uses: anthropics/claude-github-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          claude-model: "claude-3-5-sonnet-20241022"
+          context-files: |
+            CLAUDE.md
+          review-prompt: |
+            Please perform a security-focused review of this PR. Look for:
+            
+            1. **Secrets Management**: No API keys, passwords, or sensitive data committed
+            2. **Authentication**: Proper auth flow implementations
+            3. **Input Validation**: SQL injection, XSS prevention
+            4. **Dependencies**: No vulnerable packages introduced
+            5. **Permissions**: Appropriate access controls
+            6. **Data Exposure**: No sensitive data logged or exposed
+            7. **CORS**: Proper cross-origin request handling
+            
+            If any security issues are found, mark them as high priority.
+            Focus only on security aspects, not code quality.
