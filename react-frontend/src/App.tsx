@@ -6,6 +6,11 @@ import { LandingPage } from './components/LandingPage'
 import { SignUp } from './components/SignUp'
 import { AuthCallback } from './components/AuthCallback'
 function App() {
+  console.log('🎨 App component rendering...')
+  console.log('⚙️ Mantine theme loaded')
+  console.log('🔑 AuthProvider initializing')
+  console.log('🗺 Router setup complete')
+  
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <AuthProvider>
@@ -20,5 +25,7 @@ function App() {
     </MantineProvider>
   )
 }
+
+console.log('✅ App component exported')
 
 export default App
