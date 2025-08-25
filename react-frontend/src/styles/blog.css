@@ -1,0 +1,110 @@
+/* Blog Post Content Styles */
+.blog-content {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
+  font-size: 1.1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.blog-content h1 {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem 0;
+  font-family: "Montserrat", sans-serif;
+}
+
+.blog-content h2 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem 0;
+  font-family: "Montserrat", sans-serif;
+  border-bottom: 2px solid rgba(56, 189, 125, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.blog-content h3 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+  font-family: "Montserrat", sans-serif;
+}
+
+.blog-content p {
+  margin: 1rem 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.blog-content strong {
+  color: white;
+  font-weight: 600;
+}
+
+.blog-content em {
+  color: rgba(255, 255, 255, 0.9);
+  font-style: italic;
+}
+
+.blog-content ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.blog-content li {
+  margin: 0.5rem 0;
+  color: rgba(255, 255, 255, 0.85);
+  list-style-type: disc;
+}
+
+.blog-content code {
+  background-color: rgba(56, 189, 125, 0.1);
+  color: #38bd7d;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+}
+
+.blog-content pre {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.blog-content pre code {
+  background: none;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.blog-content blockquote {
+  border-left: 4px solid #38bd7d;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(56, 189, 125, 0.05);
+  padding: 1rem;
+  border-radius: 0 8px 8px 0;
+}
+
+.blog-content a {
+  color: #38bd7d;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.blog-content a:hover {
+  color: #4fd1c7;
+}
+
+.blog-content hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 2rem 0;
+}

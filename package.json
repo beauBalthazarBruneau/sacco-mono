@@ -23,7 +23,9 @@
     "install:all": "npm install && npm run install:extension && npm run install:frontend && npm run install:backend",
     "install:extension": "npm install --workspace=chrome-extension",
     "install:frontend": "npm install --workspace=react-frontend",
-    "install:backend": "npm install --workspace=backend-api"
+    "install:backend": "npm install --workspace=backend-api",
+    "precommit:frontend": "npm run type-check --workspace=react-frontend && npm run lint:fix --workspace=react-frontend && npm run test:run --workspace=react-frontend && npm run build --workspace=react-frontend",
+    "precommit": "npm run precommit:frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
