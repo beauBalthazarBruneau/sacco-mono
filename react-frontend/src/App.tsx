@@ -6,6 +6,7 @@ import { LandingPage } from './components/LandingPage'
 import { SignUp } from './components/SignUp'
 import { AuthCallback } from './components/AuthCallback'
 import { PlayerBrowser } from './components/PlayerBrowser'
+import { BlogPost } from './components/BlogPost'
 import { ProtectedRoute } from './components/ProtectedRoute'
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route 
               path="/players" 
               element={

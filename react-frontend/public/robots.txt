@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sacco.ai/sitemap.xml
+
+# Disallow admin and auth paths
+Disallow: /auth/
+Disallow: /admin/
+Disallow: /api/
+
+# Allow blog content
+Allow: /blog/

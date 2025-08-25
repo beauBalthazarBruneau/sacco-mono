@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { Container, Title, Text, Card, Button, Box, Badge, Stack, Group, ActionIcon, SimpleGrid } from '@mantine/core'
 import { IconArrowLeft, IconArrowRight, IconCalendar, IconUser, IconExternalLink } from '@tabler/icons-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { signInWithMagicLink } from '../../lib/supabase'
+import { getRecentBlogPosts } from '../../utils/blog'
 
 export const BlogSection: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -29,64 +30,8 @@ export const BlogSection: React.FC = () => {
     }
   }
 
-  // Mock blog posts - in a real app, these would come from a CMS or API
-  const blogPosts = [
-    {
-      id: 1,
-      title: 'The Ultimate 2024 Fantasy Football Draft Strategy Guide',
-      excerpt: 'Discover the advanced strategies that championship teams use to dominate their drafts. From value-based drafting to late-round sleepers, we break down everything you need to know.',
-      author: 'Sacco Team',
-      date: '2024-08-20',
-      readTime: '8 min read',
-      category: 'Draft Strategy',
-      image: 'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=400&h=250&fit=crop',
-      link: '#'
-    },
-    {
-      id: 2,
-      title: 'AI vs Traditional Analysis: Why Data Beats Gut Feelings',
-      excerpt: 'A deep dive into how machine learning algorithms consistently outperform traditional fantasy football analysis methods. See the numbers that prove AI supremacy.',
-      author: 'Dr. Sarah Chen',
-      date: '2024-08-18',
-      readTime: '6 min read',
-      category: 'Analytics',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop',
-      link: '#'
-    },
-    {
-      id: 3,
-      title: 'Waiver Wire Gold: How to Find Hidden Gems Every Week',
-      excerpt: 'Learn the secret metrics our AI uses to identify breakout players before they explode. Turn your waiver claims into league-winning moves.',
-      author: 'Mike Rodriguez',
-      date: '2024-08-15',
-      readTime: '5 min read',
-      category: 'Waiver Wire',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop',
-      link: '#'
-    },
-    {
-      id: 4,
-      title: 'Championship Week: Advanced Lineup Optimization Strategies',
-      excerpt: 'The playoffs are here! Discover how to maximize your lineup potential with advanced statistical modeling and matchup analysis.',
-      author: 'Alex Johnson',
-      date: '2024-08-12',
-      readTime: '7 min read',
-      category: 'Playoffs',
-      image: 'https://images.unsplash.com/photo-1577223625816-7546f13df25d?w=400&h=250&fit=crop',
-      link: '#'
-    },
-    {
-      id: 5,
-      title: 'Trade Analyzer: Making Deals That Win Championships',
-      excerpt: 'Stop second-guessing your trades. Learn how our AI evaluates player value, future projections, and team fit to help you make championship-winning deals.',
-      author: 'Chris Martinez',
-      date: '2024-08-10',
-      readTime: '6 min read',
-      category: 'Trading',
-      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop',
-      link: '#'
-    }
-  ]
+  // Load blog posts from JSON files
+  const blogPosts = getRecentBlogPosts(5)
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % Math.ceil(blogPosts.length / 3))
@@ -240,7 +185,7 @@ export const BlogSection: React.FC = () => {
                       <Box
                         style={{
                           height: '200px',
-                          backgroundImage: `url(${post.image})`,
+                      backgroundImage: `url(${post.image.url})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
                           position: 'relative'
@@ -290,14 +235,14 @@ export const BlogSection: React.FC = () => {
                           <Group gap="sm" style={{ fontSize: '0.85rem' }}>
                             <Group gap="xs">
                               <IconUser size={16} color="rgba(255, 255, 255, 0.5)" />
-                              <Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                                {post.author}
+                        <Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                                {post.author.name}
                               </Text>
                             </Group>
                             <Group gap="xs">
                               <IconCalendar size={16} color="rgba(255, 255, 255, 0.5)" />
                               <Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                                {new Date(post.date).toLocaleDateString()}
+                                {new Date(post.publishedAt).toLocaleDateString()}
                               </Text>
                             </Group>
                           </Group>
@@ -315,6 +260,8 @@ export const BlogSection: React.FC = () => {
 
                         {/* Read More Button */}
                         <Button
+                          component={Link}
+                          to={`/blog/${post.slug}`}
                           variant="outline"
                           color="teal"
                           size="sm"
@@ -323,11 +270,8 @@ export const BlogSection: React.FC = () => {
                             borderColor: '#38bd7d',
                             color: '#38bd7d',
                             fontFamily: '"Montserrat", sans-serif',
-                            marginTop: 'auto'
-                          }}
-                          onClick={() => {
-                            // In a real app, this would navigate to the blog post
-                            window.open(post.link, '_blank')
+                            marginTop: 'auto',
+                            textDecoration: 'none'
                           }}
                         >
                           Read More
@@ -425,13 +369,14 @@ export const BlogSection: React.FC = () => {
 
               <Group gap="lg">
                 <Button
+                  component={Link}
+                  to="/#blog"
                   variant="subtle"
                   color="teal"
                   size="sm"
                   rightSection={<IconExternalLink size={16} />}
-                  onClick={() => {
-                    // In a real app, this would navigate to the full blog
-                    window.open('#', '_blank')
+                  style={{
+                    textDecoration: 'none'
                   }}
                 >
                   View All Articles
