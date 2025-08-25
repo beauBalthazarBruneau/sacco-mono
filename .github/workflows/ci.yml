@@ -35,6 +35,9 @@ jobs:
     - name: Type check React Frontend
       run: npm run type-check --workspace=react-frontend
       
+    - name: Test React Frontend
+      run: npm run test:run --workspace=react-frontend
+      
     - name: Build React Frontend
       run: npm run build --workspace=react-frontend
       

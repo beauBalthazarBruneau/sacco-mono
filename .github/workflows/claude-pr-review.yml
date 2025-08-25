@@ -1,0 +1,83 @@
+name: PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, staging]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          separator: "\n"
+          files_ignore: |
+            **/*.lock
+            **/*.log
+            **/node_modules/**
+            **/dist/**
+            **/build/**
+
+      - name: Review changed files with Claude
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get PR details
+          PR_NUMBER=${{ github.event.number }}
+          
+          # Get file contents for changed files
+          CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          # Create review content
+          REVIEW_CONTENT=""
+          
+          echo "Reviewing changed files..."
+          while IFS= read -r file; do
+            if [[ -f "$file" ]]; then
+              echo "Processing: $file"
+              REVIEW_CONTENT="$REVIEW_CONTENT\n\n## File: $file\n\n"
+              REVIEW_CONTENT="$REVIEW_CONTENT\`\`\`$(basename "$file" | sed 's/.*\.//')\n$(cat "$file")\n\`\`\`"
+            fi
+          done <<< "$CHANGED_FILES"
+          
+          # Create prompt for Claude
+          PROMPT="Review these changed files from a GitHub PR. Focus on:\n\n**Security (Critical):**\n• No API keys, tokens, or credentials\n• Input validation and sanitization\n• Authentication/authorization\n• SQL injection and XSS prevention\n\n**Code Quality:**\n• Logic errors and bugs\n• Performance issues\n• Error handling\n• TypeScript type safety\n\n**Best Practices:**\n• Framework patterns\n• Database changes\n• API design\n\nBe concise and only flag genuine issues.\n\n$REVIEW_CONTENT"
+          
+          # Call Claude API
+          RESPONSE=$(curl -s -X POST https://api.anthropic.com/v1/messages \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -d "{
+              \"model\": \"claude-3-5-sonnet-20241022\",
+              \"max_tokens\": 4000,
+              \"messages\": [{
+                \"role\": \"user\",
+                \"content\": \"$PROMPT\"
+              }]
+            }")
+          
+          # Extract review content
+          REVIEW=$(echo "$RESPONSE" | jq -r '.content[0].text // "Review failed"')
+          
+          # Post review as PR comment
+          curl -s -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments" \
+            -d "{
+              \"body\": \"## 🤖 Claude Code Review\n\n$REVIEW\"
+            }"
