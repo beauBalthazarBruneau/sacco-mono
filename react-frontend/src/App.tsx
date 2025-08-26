@@ -8,6 +8,8 @@ import { AuthCallback } from './components/AuthCallback'
 import { PlayerBrowser } from './components/PlayerBrowser'
 import { BlogPost } from './components/BlogPost'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { BillingDashboard } from './components/BillingDashboard'
+import { PaymentSetup } from './components/PaymentSetup'
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -23,6 +25,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PlayerBrowser />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/billing" 
+              element={
+                <ProtectedRoute>
+                  <BillingDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/billing/payment-setup" 
+              element={
+                <ProtectedRoute>
+                  <PaymentSetup />
                 </ProtectedRoute>
               } 
             />
