@@ -2,19 +2,17 @@ import type { BlogPost, BlogMetadata } from '../types/blog'
 
 // Import all blog post JSON files
 import draftGuideData from '../data/blog/ultimate-2024-fantasy-football-draft-strategy-guide.json'
-import aiAnalysisData from '../data/blog/ai-vs-traditional-analysis-data-beats-gut-feelings.json'
-import waiverWireData from '../data/blog/waiver-wire-gold-find-hidden-gems-every-week.json'
-import championshipData from '../data/blog/championship-week-advanced-lineup-optimization-strategies.json'
-import tradeAnalyzerData from '../data/blog/trade-analyzer-making-deals-that-win-championships.json'
+import espnInterfaceData from '../data/blog/how-to-master-espn-new-2025-fantasy-football-interface.json'
+import completeDraftGuideData from '../data/blog/complete-espn-fantasy-football-draft-guide-2025.json'
+import punishmentsData from '../data/blog/10-brutal-fantasy-football-punishments-sacco-sacko-last-place.json'
 import metadataData from '../data/blog/metadata.json'
 
 // Type assertion for imported JSON data
 const blogPosts: BlogPost[] = [
   draftGuideData as BlogPost,
-  aiAnalysisData as BlogPost,
-  waiverWireData as BlogPost,
-  championshipData as BlogPost,
-  tradeAnalyzerData as BlogPost
+  espnInterfaceData as BlogPost,
+  completeDraftGuideData as BlogPost,
+  punishmentsData as BlogPost
 ]
 
 const metadata: BlogMetadata = metadataData as BlogMetadata
