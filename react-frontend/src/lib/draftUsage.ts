@@ -33,7 +33,7 @@ export class DraftUsageService {
       picksUsed: draft_picks_used,
       picksLimit: draft_picks_limit,
       needsPayment,
-      subscriptionTier,
+      subscriptionTier: subscription_tier,
     };
   }
 

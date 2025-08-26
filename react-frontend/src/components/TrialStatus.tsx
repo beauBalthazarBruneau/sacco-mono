@@ -1,8 +1,8 @@
 import { Progress, Paper, Text, Group, Badge, Button, Stack } from '@mantine/core';
 import { IconDashboard, IconCreditCard } from '@tabler/icons-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { FREE_TRIAL_PICKS, formatCurrency, DRAFT_PICKS_FEE } from '../lib/stripe';
+import { formatCurrency, DRAFT_PICKS_FEE } from '../lib/stripe';
 
 interface TrialStatusProps {
   userProfile?: {

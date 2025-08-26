@@ -15,7 +15,7 @@ import {
 import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { getStripe, formatCurrency, DRAFT_PICKS_FEE } from '../lib/stripe';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { PaymentForm } from './PaymentForm';
 

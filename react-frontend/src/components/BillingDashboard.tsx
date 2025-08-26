@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Paper,
@@ -15,14 +15,12 @@ import {
   Divider,
 } from '@mantine/core';
 import { 
-  IconCreditCard, 
   IconExternalLink, 
   IconAlertCircle, 
   IconReceipt,
-  IconUser,
-  IconCalendar
+  IconUser
 } from '@tabler/icons-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { formatCurrency } from '../lib/stripe';
 import { TrialStatus } from './TrialStatus';
@@ -59,13 +57,7 @@ export function BillingDashboard() {
   const [error, setError] = useState<string>('');
   const [portalLoading, setPortalLoading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchUserData();
-    }
-  }, [user]);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -97,7 +89,13 @@ export function BillingDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user, fetchUserData]);
 
   const openCustomerPortal = async () => {
     try {
