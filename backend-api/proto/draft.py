@@ -2,17 +2,16 @@
 import sys, readline
 import pandas as pd
 from tabulate import tabulate
-from util import load_players, positional_lists, load_espn_ranks, attach_espn_ranks_inplace, report_espn_match_coverage
+from util import load_players, positional_lists, load_espn_ranks, attach_espn_ranks_inplace, report_espn_match_coverage, load_adp, attach_adp_inplace
 from models import DraftState, LINEUP
-
+import numpy as np
 
 from demand import (
     forecast_until_next_pick_esbn,
     survival_probs,
-    autopick_index_from_hazard,
-    esbn_pick_probs_for_team  # add to your imports
+    next_pick_probs_mix  # add to your imports
 )
-from var import expected_best_next, current_best_now, davar_esbn, league_replacement_indices, replacement_ppg_by_pos
+from var import expected_best_next, current_best_now, league_replacement_indices, replacement_ppg_by_pos, best_ix_by_pos_now, davar_esbn_deficit_weighted
 from util import positional_lists
 
 from collections import defaultdict # ensure this import exists
@@ -35,7 +34,7 @@ def current_espn_board_positions(df, available_ix):
 def available_indices(df, taken):
     return [i for i in df.index if i not in taken]
 
-def predict_current_pick(df, draft, N_window=10, eta=0.4):
+def predict_current_pick(df, draft):
     """
     Predict the player the CURRENT team (draft.current_pick owner) will take,
     using the ESPN hazard for THIS pick only.
@@ -44,13 +43,17 @@ def predict_current_pick(df, draft, N_window=10, eta=0.4):
     owner = draft.pick_owner(draft.current_pick)
     team = draft.teams[owner]
     avail_ix = available_indices(df, draft.taken)
-    hazard = esbn_pick_probs_for_team(df, avail_ix, team, N=N_window, eta=eta)
-    if not hazard:
-        return None, {}
-    pred_ix = max(hazard.items(), key=lambda kv: kv[1])[0]
-    return pred_ix, hazard
 
+    probs = next_pick_probs_mix(
+        df, avail_ix, draft.current_pick, team
+    )
 
+    picked_player = np.random.choice(
+        list(probs.keys()), 
+        p=list(probs.values())
+    )
+
+    return picked_player, probs
 
 def _assign_user_lineup(df, team):
     """
@@ -117,7 +120,6 @@ def print_user_roster(df, draft):
     print(tabulate(counts, headers=["Slot", "Filled", "Remaining"], tablefmt="github"))
 
 
-
 def available_indices(df, taken):
     return [i for i in df.index if i not in taken]
 
@@ -133,24 +135,62 @@ def steps_until_user_next_pick(draft):
         steps += 1
     return steps
 
-def show_recs(df, draft, topN=12, N_window=10, eta=0.4, alpha=0.9, beta=0.6):
+def adp_value_tag(nfc_adp, ref_pick_num):
+    """Return a short tag like 'value +10', 'reach 15', or 'at ADP'."""
+    try:
+        adp = float(nfc_adp)
+    except (TypeError, ValueError):
+        return ""  # unknown
+
+    if not pd.notna(adp):
+        return ""
+
+    diff = int(round(ref_pick_num - adp))  # >0 => value; <0 => reach
+    if diff > 0:
+        return f"value +{diff}"
+    elif diff < 0:
+        return f"reach {abs(diff)}"
+    else:
+        return "at ADP"
+
+
+def show_recs(df, draft, topN=12, alpha=0.9, beta=0.6):
     # horizon until user's next pick
     h = steps_until_user_next_pick(draft)
     avail_ix = available_indices(df, draft.taken)
     pos_lists = positional_lists(df)
 
+    team = draft.teams[draft.user_team_ix]
+    ref_pick_num = draft.current_pick
+
+    cap_left_by_pos = {}
+    for pos in ['QB', 'RB', 'WR', 'TE']:
+        cap = float(team.need.get(pos, 0))
+        if pos in ('RB', 'WR', 'TE'):
+            cap += float(team.need.get('FLEX', 0)) / 3.0
+
+        cap_left_by_pos[pos] = cap
+        
+    owned_count_by_pos = {pos: 0 for pos in ['QB', 'RB', 'WR', 'TE']}
+    for ix in team.picks:
+        owned_count_by_pos[df.loc[ix, 'position']] += 1
+
 
     # ESPN-based hazards & drains
-    hazards, E_drain = forecast_until_next_pick_esbn(df, draft, avail_ix, h, N=N_window, eta=eta)
+    hazards, E_drain = forecast_until_next_pick_esbn(df, draft, avail_ix, h)
 
     print(f"Horizon to your next pick (H) = {h}, sum(E[K_pos]) = {round(sum(E_drain.values()),2)}")
     
     board_pos_map = current_espn_board_positions(df, avail_ix)
-
     
     # Survival for candidate set (take top ~60 by PPG among available)
     cand_df = df.loc[avail_ix].sort_values('ppg', ascending=False).head(60)
     surv = survival_probs(hazards, cand_df.index)
+
+    best_ix_map = best_ix_by_pos_now(pos_lists, avail_ix)
+    surv_best_by_pos = {p: (surv.get(ix, 1.0) if ix is not None else 1.0) 
+                        for p, ix in best_ix_map.items()}
+
 
     # Best-now and expected-best-next by position
     best_now = current_best_now(df, pos_lists, avail_ix)
@@ -160,41 +200,66 @@ def show_recs(df, draft, topN=12, N_window=10, eta=0.4, alpha=0.9, beta=0.6):
     repl_idx_map = league_replacement_indices(draft.n_teams, LINEUP)
     repl_ppg = replacement_ppg_by_pos(df, pos_lists, avail_ix, repl_idx_map)
 
+
+    from var import remaining_var_budget_by_pos, accrued_var_by_pos
+
+    # how many bench slots remain in THIS league/team
+    bench_left_now = draft.teams[draft.user_team_ix].bench_left()
+
+    # accrued VAR so far (starters + already-filled FLEX)
+    A_by_pos = accrued_var_by_pos(df, draft.teams[draft.user_team_ix], LINEUP, repl_ppg)
+
+    # remaining budget with bench awareness
+    R_by_pos = remaining_var_budget_by_pos(
+        df, pos_lists, avail_ix, draft.teams[draft.user_team_ix], LINEUP, repl_ppg,
+        bench_left=bench_left_now, bench_weight=1.0  # tune weight if desired
+)
+
     # Build table
     rows = []
     for ix, r in cand_df.iterrows():
-        score = davar_esbn(
-            df, ix, best_now, E_best_next,
-            repl_ppg,
+
+        score = davar_esbn_deficit_weighted(
+            df, ix,
+            best_now, E_best_next, repl_ppg, surv_best_by_pos,
             survival_for_candidate=surv.get(ix, 1.0),
-            alpha=alpha, beta=beta, risk_penalty=0.0
+            accrued_var_by_pos=A_by_pos,
+            remain_var_budget_by_pos=R_by_pos,
+            alpha=0.9, beta=0.7,
+            cap_left_by_pos=cap_left_by_pos,
+            owned_count_by_pos=owned_count_by_pos,
+            rho_overfill=1.0,
+            phi_deficit=1.0
         )
-        
+
+        adp_tag = adp_value_tag(r.get('nfc_adp', None), ref_pick_num)
+
         rows.append([
             r['player_name'],
             r['position'],
             board_pos_map.get(ix, None),                       # <-- NEW: current ESPN board #
             round(float(r['ppg']), 2),
             f"{100*surv.get(ix,1.0):.0f}%",
+            adp_tag,
             round(E_best_next[r['position']] - best_now[r['position']], 2),
             round(score, 2),
             ix
         ])
 
-    rows.sort(key=lambda x: x[6], reverse=True)
+    rows.sort(key=lambda x: x[7], reverse=True)
 
     from tabulate import tabulate
     print("\n== Recommendations (as if it's YOUR pick next) ==")
     print(tabulate(
-        rows[:topN],
-        headers=["Player","Pos","ESPN#","PPG","Survive%","OppCost(Pos)","DAVAR","idx"],
-        tablefmt="github"
+    rows[:topN],
+    headers=["Player","Pos","ESPN#","PPG","Survive%","ADP","OppCost(Pos)","DAVAR","idx"],
+    tablefmt="github"
     ))
 
     print("\nPos drain by your next pick (E[K_pos]):", {k: round(v,2) for k,v in E_drain.items()})
 
     owner_now = draft.pick_owner(draft.current_pick)
-    pred_ix, hazard_current = predict_current_pick(df, draft, N_window=N_window, eta=eta)
+    pred_ix, hazard_current = predict_current_pick(df, draft)
     if pred_ix is not None:
         p = df.loc[pred_ix]
         prob = hazard_current.get(pred_ix, 0.0)
@@ -205,15 +270,14 @@ def show_recs(df, draft, topN=12, N_window=10, eta=0.4, alpha=0.9, beta=0.6):
     if rows:
         best_row = rows[0]
         print(f"Top rec for YOUR next turn: {best_row[0]} ({best_row[1]}) — "
-              f"DAVAR {best_row[5]:.2f}, Survive {best_row[3]}")
+              f"DAVAR {best_row[7]:.2f}, Survive {best_row[4]}")   
 
     return rows, hazards, E_drain, pred_ix
 
-
-
 DATA = "data/player_rankings.csv"
 ESPN = "data/espn_rankings_final.csv"
-N_TEAMS, ROUNDS, USER_TEAM = 12, 15, 4  # user is team 0 (change as needed)
+ADP = "data/ppr_adp_new.csv"
+N_TEAMS, ROUNDS, USER_TEAM = 12, 15, 1  # user is team 0 (change as needed)
 
 def available_indices(df, taken):
     return [i for i in df.index if i not in taken]
@@ -230,8 +294,13 @@ def main():
         espn = load_espn_ranks(ESPN)
         attach_espn_ranks_inplace(df, espn)
         report_espn_match_coverage(df)
+
     except Exception as e:
         print(f"[ESPN merge] Warning: {e} — falling back to global_rank for hazards.")
+
+    adp = load_adp(ADP)
+    attach_adp_inplace(df, adp)
+
 
     draft = DraftState(n_teams=N_TEAMS, rounds=ROUNDS, user_team_ix=USER_TEAM)
 
@@ -240,14 +309,10 @@ def main():
 
         print_user_roster(df, draft)
 
-
-
         # Always show recs as if it's YOUR pick next (returns hazards for upcoming h picks)
         rows, hazards, E_drain, pred_ix = show_recs(
             df, draft,
             topN=24,         # how many rows to display
-            N_window=24,     # ESPN top-N window for attention
-            eta=0.8,         # softmax sharpness toward top of board
             alpha=0.9,       # DAVAR weight on pos-wait cost
             beta=0.6         # DAVAR cross-pos hedge weight
         )
@@ -257,7 +322,7 @@ def main():
 
         if cmd.lower() == 'auto':
             if pred_ix is None:
-                pred_ix, _ = predict_current_pick(df, draft, N_window=20, eta=0.7)
+                pred_ix, _ = predict_current_pick(df, draft)
             pick_ix = pred_ix
             
         elif cmd.isdigit():

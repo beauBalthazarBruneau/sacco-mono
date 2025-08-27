@@ -14,9 +14,13 @@ def load_players(csv_path: str) -> pd.DataFrame:
         # fallback: use ppr_points if you have a 'games' column; else just dropna
         df['ppg'] = df['ppr_points_per_game'].fillna(0.0)
     # global rank by ADP if present; else by -ppg
-    df['global_rank'] = df['adp'].rank(method='min') if df['adp'].notna().any() else (-df['ppg']).rank(method='min')
+    df['global_rank'] = df['nfc_adp'].rank(method='min') if df['nfc_adp'].notna().any() else (-df['ppg']).rank(method='min')
     # stable ordering
+
     df.sort_values(['position','ppg','global_rank'], ascending=[True,False,True], inplace=True)
+
+    df['exp_games_missed'] = df['exp_games_missed'].fillna(0)
+
     df.reset_index(drop=True, inplace=True)
     return df
 
@@ -26,7 +30,6 @@ def positional_lists(df: pd.DataFrame) -> dict[str, list[int]]:
         pos_to_ix[pos] = list(df.index[df['position']==pos])
     return pos_to_ix
 
-
 def _norm_name(s: str) -> str:
     """Normalize player names for matching (lowercase, strip punctuation/whitespace)."""
     if not isinstance(s, str):
@@ -34,6 +37,12 @@ def _norm_name(s: str) -> str:
     s = s.lower()
     s = re.sub(r"[^a-z0-9]+", "", s)  # drop spaces, apostrophes, dots, hyphens
     return s
+
+def load_adp(adp_csv_path: str) -> pd.DataFrame:
+    adp = pd.read_csv(adp_csv_path)
+    adp['name_key'] = adp['Player'].map(_norm_name)
+    adp = adp[['name_key','AVG']]
+    return adp
 
 def load_espn_ranks(espn_csv_path: str) -> pd.DataFrame:
     """
@@ -72,6 +81,19 @@ def attach_espn_ranks_inplace(df_players: pd.DataFrame, espn: pd.DataFrame) -> N
         how='left'
     )
     df_players['espn_rank'] = merged['espn_rank'].values  # set in-place
+    df_players.drop(columns=[c for c in ['name_key'] if c in df_players.columns], inplace=True, errors='ignore')
+
+def attach_adp_inplace(df_players: pd.DataFrame, adp: pd.DataFrame) -> None:
+    players = df_players.copy() 
+    players['name_key'] = players['player_name'].map(_norm_name)
+
+
+    merged = players.merge(
+        adp[['name_key','AVG']],
+        on=['name_key'],
+        how='left'
+    )
+    df_players['adp'] = merged['AVG'].values  # set in-place
     df_players.drop(columns=[c for c in ['name_key'] if c in df_players.columns], inplace=True, errors='ignore')
 
 def report_espn_match_coverage(df_players: pd.DataFrame) -> None:
