@@ -138,12 +138,14 @@ def steps_until_user_next_pick(draft):
 def adp_value_tag(nfc_adp, ref_pick_num):
     """Return a short tag like 'value +10', 'reach 15', or 'at ADP'."""
     try:
+        if pd.isna(nfc_adp) or nfc_adp is None:
+            return "N/A"
         adp = float(nfc_adp)
     except (TypeError, ValueError):
-        return ""  # unknown
+        return "N/A"  # unknown
 
     if not pd.notna(adp):
-        return ""
+        return "N/A"
 
     diff = int(round(ref_pick_num - adp))  # >0 => value; <0 => reach
     if diff > 0:
