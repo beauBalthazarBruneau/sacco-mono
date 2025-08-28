@@ -103,7 +103,7 @@ def _assign_user_lineup(df, team):
 
     return rows
 
-def print_user_roster(df, draft):
+def print_user_roster(df, draft, team_names=None):
     team = draft.teams[draft.user_team_ix]
     rows = _assign_user_lineup(df, team)
     counts = []
@@ -112,7 +112,8 @@ def print_user_roster(df, draft):
         remaining = team.need.get(pos, 0)
         counts.append([pos, max(filled, 0), max(remaining, 0)])
 
-    print("\n-- Your roster so far --")
+    team_name = team_names[draft.user_team_ix] if team_names else f"Team {draft.user_team_ix}"
+    print(f"\n-- {team_name}'s roster so far --")
     if rows:
         print(tabulate(rows, headers=["Slot", "Player", "Pos", "PPG"], tablefmt="github"))
     else:
@@ -279,7 +280,7 @@ def show_recs(df, draft, topN=12, alpha=0.9, beta=0.6):
 DATA = "data/player_rankings.csv"
 ESPN = "data/espn_rankings_final.csv"
 ADP = "data/ppr_adp_new.csv"
-N_TEAMS, ROUNDS, USER_TEAM = 12, 15, 1  # user is team 0 (change as needed)
+ROUNDS = 15  # default rounds, can be made configurable later
 
 def available_indices(df, taken):
     return [i for i in df.index if i not in taken]
@@ -287,6 +288,74 @@ def available_indices(df, taken):
 def find_player(df, query):
     cand = df[df['player_name'].str.lower().str.contains(query.lower())]
     return list(cand.index)
+
+def get_draft_config():
+    """Get draft configuration from user"""
+    print("=== Fantasy Football Draft Setup ===")
+    
+    # Get number of teams
+    while True:
+        try:
+            n_teams = int(input("Enter number of teams in the draft: "))
+            if n_teams >= 2 and n_teams <= 16:
+                break
+            else:
+                print("Please enter a number between 2 and 16.")
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get number of rounds
+    while True:
+        try:
+            rounds = int(input(f"Enter number of rounds (default {ROUNDS}): ") or ROUNDS)
+            if rounds >= 1 and rounds <= 20:
+                break
+            else:
+                print("Please enter a number between 1 and 20.")
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    return n_teams, rounds
+
+def get_team_names(n_teams):
+    """Get team names from user in draft order (1st pick to last pick)"""
+    print(f"\n=== Enter Team Names in Draft Order ===")
+    print(f"Enter the names of {n_teams} teams in the order they will draft (1st pick to last pick)")
+    print("This will be mapped to the snake draft order automatically.\n")
+    
+    team_names = []
+    for i in range(n_teams):
+        while True:
+            name = input(f"Team {i+1} (pick #{i+1}): ").strip()
+            if name:
+                team_names.append(name)
+                break
+            print("Please enter a valid team name.")
+    
+    return team_names
+
+def get_snake_draft_order(n_teams, rounds):
+    """Generate the complete snake draft order"""
+    draft_order = []
+    for round_num in range(1, rounds + 1):
+        if round_num % 2 == 1:  # Odd rounds: 1, 2, 3, ..., n
+            round_order = list(range(n_teams))
+        else:  # Even rounds: n, n-1, ..., 2, 1
+            round_order = list(range(n_teams - 1, -1, -1))
+        
+        for team_idx in round_order:
+            draft_order.append(team_idx)
+    
+    return draft_order
+
+def print_draft_order(team_names, draft_order):
+    """Print the complete draft order for reference"""
+    print(f"\n=== Complete Draft Order ===")
+    for i, team_idx in enumerate(draft_order):
+        round_num = (i // len(team_names)) + 1
+        pick_in_round = (i % len(team_names)) + 1
+        print(f"Pick {i+1:2d} (Round {round_num:2d}.{pick_in_round:2d}): {team_names[team_idx]}")
+    print()
 
 def main():
     df = load_players(DATA)
@@ -303,13 +372,41 @@ def main():
     adp = load_adp(ADP)
     attach_adp_inplace(df, adp)
 
+    # Get draft configuration from user
+    n_teams, rounds = get_draft_config()
+    
+    # Get team names from user
+    team_names = get_team_names(n_teams)
+    
+    # Generate snake draft order
+    draft_order = get_snake_draft_order(n_teams, rounds)
+    
+    # Print the complete draft order for reference
+    print_draft_order(team_names, draft_order)
+    
+    # Ask user which team they are
+    print("Which team are you?")
+    for i, name in enumerate(team_names):
+        print(f"{i+1}. {name}")
+    
+    while True:
+        try:
+            user_choice = int(input(f"Enter your team number (1-{n_teams}): ")) - 1
+            if 0 <= user_choice < n_teams:
+                user_team = user_choice
+                break
+            else:
+                print(f"Please enter a number between 1 and {n_teams}")
+        except ValueError:
+            print("Please enter a valid number")
 
-    draft = DraftState(n_teams=N_TEAMS, rounds=ROUNDS, user_team_ix=USER_TEAM)
+    draft = DraftState(n_teams=n_teams, rounds=rounds, user_team_ix=user_team)
 
     while not draft.is_complete():
         owner = draft.pick_owner(draft.current_pick)
+        owner_name = team_names[owner]
 
-        print_user_roster(df, draft)
+        print_user_roster(df, draft, team_names)
 
         # Always show recs as if it's YOUR pick next (returns hazards for upcoming h picks)
         rows, hazards, E_drain, pred_ix = show_recs(
@@ -319,7 +416,7 @@ def main():
             beta=0.6         # DAVAR cross-pos hedge weight
         )
 
-        print(f"\nPick {draft.current_pick} is Team {owner}.")
+        print(f"\nPick {draft.current_pick} is {owner_name} (Team {owner}).")
         cmd = input("Enter pick: 'name' to pick by search, 'idx' to pick by idx, or 'auto' to auto-pick for owner: ").strip()
 
         if cmd.lower() == 'auto':
@@ -340,7 +437,7 @@ def main():
         # Validate roster need
         pos = df.loc[pick_ix, 'position']
         if not draft.teams[owner].can_draft(pos):
-            print(f"Team {owner} cannot draft {pos} (slots full). Try another pick.")
+            print(f"{owner_name} cannot draft {pos} (slots full). Try another pick.")
             continue
 
         # Apply pick
@@ -355,6 +452,7 @@ def main():
     print("\nDraft complete!")
     u = draft.teams[draft.user_team_ix]
     roster = [[df.loc[ix,'player_name'], df.loc[ix,'position'], round(df.loc[ix,'ppg'],2)] for ix in u.picks]
+    print(f"\n=== Final Roster for {team_names[user_team]} ===")
     print(tabulate(roster, headers=["Player","Pos","PPG"], tablefmt="github"))
 
 
