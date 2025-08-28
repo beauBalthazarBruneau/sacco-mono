@@ -53,6 +53,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 18801,"Hunter Long",JAX,17,0,0,0,24,213,1,0,0,0,0,241.4
 19578,"Jeremy Ruckert",NYJ,17,0,0,0,24,192,1,0,0,0,0,241.89
 22123,"Gunnar Helm",TEN,17,0,0,0,20,204,1,1,0,0,0,248.92
+22095,"Harold Fannin Jr.",CLV,17,0,0,0,24,216,1,1,0,0,0,273.1
 17088,"Dawson Knox",BUF,17,0,0,0,14,174,1,0,0,0,0,271.62
 20346,"Elijah Higgins",ARZ,17,0,0,0,11,104,2,0,0,0,0,241.19
 21011,"Nate Adkins",DEN,13,0,0,0,12,91,2,0,0,0,0,241.2
@@ -63,3 +64,4 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 15555,"Johnny Mundt",JAX,17,0,0,0,18,150,1,0,0,0,0,244.94
 15751,"Robert Tonyan",KC,17,0,0,0,12,109,1,0,0,0,0,241.37
 22127,"Luke Lachey",HST,17,0,0,0,11,112,1,0,0,0,0,241.17
+22101,"Oronde Gadsden II",LAC,17,0,0,0,10,107,1,0,0,0,0,271.78

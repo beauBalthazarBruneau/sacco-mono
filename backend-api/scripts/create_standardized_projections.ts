@@ -9,6 +9,33 @@ interface AdpPlayer {
   ADP: string;
 }
 
+// Function to normalize player names by removing common suffixes
+function normalizePlayerName(name: string): string {
+  // Remove quotes and trim
+  let normalized = name.replace(/"/g, '').trim();
+  
+  // Remove common suffixes (case insensitive)
+  const suffixes = [
+    / Jr\.?$/i,
+    / Sr\.?$/i,
+    / II$/i,
+    / III$/i,
+    / IV$/i,
+    / V$/i,
+    / VI$/i,
+    / VII$/i,
+    / VIII$/i,
+    / IX$/i,
+    / X$/i
+  ];
+  
+  for (const suffix of suffixes) {
+    normalized = normalized.replace(suffix, '');
+  }
+  
+  return normalized.trim();
+}
+
 function loadAdpData(position: string): Map<string, AdpPlayer> {
   const adpFile = path.join(process.cwd(), 'data', 'raw_player_data', `nfc_${position}_adp.csv`);
   const content = fs.readFileSync(adpFile, 'utf-8');
@@ -20,8 +47,9 @@ function loadAdpData(position: string): Map<string, AdpPlayer> {
     if (line.trim()) {
       const [Rank, PlayerID, Player, Team, Position, ADP, MinPick, MaxPick, Difference, NumPicks, TeamPick] = line.split(',');
       if (PlayerID && Player && Team) {
-        // Create a key using player name and team for matching
-        const key = `${Player.replace(/"/g, '')}_${Team}`;
+        // Create a key using normalized player name and team for matching
+        const normalizedName = normalizePlayerName(Player);
+        const key = `${normalizedName}_${Team}`;
         playerMap.set(key, {
           PlayerID: PlayerID.trim(),
           Player: Player.replace(/"/g, '').trim(),
@@ -61,8 +89,16 @@ function createClayStandardized(position: string): void {
       let playerName = fields[headers.indexOf(position === 'qb' ? 'Quarterback' : position === 'rb' ? 'Running Back' : position === 'wr' ? 'Wide Receiver' : 'Tight End')].replace(/"/g, '');
       let team = fields[headers.indexOf('Team')];
       
-      const key = `${playerName}_${team}`;
-      const adpPlayer = adpData.get(key);
+      // Try to match using normalized name first
+      const normalizedName = normalizePlayerName(playerName);
+      const key = `${normalizedName}_${team}`;
+      let adpPlayer = adpData.get(key);
+      
+      // If no match found, try with original name as fallback
+      if (!adpPlayer) {
+        const originalKey = `${playerName}_${team}`;
+        adpPlayer = adpData.get(originalKey);
+      }
       
       if (adpPlayer) {
         let g = parseInt(fields[headers.indexOf('G')]) || 0;
@@ -110,7 +146,7 @@ function createClayStandardized(position: string): void {
         ].join(',');
         outputLines.push(line);
       } else {
-        console.log(`  Warning: Could not find ADP data for ${playerName} (${team})`);
+        console.log(`  Warning: Could not find ADP data for ${playerName} (${team}) - normalized: ${normalizedName}`);
       }
     }
   }
@@ -145,8 +181,16 @@ function createCbsStandardized(position: string): void {
       let playerName = fields[headers.indexOf('PLAYER')].replace(/"/g, '');
       let team = fields[headers.indexOf('TEAM')];
       
-      const key = `${playerName}_${team}`;
-      const adpPlayer = adpData.get(key);
+      // Try to match using normalized name first
+      const normalizedName = normalizePlayerName(playerName);
+      const key = `${normalizedName}_${team}`;
+      let adpPlayer = adpData.get(key);
+      
+      // If no match found, try with original name as fallback
+      if (!adpPlayer) {
+        const originalKey = `${playerName}_${team}`;
+        adpPlayer = adpData.get(originalKey);
+      }
       
       if (adpPlayer) {
         let g = parseInt(fields[headers.indexOf('GP')]) || 0;
@@ -211,7 +255,7 @@ function createCbsStandardized(position: string): void {
         ].join(',');
         outputLines.push(line);
       } else {
-        console.log(`  Warning: Could not find ADP data for ${playerName} (${team})`);
+        console.log(`  Warning: Could not find ADP data for ${playerName} (${team}) - normalized: ${normalizedName}`);
       }
     }
   }
@@ -246,8 +290,16 @@ function createNflStandardized(position: string): void {
       let playerName = fields[headers.indexOf('Player')].replace(/"/g, '');
       let team = fields[headers.indexOf('Team')];
       
-      const key = `${playerName}_${team}`;
-      const adpPlayer = adpData.get(key);
+      // Try to match using normalized name first
+      const normalizedName = normalizePlayerName(playerName);
+      const key = `${normalizedName}_${team}`;
+      let adpPlayer = adpData.get(key);
+      
+      // If no match found, try with original name as fallback
+      if (!adpPlayer) {
+        const originalKey = `${playerName}_${team}`;
+        adpPlayer = adpData.get(originalKey);
+      }
       
       if (adpPlayer) {
         let g = parseInt(fields[headers.indexOf('GP')]) || 0;
@@ -282,7 +334,7 @@ function createNflStandardized(position: string): void {
         ].join(',');
         outputLines.push(line);
       } else {
-        console.log(`  Warning: Could not find ADP data for ${playerName} (${team})`);
+        console.log(`  Warning: Could not find ADP data for ${playerName} (${team}) - normalized: ${normalizedName}`);
       }
     }
   }

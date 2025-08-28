@@ -2,6 +2,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 18775,"Ja'Marr Chase",CIN,17,0,0,0,119,1601,14,0,0,0,0,1.16
 17972,"Justin Jefferson",MIN,17,0,0,0,105,1600,8,0,0,0,0,5.4
 21122,"Malik Nabers",NYG,17,0,0,0,116,1397,11,0,0,0,0,9.69
+21131,"Brian Thomas Jr.",JAX,17,0,0,0,88,1315,12,0,0,0,0,12.79
 17965,"CeeDee Lamb",DAL,17,0,0,0,118,1462,8,1,0,0,0,5.87
 18836,"Nico Collins",HST,17,0,0,0,84,1275,11,0,0,0,0,14.61
 12729,"Davante Adams",LAR,17,0,0,0,95,1315,10,0,0,0,0,38.32
@@ -16,6 +17,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 14725,"Tyreek Hill",MIA,17,0,0,0,92,1153,8,0,0,0,0,32.51
 17002,"DK Metcalf",PIT,17,0,0,0,73,1169,8,2,0,0,0,49.08
 21128,"Xavier Worthy",KC,17,0,0,0,68,832,9,0,0,0,0,46.63
+21121,"Marvin Harrison Jr.",ARZ,17,0,0,0,68,1000,10,1,0,0,0,36.12
 16134,"DJ Moore",CHI,17,0,0,0,95,1047,8,1,0,0,0,43.8
 20273,"Jaxon Smith-Njigba",SEA,17,0,0,0,99,1101,7,0,0,0,0,29.52
 18778,"DeVonta Smith",PHI,17,0,0,0,76,960,9,0,0,0,0,54.53
@@ -51,6 +53,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 22063,"Emeka Egbuka",TB,17,0,0,0,62,856,5,2,0,0,0,91.87
 16132,"Christian Kirk",HST,17,0,0,0,65,886,4,1,0,0,0,127.21
 19934,"Rashid Shaheed",NO,17,0,0,0,48,822,5,2,0,0,0,134.39
+19480,"Calvin Austin III",PIT,17,0,0,0,49,751,6,1,0,0,0,251.69
 19462,"Khalil Shakir",BUF,17,0,0,0,70,771,5,0,0,0,0,89.3
 11857,"Keenan Allen",LAC,17,0,0,0,56,689,6,0,0,0,0,162.61
 12426,"Adam Thielen",CAR,17,0,0,0,62,689,6,0,0,0,0,171.98
@@ -70,6 +73,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 22112,"Jack Bech",LV,17,0,0,0,54,685,3,2,0,0,0,201.16
 21171,"Tory Horton",SEA,17,0,0,0,52,676,3,2,0,0,0,256.97
 22114,"Jayden Higgins",HST,17,0,0,0,48,656,3,1,0,0,0,139.17
+22060,"Luther Burden III",CHI,17,0,0,0,53,675,3,2,0,0,0,135.42
 18719,"Nick Westbrook-Ikhine",MIA,17,0,0,0,36,500,5,0,0,0,0,275.62
 20314,"Dontayvion Wicks",GB,17,0,0,0,38,461,5,0,0,0,0,248.53
 13596,"Tyler Lockett",TEN,17,0,0,0,45,557,3,0,0,0,0,256.23

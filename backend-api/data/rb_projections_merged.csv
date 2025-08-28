@@ -14,6 +14,7 @@ player_id,player_name,team,sources,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,P
 19427,"Breece Hall",NYJ,clay|cbs|nfl,16,139.3,961,5.3,46.3,390.7,2.3,1.3,0,0,0,35
 19467,"James Cook",BUF,clay|cbs|nfl,16,157.7,1091.3,10.3,33.7,272,2,1,0,0,0,38.9
 22069,"Omarion Hampton",LAC,clay|cbs|nfl,16,154,995.3,9,35.3,289.3,1.7,1.7,0,0,0,40.8
+19430,"Kenneth Walker III",SEA,cbs|nfl,15,109.5,927,8.5,40.5,279,1,1.5,0,0,0,44
 15293,"Alvin Kamara",NO,clay|cbs|nfl,15.5,153.7,958.7,5.3,67,518.7,2,1,0,0,0,48.1
 18773,"Chuba Hubbard",CAR,clay|cbs|nfl,16,162.7,1089.7,8,43.3,258.7,1,1.3,0,0,0,48.9
 22072,"TreVeyon Henderson",NE,clay|cbs|nfl,16.5,146,956.3,6,38.3,303.7,1.7,1.3,0,0,0,57.4
@@ -26,7 +27,8 @@ player_id,player_name,team,sources,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,P
 19486,"Isiah Pacheco",KC,clay|cbs|nfl,16,132.3,812.3,5.7,34.3,237,1,0.7,0,0,0,76.6
 17067,"Tony Pollard",TEN,clay|cbs|nfl,16,153.7,962.3,5.3,41.3,277.3,0.7,0.7,0,0,0,77.3
 22111,"RJ Harvey",DEN,clay|cbs|nfl,16,129,821,5.7,38.7,303.3,2,1,0,0,0,79.6
-19468,"Brian Robinson",WAS,nfl,15,0,517,4,14,103,1,1,0,0,0,90.2
+21183,"Tyrone Tracy Jr.",NYG,clay|cbs|nfl,16,130.7,823.7,4.7,36.3,276,1.3,1,0,0,0,89.8
+19468,"Brian Robinson Jr.",WAS,clay|cbs|nfl,16,96.7,572.3,5.3,17,131,1,0.7,0,0,0,90.2
 19833,"Jaylen Warren",PIT,clay|cbs|nfl,16.5,94.7,670,3.3,49.7,371.7,1,0.7,0,0,0,97.7
 18770,"Travis Etienne",JAX,clay|cbs|nfl,16,93.3,571,3.7,40.3,304.7,1,0.7,0,0,0,99.3
 19872,"Jordan Mason",MIN,clay|cbs|nfl,16.5,119,814.3,4.3,15.7,115.7,0.3,0.3,0,0,0,106.5
@@ -68,6 +70,7 @@ player_id,player_name,team,sources,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,P
 17039,"Miles Sanders",DAL,clay|cbs|nfl,16,66.7,412.7,2.7,14.7,95.7,0.7,0.3,0,0,0,235.6
 20344,"Keaton Mitchell",BLT,clay|cbs|nfl,16,43,299,1.3,7,75,0.3,0,0,0,0,236.8
 22300,"Tahj Brooks",CIN,clay|cbs|nfl,16.5,26,221.3,2,8.3,70.7,0.3,0.7,0,0,0,238
+22071,"Ollie Gordon II",MIA,clay|cbs|nfl,14.5,43.7,272,2.3,7.7,62,0.3,0.7,0,0,0,239.3
 21769,"Carson Steele",KC,clay|cbs|nfl,12.5,24,81,0.3,4.7,23.7,0,0.7,0,0,0,241
 22488,"Raheim Sanders",LAC,nfl,8,0,21,0,2,15,0,0,0,0,0,241
 21167,"Rasheen Ali",BLT,clay|nfl,14.5,2.5,81,0.5,2.5,17.5,0,0,0,0,0,241.1
@@ -83,13 +86,14 @@ player_id,player_name,team,sources,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,P
 17870,"Craig Reynolds",DET,clay|nfl,16.5,2.5,31,0,2,15.5,0,0,0,0,0,243.3
 20304,"Kendre Miller",NO,clay|cbs|nfl,15.5,71,386,3.7,10.3,77.3,0,0.3,0,0,0,243.5
 20719,"Emari Demercado",ARZ,clay|cbs|nfl,16.5,15.3,127.3,0.3,9.3,62.7,0,0,0,0,0,243.6
+20308,"Chris Rodriguez Jr.",WAS,cbs|nfl,12,17.5,200.5,2,3,23,0,0,0,0,0,244.1
 15441,"Jeremy McNichols",WAS,clay|cbs|nfl,12.5,13,73.7,0.7,2.7,15.3,0,0,0,0,0,244.7
 19472,"Tyler Goodson",IND,clay|cbs|nfl,16.5,20,109.7,0.7,4.7,31.3,0.3,0,0,0,0,244.7
 18832,"Zamir White",LV,nfl,8,0,107,1,3,21,0,0,0,0,0,245.5
 13794,"Raheem Mostert",LV,clay|cbs|nfl,16,58.7,297,2.7,16.3,118.7,0.3,0.7,0,0,0,246.1
 22119,"Kyle Monangai",CHI,clay|cbs|nfl,14.5,28,236.7,2,5,36.3,0,0,0,0,0,250.1
 20151,"Sincere McCormick",LV,clay,17,24,101,1,5,31,0,0,0,0,0,250.2
-22090,"LeQuint Allen",JAX,clay,17,4,17,0,0,0,0,0,0,0,0,250.6
+22090,"LeQuint Allen",JAX,clay|nfl,12.5,2,51,0.5,3,22,0,0,0,0,0,250.6
 17966,"Cam Akers",NO,nfl,8,0,40,0,1,6,0,0,0,0,0,255.7
 21169,"Kimani Vidal",LAC,clay|nfl,12.5,2,19.5,0,2,15,0,0,0,0,0,256.7
 22097,"Jordan James",SF,clay|cbs|nfl,14.5,18,154.3,1.3,3.3,29.3,0,0,0,0,0,257.6

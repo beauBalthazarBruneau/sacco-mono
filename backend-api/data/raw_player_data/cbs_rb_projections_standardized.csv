@@ -14,6 +14,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 19467,"James Cook",BUF,17,209,1007,11,31,275,2,1,0,0,0,38.91
 20292,"Chase Brown",CIN,17,211,882,8,60,413,4,1,0,0,0,25.03
 15306,"James Conner",ARZ,17,206,970,7,43,373,2,1,0,0,0,57.39
+19430,"Kenneth Walker III",SEA,17,219,899,10,51,338,1,1,0,0,0,44.02
 19427,"Breece Hall",NYJ,17,190,869,6,51,455,3,2,0,0,0,34.99
 18773,"Chuba Hubbard",CAR,17,213,986,9,45,212,1,2,0,0,0,48.87
 17961,"D'Andre Swift",CHI,17,228,1006,5,42,364,1,1,0,0,0,69.75
@@ -26,11 +27,13 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 17067,"Tony Pollard",TEN,17,232,981,5,39,249,0,1,0,0,0,77.34
 20279,"Tank Bigsby",JAX,17,182,827,8,6,45,0,1,0,0,0,138.63
 22098,"Kaleb Johnson",PIT,17,207,821,6,14,142,1,3,0,0,0,72.02
+21183,"Tyrone Tracy Jr.",NYG,17,174,777,4,35,281,1,2,0,0,0,89.8
 19872,"Jordan Mason",MIN,17,181,913,4,14,113,0,1,0,0,0,106.5
 19469,"Zach Charbonnet",SEA,17,122,533,6,37,294,1,1,0,0,0,107.71
 18791,"Rhamondre Stevenson",NE,17,151,654,6,33,187,1,2,0,0,0,123.1
 22062,"Quinshon Judkins",CLV,17,177,694,5,18,153,1,2,0,0,0,110.17
 16067,"Nick Chubb",HST,17,164,653,6,12,88,1,1,0,0,0,181.96
+19468,"Brian Robinson Jr.",WAS,17,144,586,6,20,163,1,1,0,0,0,90.18
 22130,"Jacory Croskey-Merritt",WAS,17,123,586,5,24,222,1,2,0,0,0,218.07
 19486,"Isiah Pacheco",KC,17,188,713,4,29,182,0,1,0,0,0,76.57
 20304,"Kendre Miller",NO,17,138,590,7,10,85,0,1,0,0,0,243.53
@@ -60,6 +63,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 18036,"Rico Dowdle",CAR,17,89,452,2,24,148,2,1,0,0,0,169.14
 20344,"Keaton Mitchell",BLT,17,93,545,2,9,134,0,0,0,0,0,236.82
 17039,"Miles Sanders",DAL,17,105,400,3,18,111,1,1,0,0,0,235.64
+22071,"Ollie Gordon II",MIA,17,91,404,3,12,109,1,1,0,0,0,239.3
 22094,"Trevor Etienne",CAR,17,72,324,3,21,178,1,1,0,0,0,272.88
 18840,"Elijah Mitchell",KC,17,104,381,3,11,38,1,0,0,0,0,262.21
 18034,"Antonio Gibson",NE,17,78,372,1,25,210,1,0,0,0,0,271.75
@@ -76,6 +80,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 17034,"Devin Singletary",NYG,17,73,299,2,10,61,0,1,0,0,0,275.08
 20719,"Emari Demercado",ARZ,17,33,259,1,10,62,0,0,0,0,0,243.58
 18772,"Kenneth Gainwell",PIT,17,65,210,1,16,111,0,0,0,0,0,263.49
+20308,"Chris Rodriguez Jr.",WAS,17,35,171,2,0,2,0,0,0,0,0,244.06
 21141,"Will Shipley",PHI,17,42,218,1,3,24,0,0,0,0,0,208.91
 15441,"Jeremy McNichols",WAS,17,35,161,2,3,8,0,0,0,0,0,244.67
 21161,"Isaiah Davis",NYJ,17,29,173,1,4,30,0,0,0,0,0,271.54

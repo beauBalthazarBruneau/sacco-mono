@@ -3,6 +3,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 17965,"CeeDee Lamb",DAL,16,0,81,1,108,1324,8,1,0,0,0,5.87
 17972,"Justin Jefferson",MIN,16,0,6,0,102,1437,9,1,0,0,0,5.4
 21122,"Malik Nabers",NYG,16,0,35,0,102,1230,8,1,0,0,0,9.69
+21131,"Brian Thomas Jr.",JAX,16,0,18,0,96,1305,8,1,0,0,0,12.79
 20336,"Puka Nacua",LAR,15,0,75,1,97,1237,7,1,0,0,0,12.43
 18836,"Nico Collins",HST,15,0,6,0,91,1305,9,1,0,0,0,14.61
 18827,"Amon-Ra St. Brown",DET,16,0,12,0,105,1215,8,1,0,0,0,10.29
@@ -12,6 +13,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 21139,"Ladd McConkey",LAC,16,0,7,0,88,1114,7,1,0,0,0,22.17
 17002,"DK Metcalf",PIT,16,0,6,0,80,1141,7,1,0,0,0,49.08
 17971,"Tee Higgins",CIN,15,0,0,0,82,1057,8,1,0,0,0,31.55
+21121,"Marvin Harrison Jr.",ARZ,16,0,16,0,80,1112,7,1,0,0,0,36.12
 12729,"Davante Adams",LAR,16,0,0,0,82,1040,8,1,0,0,0,38.32
 17062,"Terry McLaurin",WAS,16,0,6,0,79,1121,7,1,0,0,0,41.35
 19431,"Garrett Wilson",NYJ,16,0,37,0,85,1083,6,1,0,0,0,28.34
@@ -33,6 +35,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 22085,"Matthew Golden",GB,16,0,33,0,67,910,6,0,0,0,0,103.85
 22058,"Travis Hunter",JAX,16,0,28,0,67,899,6,0,0,0,0,77.72
 20288,"Zay Flowers",BLT,16,0,43,0,70,919,5,1,0,0,0,57.21
+17019,"Deebo Samuel Sr.",WAS,14,0,120,1,64,835,5,1,0,0,0,82.61
 20335,"Rome Odunze",CHI,16,0,10,0,67,901,6,1,0,0,0,67.48
 13671,"Stefon Diggs",NE,15,0,11,0,70,785,6,1,0,0,0,91.8
 22063,"Emeka Egbuka",TB,16,0,17,0,65,807,6,1,0,0,0,91.87
@@ -48,12 +51,14 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 15283,"Cooper Kupp",SEA,15,0,16,0,65,688,5,1,0,0,0,94.56
 22114,"Jayden Higgins",HST,16,0,6,0,57,757,5,0,0,0,0,139.17
 21130,"Keon Coleman",BUF,16,0,6,0,54,739,5,1,0,0,0,119.75
+20293,"Marvin Mims Jr.",DEN,16,0,48,0,49,675,5,1,0,0,0,129.58
 18169,"Darnell Mooney",ATL,14,0,5,0,53,723,4,1,0,0,0,119.89
 20290,"Cedric Tillman",CLV,16,0,7,0,51,671,4,0,0,0,0,162.07
 18785,"Rashod Bateman",BLT,16,0,0,0,44,679,5,0,0,0,0,145.16
 12426,"Adam Thielen",CAR,15,0,5,0,56,619,4,1,0,0,0,171.98
 20341,"DeMario Douglas",NE,16,0,26,0,58,616,3,0,0,0,0,175.45
 19460,"Wan'Dale Robinson",NYG,16,0,23,0,63,585,3,1,0,0,0,153.83
+22060,"Luther Burden III",CHI,16,0,47,1,47,560,4,1,0,0,0,135.42
 18786,"Dyami Brown",JAX,16,0,11,0,46,595,4,0,0,0,0,243.51
 17983,"Brandon Aiyuk",SF,12,0,0,0,44,630,4,1,0,0,0,136.53
 16132,"Christian Kirk",HST,16,0,9,0,48,563,4,1,0,0,0,127.21
@@ -69,9 +74,11 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 22128,"Kyle Williams",NE,16,0,14,0,34,480,3,0,0,0,0,180.37
 21570,"Jalen Coker",CAR,16,0,8,0,36,455,3,0,0,0,0,241.94
 22091,"Elic Ayomanor",TEN,12,0,15,0,37,436,3,0,0,0,0,241.22
+22126,"Dont'e Thornton Jr.",LV,12,0,6,0,32,470,3,0,0,0,0,239.95
 19463,"Alec Pierce",IND,16,0,0,0,30,490,3,0,0,0,0,213.75
 20326,"Kayshon Boutte",NE,16,0,0,0,32,427,3,0,0,0,0,274.05
 18802,"Tutu Atwell",LAR,16,0,17,0,34,431,2,0,0,0,0,263.93
+19480,"Calvin Austin III",PIT,16,0,14,0,35,400,2,0,0,0,0,251.69
 20247,"KaVontae Turpin",DAL,16,0,77,1,27,315,2,1,0,0,0,263.26
 18719,"Nick Westbrook-Ikhine",MIA,16,0,5,0,30,393,3,0,0,0,0,275.62
 11806,"DeAndre Hopkins",BLT,15,0,0,0,31,383,3,0,0,0,0,218.03
@@ -133,5 +140,6 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 20323,"Tank Dell",HST,6,0,0,0,2,24,0,0,0,0,0,242.76
 16281,"Justin Watson",HST,12,0,0,0,2,24,0,0,0,0,0,241.5
 20780,"Jake Bobo",SEA,16,0,0,0,2,23,0,0,0,0,0,240.99
+19454,"John Metchie III",PHI,12,0,0,0,2,22,0,0,0,0,0,245.74
 16397,"Trent Sherfield",DEN,8,0,0,0,2,22,0,0,0,0,0,241.13
 17053,"Mecole Hardman",GB,8,0,6,0,2,22,0,1,0,0,0,241.1

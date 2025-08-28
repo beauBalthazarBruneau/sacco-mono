@@ -23,6 +23,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 20281,"Bryce Young",CAR,17,47,293,4,0,0,0,2,3428,25,13,156.83
 18779,"Trevor Lawrence",JAX,17,54,233,4,0,0,0,4,3841,24,13,128.39
 21150,"J.J. McCarthy",MIN,17,59,279,1,0,0,0,4,3948,26,17,128.23
+20298,"Michael Penix Jr.",ATL,17,52,211,2,0,0,0,2,3991,24,16,146.03
 7697,"Matthew Stafford",LAR,17,27,41,0,0,0,0,2,3798,26,7,165.38
 5712,"Aaron Rodgers",PIT,17,29,113,0,0,0,0,3,3713,25,9,199.03
 16077,"Sam Darnold",SEA,17,51,167,2,0,0,0,4,4011,22,18,176.64
@@ -42,6 +43,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 14802,"Jacoby Brissett",ARZ,17,5,25,0,0,0,0,0,156,1,0,248.14
 19458,"Malik Willis",GB,17,5,23,0,0,0,0,0,148,1,0,258.38
 18922,"Davis Mills",HST,17,4,18,0,0,0,0,0,146,1,0,246.6
+21408,"Joe Milton III",DAL,17,4,18,0,0,0,0,0,180,1,0,264.58
 10144,"Tyrod Taylor",NYJ,17,4,19,0,0,0,0,0,151,1,0,246.83
 22376,"Will Howard",PIT,17,2,8,0,0,0,0,0,114,1,0,242.47
 20481,"Aidan O'Connell",LV,17,4,14,0,0,0,0,0,164,1,0,243.48

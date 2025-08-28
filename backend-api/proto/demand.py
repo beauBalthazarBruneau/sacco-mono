@@ -153,7 +153,7 @@ def next_pick_probs_mix(
     team=None,                            # optional: apply roster constraints
     base_weight: Optional[Dict[int,float]] = None,
     # windows & schedules
-    window_min: int = 3,
+    window_min: int = 6,
     window_max: int = 36,
     growth_every_picks: int = 6,          # expand window as draft advances
     # ADP hazard params (Student-t for fat tails)

@@ -23,6 +23,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 15392,"Aaron Jones",MIN,17,180,797,4,52,390,3,0,0,0,0,74.41
 19486,"Isiah Pacheco",KC,17,209,887,7,43,301,2,0,0,0,0,76.57
 17067,"Tony Pollard",TEN,17,229,988,5,45,293,1,0,0,0,0,77.34
+21183,"Tyrone Tracy Jr.",NYG,17,218,949,6,39,297,2,0,0,0,0,89.8
 19833,"Jaylen Warren",PIT,17,160,709,4,56,407,2,0,0,0,0,97.67
 22111,"RJ Harvey",DEN,17,183,814,5,46,353,2,0,0,0,0,79.55
 16066,"Joe Mixon",HST,13,192,814,8,32,265,2,0,0,0,0,72.67
@@ -36,6 +37,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 18770,"Travis Etienne",JAX,17,129,532,3,44,333,1,0,0,0,0,99.34
 20279,"Tank Bigsby",JAX,17,182,793,6,17,122,0,0,0,0,0,138.63
 22077,"Cam Skattebo",NYG,17,147,635,4,28,209,1,0,0,0,0,119.92
+19468,"Brian Robinson Jr.",WAS,17,146,614,6,17,127,1,0,0,0,0,90.18
 19436,"Rachaad White",TB,17,116,496,3,32,231,2,0,0,0,0,149.94
 19872,"Jordan Mason",MIN,17,176,815,4,13,89,0,0,0,0,0,106.5
 21135,"Trey Benson",ARZ,17,138,608,4,21,154,1,0,0,0,0,146.31
@@ -69,6 +71,7 @@ player_id,player_name,team,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,PYds,PTD,
 13794,"Raheem Mostert",LV,17,47,205,1,9,62,0,0,0,0,0,246.11
 17967,"Clyde Edwards-Helaire",NO,17,54,237,1,6,48,0,0,0,0,0,241.39
 22119,"Kyle Monangai",CHI,17,52,214,2,4,28,0,0,0,0,0,250.14
+22071,"Ollie Gordon II",MIA,17,40,167,1,5,33,0,0,0,0,0,239.3
 20285,"Sean Tucker",TB,17,31,139,1,4,31,0,0,0,0,0,259.37
 21161,"Isaiah Davis",NYJ,17,23,102,0,7,52,0,0,0,0,0,271.54
 20344,"Keaton Mitchell",BLT,17,36,165,1,2,13,0,0,0,0,0,236.82

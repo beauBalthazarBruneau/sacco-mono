@@ -19,6 +19,7 @@ player_id,player_name,team,sources,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,P
 20280,"C.J. Stroud",HST,clay|cbs|nfl,16.5,34.7,228.7,1.3,0,0,0,1.3,4096.7,25.7,10.7,118.6
 21150,"J.J. McCarthy",MIN,clay|cbs|nfl,16.5,37.7,264.7,2,0,0,0,1.3,4061.3,27.3,15,128.2
 18779,"Trevor Lawrence",JAX,clay|cbs|nfl,16.5,38,257,3.7,0,0,0,1.3,4037,24,13.3,128.4
+20298,"Michael Penix Jr.",ATL,clay|cbs|nfl,16.5,33,198.7,2.3,0,0,0,0.7,3853.7,23.3,13.7,146
 20281,"Bryce Young",CAR,clay|cbs|nfl,16.5,32.7,294.3,4,0,0,0,0.7,3648,23,12.7,156.8
 17975,"Tua Tagovailoa",MIA,clay|cbs|nfl,16,22.3,98.3,0.7,0,0,0,1,4250.3,27,12,158.2
 7697,"Matthew Stafford",LAR,clay|cbs|nfl,16,20,49.3,0.7,0,0,0,0.7,4068.7,26.3,10.3,165.4
@@ -67,5 +68,6 @@ player_id,player_name,team,sources,G,Carries,RuYds,RuTD,Rec,ReYds,ReTD,FumLost,P
 10974,"Kirk Cousins",ATL,cbs,0,5,22,0,0,0,0,1,163,1,1,258.2
 19458,"Malik Willis",GB,cbs|nfl,1,2.5,31,0,0,0,0,0,169.5,1,0.5,258.4
 21413,"Spencer Rattler",NO,clay|cbs|nfl,6.5,15.3,139.7,0.3,0,0,0,1,1406,7.3,5.3,263.1
+21408,"Joe Milton III",DAL,cbs|nfl,1,2,23,0,0,0,0,0,186.5,1,0.5,264.6
 13529,"Jameis Winston",NYG,cbs|nfl,2,2,17,0,0,0,0,0,298,2,1,265.8
 22064,"Jalen Milroe",SEA,cbs|nfl,5,27.5,163.5,1.5,0,0,0,0,149,1,1,269.3
