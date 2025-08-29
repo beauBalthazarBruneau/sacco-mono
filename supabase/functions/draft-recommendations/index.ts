@@ -60,9 +60,26 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
     if (userError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
+        JSON.stringify({ error: 'Invalid or expired token' }),
         {
           status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
+    // Verify user exists in profiles table (ensures they have a valid account)
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('id, subscription_status')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError || !profile) {
+      return new Response(
+        JSON.stringify({ error: 'User account not found. Please complete your registration.' }),
+        {
+          status: 403,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
