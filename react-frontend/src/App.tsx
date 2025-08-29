@@ -10,6 +10,7 @@ import { BlogPost } from './components/BlogPost'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { BillingDashboard } from './components/BillingDashboard'
 import { PaymentSetup } from './components/PaymentSetup'
+import { UserDashboard } from './components/UserDashboard'
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -41,6 +42,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PaymentSetup />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
                 </ProtectedRoute>
               } 
             />
