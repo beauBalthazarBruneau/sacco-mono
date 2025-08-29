@@ -13,6 +13,7 @@ import { PaymentSetup } from './components/PaymentSetup'
 import { UserDashboard } from './components/UserDashboard'
 import { DraftCreation } from './components/DraftCreation'
 import { DraftManagement } from './components/DraftManagement'
+import { CodeInputDemo } from './components/CodeInputDemo'
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -22,6 +23,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/code-input-demo" element={<CodeInputDemo />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route 
               path="/players" 

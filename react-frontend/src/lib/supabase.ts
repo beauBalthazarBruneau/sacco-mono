@@ -11,15 +11,63 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 })
 
+// Helper function to get correct redirect URL for environment
+const getRedirectUrl = () => {
+  if (typeof window !== 'undefined') {
+    const { hostname, protocol, port } = window.location
+    
+    // Handle localhost with port
+    if (hostname === 'localhost') {
+      return `${protocol}//${hostname}:${port}/auth/callback`
+    }
+    
+    // Handle production domains
+    return `${protocol}//${hostname}/auth/callback`
+  }
+  
+  // Fallback for server-side rendering
+  return import.meta.env.VITE_APP_URL ? 
+    `${import.meta.env.VITE_APP_URL}/auth/callback` : 
+    'http://localhost:5173/auth/callback'
+}
+
 // Auth helper functions
 export const signInWithMagicLink = async (email: string) => {
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${window.location.origin}/auth/callback`
+      emailRedirectTo: getRedirectUrl(),
+      shouldCreateUser: true
     }
   })
   return { data, error }
+}
+
+// New OTP (6-digit code) authentication functions
+export const signInWithCode = async (email: string) => {
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: true,
+      // Don't send email redirect for OTP codes
+      emailRedirectTo: undefined
+    }
+  })
+  return { data, error }
+}
+
+export const verifyCode = async (email: string, code: string) => {
+  const { data, error } = await supabase.auth.verifyOtp({
+    email,
+    token: code,
+    type: 'email'
+  })
+  return { data, error }
+}
+
+export const resendCode = async (email: string) => {
+  // Same as signInWithCode - resends the OTP
+  return await signInWithCode(email)
 }
 
 export const signOut = async () => {
