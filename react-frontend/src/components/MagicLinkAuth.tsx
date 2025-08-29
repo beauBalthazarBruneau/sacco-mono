@@ -15,7 +15,7 @@ import {
   Divider,
   Transition
 } from '@mantine/core'
-import { IconLock, IconMail, IconAlertCircle, IconCheck, IconKey, IconSend } from '@tabler/icons-react'
+import Icon from './Icon'
 import { signInWithMagicLink, signInWithCode, verifyCode, resendCode } from '../lib/supabase'
 import { CodeInput } from './CodeInput'
 
@@ -187,7 +187,7 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
             variant="gradient"
             gradient={{ from: 'green.6', to: 'green.7' }}
           >
-            <IconLock size={40} />
+            <Icon name="key" size={40} />
           </ThemeIcon>
 
           <Box ta="center">
@@ -210,7 +210,7 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    leftSection={<IconMail size={16} />}
+                    leftSection={<Icon name="mail" size={16} />}
                     size="md"
                   />
 
@@ -222,11 +222,11 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
                       <Stack gap="xs">
                         <Radio 
                           value="code" 
-                          label={<Group gap="xs"><IconKey size={16} /> Send 6-digit code to email</Group>}
+                          label={<Group gap="xs"><Icon name="key" size={16} /> Send 6-digit code to email</Group>}
                         />
                         <Radio 
                           value="magic-link" 
-                          label={<Group gap="xs"><IconSend size={16} /> Send magic link to email</Group>}
+                          label={<Group gap="xs"><Icon name="mail" size={16} /> Send magic link to email</Group>}
                         />
                       </Stack>
                     </Radio.Group>
@@ -234,7 +234,7 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
 
                   {message && (
                     <Alert
-                      icon={messageType === 'success' ? <IconCheck size={16} /> : <IconAlertCircle size={16} />}
+                      icon={messageType === 'success' ? <Icon name="check" size={16} /> : <Icon name="alert-circle" size={16} />}
                       title={messageType === 'success' ? 'Success' : 'Error'}
                       color={messageType === 'success' ? 'green' : 'red'}
                       variant="light"
@@ -250,7 +250,7 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
                     fullWidth
                     variant="gradient"
                     gradient={{ from: 'green.6', to: 'green.7' }}
-                    leftSection={authMethod === 'code' ? <IconKey size={16} /> : <IconSend size={16} />}
+                    leftSection={authMethod === 'code' ? <Icon name="key" size={16} /> : <Icon name="mail" size={16} />}
                   >
                     {loading 
                       ? (authMethod === 'code' ? 'Sending code...' : 'Sending magic link...') 
@@ -288,7 +288,7 @@ export const MagicLinkAuth: React.FC<MagicLinkAuthProps> = ({ onSuccess }) => {
 
                     {message && messageType === 'success' && (
                       <Alert
-                        icon={<IconCheck size={16} />}
+                        icon={<Icon name="check" size={16} />}
                         color="green"
                         variant="light"
                       >

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } from 'react'
 import { Box, Input, Stack, Text, Alert } from '@mantine/core'
-import { IconAlertCircle } from '@tabler/icons-react'
+import Icon from './Icon'
 
 interface CodeInputProps {
   /** Number of code digits (default: 6) */
@@ -242,7 +242,7 @@ export const CodeInput: React.FC<CodeInputProps> = ({
 
       {error && (
         <Alert
-          icon={<IconAlertCircle size={16} />}
+          icon={<Icon name="alert-circle" size={16} />}
           color="red"
           variant="light"
           id="code-input-error"
