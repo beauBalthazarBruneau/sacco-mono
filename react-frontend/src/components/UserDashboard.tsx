@@ -24,7 +24,7 @@ import {
   IconHistory,
   IconLogout,
   IconUser,
-  IconPlay,
+  IconPlayerPlay,
   IconEye,
   IconTrash,
   IconCalendar,
@@ -568,7 +568,7 @@ export const UserDashboard: React.FC = () => {
                               size="sm"
                               variant="gradient"
                               gradient={{ from: 'green.6', to: 'green.7' }}
-                              leftSection={<IconPlay size={16} />}
+                              leftSection={<IconPlayerPlay size={16} />}
                               onClick={() => handleContinueDraft(draft.id)}
                             >
                               Continue
