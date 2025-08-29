@@ -11,6 +11,8 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { BillingDashboard } from './components/BillingDashboard'
 import { PaymentSetup } from './components/PaymentSetup'
 import { UserDashboard } from './components/UserDashboard'
+import { DraftCreation } from './components/DraftCreation'
+import { DraftManagement } from './components/DraftManagement'
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -50,6 +52,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <UserDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/drafts/create" 
+              element={
+                <ProtectedRoute>
+                  <DraftCreation />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/drafts" 
+              element={
+                <ProtectedRoute>
+                  <DraftManagement />
                 </ProtectedRoute>
               } 
             />
