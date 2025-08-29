@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   Container,
   Group,
@@ -16,9 +16,7 @@ import {
   Alert,
   Modal,
   Anchor,
-  Progress,
-  Divider,
-  Notification
+  Progress
 } from '@mantine/core'
 import {
   IconTrophy,
@@ -50,7 +48,7 @@ interface DraftSession {
   team_count: number
   draft_position: number
   status: 'active' | 'completed' | 'cancelled'
-  settings: Record<string, any>
+  settings: Record<string, unknown>
   created_at: string
   updated_at: string
 }
@@ -67,10 +65,6 @@ interface UserProfile {
   created_at: string
 }
 
-interface DraftPickCount {
-  draft_session_id: string
-  pick_count: number
-}
 
 export const UserDashboard: React.FC = () => {
   const { user, signOut } = useAuth()
@@ -84,13 +78,7 @@ export const UserDashboard: React.FC = () => {
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  useEffect(() => {
-    if (user) {
-      loadDashboardData()
-    }
-  }, [user])
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -149,7 +137,13 @@ export const UserDashboard: React.FC = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      loadDashboardData()
+    }
+  }, [user, loadDashboardData])
 
   const handleSignOut = async () => {
     await signOut()
