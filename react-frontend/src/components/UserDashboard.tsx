@@ -24,35 +24,17 @@ import {
   IconHistory,
   IconLogout,
   IconUser,
-  IconPlayerPlay,
-  IconEye,
-  IconTrash,
-  IconCalendar,
   IconUsers,
-  IconCrown,
   IconExclamationMark,
-  IconCheck,
   IconCreditCard,
   IconAlertCircle
 } from '@tabler/icons-react'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { DraftManagement } from './DraftManagement'
 
 // Types based on database schema
-interface DraftSession {
-  id: string
-  league_name: string
-  platform: string
-  draft_date: string | null
-  team_count: number
-  draft_position: number
-  status: 'active' | 'completed' | 'cancelled'
-  settings: Record<string, unknown>
-  created_at: string
-  updated_at: string
-}
-
 interface UserProfile {
   id: string
   email: string
@@ -71,9 +53,7 @@ export const UserDashboard: React.FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [draftSessions, setDraftSessions] = useState<DraftSession[]>([])
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-  const [draftPickCounts, setDraftPickCounts] = useState<Record<string, number>>({})
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -95,41 +75,6 @@ export const UserDashboard: React.FC = () => {
       }
 
       setUserProfile(profile)
-
-      // Load draft sessions
-      const { data: sessions, error: sessionsError } = await supabase
-        .from('draft_sessions')
-        .select('*')
-        .eq('user_id', user!.id)
-        .order('created_at', { ascending: false })
-
-      if (sessionsError) {
-        throw new Error(`Failed to load draft sessions: ${sessionsError.message}`)
-      }
-
-      setDraftSessions(sessions || [])
-
-      // Load pick counts for each session
-      if (sessions && sessions.length > 0) {
-        const pickCountPromises = sessions.map(async (session) => {
-          const { count, error } = await supabase
-            .from('draft_picks')
-            .select('*', { count: 'exact', head: true })
-            .eq('draft_session_id', session.id)
-          
-          return {
-            draft_session_id: session.id,
-            pick_count: error ? 0 : (count || 0)
-          }
-        })
-
-        const pickCounts = await Promise.all(pickCountPromises)
-        const pickCountMap: Record<string, number> = {}
-        pickCounts.forEach(({ draft_session_id, pick_count }) => {
-          pickCountMap[draft_session_id] = pick_count
-        })
-        setDraftPickCounts(pickCountMap)
-      }
 
     } catch (err) {
       console.error('Error loading dashboard data:', err)
@@ -160,13 +105,6 @@ export const UserDashboard: React.FC = () => {
     }
   }
 
-  const handleContinueDraft = (draftId: string) => {
-    navigate(`/drafts/${draftId}`)
-  }
-
-  const handleViewResults = (draftId: string) => {
-    navigate(`/drafts/${draftId}/results`)
-  }
 
   const handleDeleteDraft = async () => {
     if (!selectedDraftId) return
@@ -202,29 +140,6 @@ export const UserDashboard: React.FC = () => {
     }
   }
 
-  const openDeleteModal = (draftId: string) => {
-    setSelectedDraftId(draftId)
-    setDeleteModalOpen(true)
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'blue'
-      case 'completed': return 'green'
-      case 'cancelled': return 'red'
-      default: return 'gray'
-    }
-  }
 
   const getTrialProgress = () => {
     if (!userProfile || userProfile.subscription_tier !== 'free') return null
@@ -488,117 +403,24 @@ export const UserDashboard: React.FC = () => {
               <Group justify="space-between" align="center">
                 <Title order={3} size="h3">Your Drafts</Title>
                 <Text size="sm" c="dimmed">
-                  {draftSessions.length} draft{draftSessions.length !== 1 ? 's' : ''} total
+                  Recent draft sessions
                 </Text>
               </Group>
               
-              {draftSessions.length === 0 ? (
-                <Box ta="center" py="xl">
-                  <ThemeIcon 
-                    size={60} 
-                    radius="xl" 
-                    variant="gradient"
-                    gradient={{ from: 'gray.5', to: 'gray.6' }}
-                    mx="auto"
-                    mb="md"
-                  >
-                    <IconTrophy size={30} />
-                  </ThemeIcon>
-                  <Title order={4} size="h4" mb="xs">No drafts yet</Title>
-                  <Text c="dimmed" mb="lg">
-                    Create your first draft to get started with AI-powered recommendations!
-                  </Text>
-                  <Button
-                    variant="gradient"
-                    gradient={{ from: 'green.6', to: 'green.7' }}
-                    leftSection={<IconPlus size={16} />}
-                    onClick={handleCreateNewDraft}
-                  >
-                    Create Your First Draft
-                  </Button>
-                </Box>
-              ) : (
-                <Stack gap="md">
-                  {draftSessions.map((draft) => (
-                    <Card 
-                      key={draft.id} 
-                      withBorder 
-                      padding="lg" 
-                      radius="md"
-                      bg="var(--mantine-color-dark-5)"
-                    >
-                      <Group justify="space-between" align="flex-start">
-                        <Box flex={1}>
-                          <Group align="center" mb="xs">
-                            <Text fw={600} size="lg">{draft.league_name}</Text>
-                            <Badge color={getStatusColor(draft.status)} variant="light">
-                              {draft.status}
-                            </Badge>
-                            <Text size="sm" c="dimmed">
-                              {draft.platform}
-                            </Text>
-                          </Group>
-                          
-                          <Group gap="xl" mb="sm">
-                            <Group gap="xs">
-                              <IconUsers size={14} />
-                              <Text size="sm">{draft.team_count} teams</Text>
-                            </Group>
-                            <Group gap="xs">
-                              <IconCrown size={14} />
-                              <Text size="sm">Pick #{draft.draft_position}</Text>
-                            </Group>
-                            <Group gap="xs">
-                              <IconCalendar size={14} />
-                              <Text size="sm">Created {formatDate(draft.created_at)}</Text>
-                            </Group>
-                          </Group>
-                          
-                          {draftPickCounts[draft.id] > 0 && (
-                            <Text size="sm" c="green">
-                              <IconCheck size={14} style={{ display: 'inline', marginRight: 4 }} />
-                              {draftPickCounts[draft.id]} picks made
-                            </Text>
-                          )}
-                        </Box>
-                        
-                        <Group gap="xs">
-                          {draft.status === 'active' ? (
-                            <Button
-                              size="sm"
-                              variant="gradient"
-                              gradient={{ from: 'green.6', to: 'green.7' }}
-                              leftSection={<IconPlayerPlay size={16} />}
-                              onClick={() => handleContinueDraft(draft.id)}
-                            >
-                              Continue
-                            </Button>
-                          ) : draft.status === 'completed' ? (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              leftSection={<IconEye size={16} />}
-                              onClick={() => handleViewResults(draft.id)}
-                            >
-                              View Results
-                            </Button>
-                          ) : null}
-                          
-                          <ActionIcon
-                            size="lg"
-                            variant="subtle"
-                            color="red"
-                            onClick={() => openDeleteModal(draft.id)}
-                            title="Delete draft"
-                          >
-                            <IconTrash size={16} />
-                          </ActionIcon>
-                        </Group>
-                      </Group>
-                    </Card>
-                  ))}
-                </Stack>
-              )}
+              <DraftManagement 
+                limit={3}
+                onCreateNew={handleCreateNewDraft}
+                showCreateButton={false}
+              />
+              
+              <Group justify="center">
+                <Button
+                  variant="light"
+                  onClick={() => navigate('/drafts')}
+                >
+                  View All Drafts
+                </Button>
+              </Group>
             </Stack>
           </Card>
         </Stack>
