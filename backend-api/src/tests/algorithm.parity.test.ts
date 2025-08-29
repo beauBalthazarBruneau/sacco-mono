@@ -4,15 +4,15 @@
  */
 
 import { describe, test, expect } from '@jest/globals';
-import { DraftState, Team, LINEUP } from '../../src/algorithm/models.js';
+import { DraftState, Team, LINEUP } from '../algorithm/models';
 import { 
   getSurvivalProbabilities,
   getExpectedPositionDrain
-} from '../../src/algorithm/survival.js';
+} from '../algorithm/survival';
 import {
   calculateDavarEsbn,
   calculateSimpleVar
-} from '../../src/algorithm/scoring.js';
+} from '../algorithm/scoring';
 
 // Minimal mock Player type for focused tests
 type Player = {

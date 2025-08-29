@@ -11,8 +11,8 @@ import {
   formatRecommendationSummary,
   applyDraftPick,
   validatePick
-} from '../algorithm/draft.js';
-import { DraftState } from '../algorithm/models.js';
+} from '../algorithm/draft';
+import { DraftState } from '../algorithm/models';
 
 // Sample player data for testing
 const samplePlayerData = [

@@ -10,7 +10,7 @@ import {
   DraftRecommendation, 
   createPositionLists,
   isValidPosition 
-} from './models.js';
+} from './models';
 
 import {
   getCurrentBestNow,
@@ -20,21 +20,21 @@ import {
   getCurrentEspnBoardPositions,
   getAdpValueTag,
   roundTo
-} from './utils.js';
+} from './utils';
 
 import {
   forecastUntilNextPickEsbn,
   getSurvivalProbabilities,
   predictCurrentPick,
   getBestIndexByPositionNow
-} from './survival.js';
+} from './survival';
 
 import {
   calculateDavarEsbn,
   scorePlayersWithDavar,
   calculateAllOpportunityCosts,
   ScoringContext
-} from './scoring.js';
+} from './scoring';
 
 /**
  * Main recommendation engine

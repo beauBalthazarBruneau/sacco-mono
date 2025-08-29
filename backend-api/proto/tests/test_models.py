@@ -1,5 +1,8 @@
 import pytest
-from backend_api.proto.models import DraftState, Team, LINEUP, FLEX_SET
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from models import DraftState, Team, LINEUP, FLEX_SET
 
 
 def test_pick_owner_snake_12_teams():

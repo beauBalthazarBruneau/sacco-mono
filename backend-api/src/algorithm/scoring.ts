@@ -3,7 +3,7 @@
  * Ports var.py DAVAR calculations and value-above-replacement logic
  */
 
-import { Player, Position, PositionLists, POSITIONS } from './models.js';
+import { Player, Position, PositionLists, POSITIONS } from './models';
 
 /**
  * VAR-based, survival-aware DAVAR scoring
@@ -107,8 +107,8 @@ export function calculateAdvancedDavar(
 
   // Capacity constraint adjustments
   let capacityAdjustment = 0.0;
-  const capLeft = capLeftByPosition[pos] || 0.0;
-  const owned = ownedCountByPosition[pos] || 0;
+  const capLeft = (capLeftByPosition as any)[pos] || 0.0;
+  const owned = (ownedCountByPosition as any)[pos] || 0;
 
   // Overfill penalty if exceeding reasonable capacity
   if (capLeft <= 0 && owned > 0) {
@@ -117,7 +117,7 @@ export function calculateAdvancedDavar(
 
   // Deficit consideration - boost positions that are under-represented
   let deficitBoost = 0.0;
-  const remainingBudget = remainingVarBudgetByPosition[pos] || 0.0;
+  const remainingBudget = (remainingVarBudgetByPosition as any)[pos] || 0.0;
   if (remainingBudget > 0 && capLeft > 0) {
     // Small boost for positions where we still have capacity and need value
     deficitBoost = phiDeficit * Math.min(1.0, remainingBudget / 5.0);

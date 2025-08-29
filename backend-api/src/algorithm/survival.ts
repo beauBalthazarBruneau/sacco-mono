@@ -3,8 +3,8 @@
  * Ports demand.py functionality for predicting picks and player availability
  */
 
-import { Player, Position, DraftState, Team } from './models.js';
-import { normalize, softmax, ensureRankColumn } from './utils.js';
+import { Player, Position, DraftState, Team } from './models';
+import { normalize, softmax, ensureRankColumn } from './utils';
 
 /**
  * Player-level ESPN hazard for one upcoming pick

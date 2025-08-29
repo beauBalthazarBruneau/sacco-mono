@@ -1,5 +1,8 @@
 import pandas as pd
-from backend_api.proto.var import replacement_ppg_by_pos
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from var import replacement_ppg_by_pos
 
 
 def test_replacement_ppg_by_pos_basic():

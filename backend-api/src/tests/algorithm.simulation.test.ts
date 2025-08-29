@@ -1,53 +1,221 @@
-/**
- * Full draft simulation test
- * Validates algorithm behavior over a complete draft scenario
- */
+import { DraftRecommendationEngine } from '../../src/algorithm/draft';
+import { Player, PlayerRosterSlot, RosterSlot, Team, DraftPick, getDraftPickTeam } from '../../src/algorithm/models';
+import { readJsonData, getCurrentBestPlayerAtPosition } from '../../src/algorithm/utils';
+import { DraftState } from '../../src/algorithm/types';
 
-import { describe, test, expect } from '@jest/globals';
-import {
-  generateRecommendations,
-  createPlayersMap,
-  createSampleDraftState,
-  applyDraftPick,
-  formatRecommendationSummary
-} from '../algorithm/draft.js';
-import { DraftState } from '../algorithm/models.js';
+describe('Full Draft Simulation', () => {
+  let engine: DraftRecommendationEngine;
+  let players: Player[];
+  let teams: Team[];
+  let rosterSlots: RosterSlot[];
+  let draftPicks: DraftPick[];
 
-// Expanded player pool for realistic draft simulation
-const realisticPlayerPool = [
-  // Top tier players
-  { index: 1, playerName: 'Christian McCaffrey', position: 'RB', team: 'SF', ppg: 24.1, adp: 1.2 },
-  { index: 2, playerName: "Ja'Marr Chase", position: 'WR', team: 'CIN', ppg: 20.8, adp: 1.8 },
-  { index: 3, playerName: 'Bijan Robinson', position: 'RB', team: 'ATL', ppg: 20.0, adp: 2.6 },
-  { index: 4, playerName: 'CeeDee Lamb', position: 'WR', team: 'DAL', ppg: 19.1, adp: 2.4 },
-  { index: 5, playerName: 'Saquon Barkley', position: 'RB', team: 'PHI', ppg: 19.6, adp: 4.9 },
-  { index: 6, playerName: 'Tyreek Hill', position: 'WR', team: 'MIA', ppg: 18.2, adp: 3.8 },
-  { index: 7, playerName: 'Josh Allen', position: 'QB', team: 'BUF', ppg: 22.4, adp: 24.3 },
-  { index: 8, playerName: 'Lamar Jackson', position: 'QB', team: 'BAL', ppg: 22.2, adp: 23.5 },
-  { index: 9, playerName: 'Travis Kelce', position: 'TE', team: 'KC', ppg: 16.5, adp: 8.1 },
-  { index: 10, playerName: 'Jahmyr Gibbs', position: 'RB', team: 'DET', ppg: 19.5, adp: 4.3 },
+  beforeAll(() => {
+    players = readJsonData('players.json');
+    teams = readJsonData('teams.json');
+    rosterSlots = readJsonData('roster_slots.json');
+    draftPicks = readJsonData('draft_picks.json');
+    
+    engine = new DraftRecommendationEngine({
+      players,
+      teams,
+      rosterSlots,
+      draftPicks
+    });
+  });
+
+  test('should complete a full draft simulation', () => {
+    // Start with clean draft state
+    const initialRosters = teams.map(team => ({
+      team_id: team.team_id,
+      players: [] as Player[]
+    }));
+
+    let currentRosters = [...initialRosters];
+    const completedPicks: DraftPick[] = [];
+    const availablePlayers = new Set(players.map(p => p.player_id));
+
+    // Simulate first 5 rounds (major positions typically filled first)
+    for (let round = 1; round <= 5; round++) {
+      console.log(`\nSimulating Round ${round}`);
+      
+      for (let pickInRound = 1; pickInRound <= teams.length; pickInRound++) {
+        const pickNumber = (round - 1) * teams.length + pickInRound;
+        const currentPick = draftPicks.find(p => p.pick_number === pickNumber);
+        
+        if (!currentPick) continue;
+
+        // Get current draft state
+        const draftState: DraftState = {
+          currentRosters,
+          completedPicks,
+          availablePlayers: Array.from(availablePlayers),
+          currentPickNumber: pickNumber
+        };
+
+        // Get recommendation from engine
+        const recommendation = engine.getPickRecommendation(currentPick, draftState);
+        
+        expect(recommendation).toBeDefined();
+        expect(recommendation.playerId).toBeDefined();
+        expect(availablePlayers.has(recommendation.playerId)).toBe(true);
+
+        // Find the recommended player
+        const pickedPlayer = players.find(p => p.player_id === recommendation.playerId);
+        expect(pickedPlayer).toBeDefined();
+
+        // Verify the pick makes sense (high enough score)
+        expect(recommendation.score).toBeGreaterThan(0);
+
+        // Update draft state with the pick
+        availablePlayers.delete(recommendation.playerId);
+        completedPicks.push({
+          ...currentPick,
+          player_id: recommendation.playerId
+        });
+
+        // Add player to team roster
+        const pickingTeam = getDraftPickTeam(currentPick, teams);
+        const teamRoster = currentRosters.find(r => r.team_id === pickingTeam.team_id);
+        if (teamRoster && pickedPlayer) {
+          teamRoster.players.push(pickedPlayer);
+        }
+
+        // Log pick details for key rounds
+        if (round <= 2) {
+          console.log(`Pick ${pickNumber}: Team ${pickingTeam.team_name} selects ${pickedPlayer?.first_name} ${pickedPlayer?.last_name} (${pickedPlayer?.position}) - Score: ${recommendation.score.toFixed(2)}`);
+        }
+      }
+    }
+
+    // Verify draft state after 5 rounds
+    expect(completedPicks.length).toBe(5 * teams.length);
+    expect(availablePlayers.size).toBe(players.length - (5 * teams.length));
+
+    // Verify each team has drafted reasonable players
+    currentRosters.forEach(roster => {
+      expect(roster.players.length).toBe(5);
+      
+      // Check for position diversity (shouldn't draft all same position)
+      const positions = roster.players.map(p => p.position);
+      const uniquePositions = new Set(positions);
+      expect(uniquePositions.size).toBeGreaterThan(1);
+
+      // Verify all players are valid
+      roster.players.forEach(player => {
+        expect(player.player_id).toBeDefined();
+        expect(player.position).toBeDefined();
+        expect(['QB', 'RB', 'WR', 'TE', 'K', 'DEF'].includes(player.position)).toBe(true);
+      });
+    });
+
+    // Test specific strategic scenarios
+    testEarlyRoundStrategy(completedPicks, players, teams);
+    testPositionalDistribution(currentRosters);
+  });
+
+  test('should handle bye week conflicts correctly', () => {
+    // Create a scenario where many top players have same bye week
+    const testPlayers = players.slice(0, 20).map(p => ({
+      ...p,
+      bye_week: 7 // Force same bye week
+    }));
+
+    const testEngine = new DraftRecommendationEngine({
+      players: testPlayers,
+      teams,
+      rosterSlots,
+      draftPicks
+    });
+
+    // Simulate first few picks
+    const currentRosters = teams.map(team => ({
+      team_id: team.team_id,
+      players: [] as Player[]
+    }));
+
+    const draftState: DraftState = {
+      currentRosters,
+      completedPicks: [],
+      availablePlayers: testPlayers.map(p => p.player_id),
+      currentPickNumber: 1
+    };
+
+    const firstPick = draftPicks[0];
+    const recommendation = testEngine.getPickRecommendation(firstPick, draftState);
+
+    expect(recommendation).toBeDefined();
+    expect(recommendation.score).toBeGreaterThan(0);
+    
+    // Verify the pick considers bye week implications
+    const pickedPlayer = testPlayers.find(p => p.player_id === recommendation.playerId);
+    expect(pickedPlayer).toBeDefined();
+    expect(pickedPlayer?.bye_week).toBe(7);
+  });
+
+  test('should prioritize team needs correctly', () => {
+    // Create scenario where team already has QB, should prioritize other positions
+    const testTeam = teams[0];
+    const qb = players.find(p => p.position === 'QB' && p.projected_points > 250);
+    const rb = players.find(p => p.position === 'RB' && p.projected_points > 200);
+    
+    expect(qb).toBeDefined();
+    expect(rb).toBeDefined();
+
+    const currentRosters = teams.map(team => ({
+      team_id: team.team_id,
+      players: team.team_id === testTeam.team_id ? [qb!] : []
+    }));
+
+    const draftState: DraftState = {
+      currentRosters,
+      completedPicks: [{ ...draftPicks[0], player_id: qb!.player_id }],
+      availablePlayers: players.filter(p => p.player_id !== qb!.player_id).map(p => p.player_id),
+      currentPickNumber: teams.length + 1 // Second round pick for same team
+    };
+
+    const secondRoundPick = draftPicks.find(p => p.pick_number === teams.length + 1);
+    expect(secondRoundPick).toBeDefined();
+
+    const recommendation = engine.getPickRecommendation(secondRoundPick!, draftState);
+    const recommendedPlayer = players.find(p => p.player_id === recommendation.playerId);
+    
+    // Should not recommend another QB since team already has one
+    expect(recommendedPlayer?.position).not.toBe('QB');
+  });
+});
+
+function testEarlyRoundStrategy(picks: DraftPick[], players: Player[], teams: Team[]) {
+  // Check that first round picks are high-value players
+  const firstRoundPicks = picks.slice(0, teams.length);
   
-  // Second tier
-  { index: 11, playerName: 'Stefon Diggs', position: 'WR', team: 'HOU', ppg: 17.9, adp: 6.2 },
-  { index: 12, playerName: 'Derrick Henry', position: 'RB', team: 'BAL', ppg: 17.2, adp: 12.1 },
-  { index: 13, playerName: 'Amon-Ra St. Brown', position: 'WR', team: 'DET', ppg: 17.1, adp: 11.7 },
-  { index: 14, playerName: 'Mark Andrews', position: 'TE', team: 'BAL', ppg: 14.2, adp: 15.3 },
-  { index: 15, playerName: 'Joe Mixon', position: 'RB', team: 'HOU', ppg: 16.8, adp: 18.4 },
-  { index: 16, playerName: 'Puka Nacua', position: 'WR', team: 'LAR', ppg: 16.9, adp: 13.2 },
-  { index: 17, playerName: 'Jalen Hurts', position: 'QB', team: 'PHI', ppg: 21.9, adp: 39.4 },
-  { index: 18, playerName: 'A.J. Brown', position: 'WR', team: 'PHI', ppg: 16.7, adp: 14.8 },
-  { index: 19, playerName: 'DeVonta Smith', position: 'WR', team: 'PHI', ppg: 15.8, adp: 19.6 },
-  { index: 20, playerName: 'George Kittle', position: 'TE', team: 'SF', ppg: 13.8, adp: 22.1 },
-  
-  // Third tier for depth
-  { index: 21, playerName: 'Jonathan Taylor', position: 'RB', team: 'IND', ppg: 15.2, adp: 25.7 },
-  { index: 22, playerName: 'Cooper Kupp', position: 'WR', team: 'LAR', ppg: 15.4, adp: 28.3 },
-  { index: 23, playerName: 'Joe Burrow', position: 'QB', team: 'CIN', ppg: 20.4, adp: 31.2 },
-  { index: 24, playerName: 'Mike Evans', position: 'WR', team: 'TB', ppg: 15.1, adp: 30.1 },
-  { index: 25, playerName: 'Kyren Williams', position: 'RB', team: 'LAR', ppg: 14.8, adp: 35.2 },
-  { index: 26, playerName: 'Tee Higgins', position: 'WR', team: 'CIN', ppg: 14.9, adp: 32.4 },
-  { index: 27, playerName: 'Sam LaPorta', position: 'TE', team: 'DET', ppg: 12.9, adp: 42.1 },
-  { index: 28, playerName: 'Dak Prescott', position: 'QB', team: 'DAL', ppg: 19.8, adp: 45.7 },
-  { index: 29, playerName: 'Chris Olave', position: 'WR', team: 'NO', ppg: 14.2, adp: 38.9 },
-  { index: 30, playerName: 'James Cook', position: 'RB', team: 'BUF', ppg: 14.1, adp: 41.3 },
-];\n\ndescribe('Full Draft Simulation', () => {\n  test('completes a realistic 3-round draft with logical picks', () => {\n    const players = createPlayersMap(realisticPlayerPool);\n    const draftState = createSampleDraftState(12, 15, 0, 1); // User is team 0\n    \n    const draftLog: Array<{\n      pick: number;\n      team: number;\n      playerName: string;\n      position: string;\n      ppg: number;\n      davarScore?: number;\n      recommended: boolean;\n    }> = [];\n    \n    // Simulate first 3 rounds (36 picks)\n    const maxPicks = 36;\n    \n    for (let pickNum = 1; pickNum <= maxPicks && !draftState.isComplete(); pickNum++) {\n      const currentTeam = draftState.pickOwner(draftState.currentPick);\n      const isUserTeam = currentTeam === draftState.userTeamIndex;\n      \n      let selectedPlayerId: number;\n      let davarScore: number | undefined;\n      let recommended = false;\n      \n      if (isUserTeam) {\n        // Generate recommendations for user team\n        const recs = generateRecommendations(players, draftState, { \n          topN: 8,\n          candidatePoolSize: 25\n        });\n        \n        // Take top recommendation\n        if (recs.recommendations.length > 0) {\n          const topRec = recs.recommendations[0];\n          selectedPlayerId = topRec.playerIndex;\n          davarScore = topRec.davarScore;\n          recommended = true;\n        } else {\n          // Fallback to best available by PPG\n          const available = Array.from(players.values())\n            .filter(p => !draftState.taken.has(p.index))\n            .sort((a, b) => b.ppg - a.ppg);\n          selectedPlayerId = available[0]?.index || 1;\n        }\n      } else {\n        // Simulate other teams with simple ADP-based selection\n        const available = Array.from(players.values())\n          .filter(p => !draftState.taken.has(p.index))\n          .sort((a, b) => (a.adp || 999) - (b.adp || 999));\n        \n        // Add some randomness for realism - pick from top 5 available by ADP\n        const candidates = available.slice(0, 5);\n        const randomIndex = Math.floor(Math.random() * candidates.length);\n        selectedPlayerId = candidates[randomIndex]?.index || available[0]?.index || 1;\n      }\n      \n      // Apply the pick\n      const result = applyDraftPick(selectedPlayerId, players, draftState);\n      \n      if (result.success && result.pickDetails) {\n        const player = players.get(selectedPlayerId)!;\n        draftLog.push({\n          pick: pickNum,\n          team: result.pickDetails.team,\n          playerName: result.pickDetails.playerName,\n          position: result.pickDetails.position,\n          ppg: player.ppg,\n          davarScore,\n          recommended\n        });\n      }\n    }\n    \n    // Validate draft results\n    expect(draftLog.length).toBe(maxPicks);\n    expect(draftState.currentPick).toBe(maxPicks + 1);\n    \n    // Check that user team made logical picks\n    const userPicks = draftLog.filter(p => p.team === 0);\n    expect(userPicks.length).toBeGreaterThan(0);\n    \n    // User picks should generally be high-value players\n    const avgUserPpg = userPicks.reduce((sum, p) => sum + p.ppg, 0) / userPicks.length;\n    expect(avgUserPpg).toBeGreaterThan(12); // Reasonable threshold\n    \n    // Should have good position diversity in early picks\n    const earlyUserPicks = userPicks.slice(0, 3);\n    const positions = earlyUserPicks.map(p => p.position);\n    const uniquePositions = new Set(positions);\n    expect(uniquePositions.size).toBeGreaterThan(1); // Should draft multiple positions\n    \n    // Log summary for manual inspection\n    console.log('\\n=== Draft Simulation Summary ===');\n    console.log(`Completed ${draftLog.length} picks`);\n    console.log(`User team (${draftState.userTeamIndex}) picks:`);\n    \n    userPicks.forEach(pick => {\n      const recStr = pick.recommended ? ` (DAVAR: ${pick.davarScore?.toFixed(1)})` : ' (ADP)';\n      console.log(`  Pick ${pick.pick}: ${pick.playerName} (${pick.position}) - ${pick.ppg} PPG${recStr}`);\n    });\n  });\n  \n  test('recommendations improve in quality throughout draft', () => {\n    const players = createPlayersMap(realisticPlayerPool);\n    const draftState = createSampleDraftState(12, 15, 0, 1);\n    \n    const recommendationQuality: Array<{\n      pick: number;\n      topRecommendation: {\n        playerName: string;\n        davarScore: number;\n        survivalProb: number;\n      };\n      avgCandidateScore: number;\n    }> = [];\n    \n    // Test recommendations at different draft stages\n    const testPicks = [1, 13, 25, 37]; // Start of rounds 1, 2, 3, 4\n    \n    for (const pickNum of testPicks) {\n      draftState.currentPick = pickNum;\n      \n      // Simulate some picks being taken\n      const picksTaken = Math.min(pickNum - 1, 20);\n      for (let i = 0; i < picksTaken; i++) {\n        const available = Array.from(players.values())\n          .filter(p => !draftState.taken.has(p.index))\n          .sort((a, b) => (a.adp || 999) - (b.adp || 999));\n        \n        if (available.length > 0) {\n          draftState.taken.add(available[0].index);\n        }\n      }\n      \n      const recs = generateRecommendations(players, draftState, { topN: 10 });\n      \n      if (recs.recommendations.length > 0) {\n        const topRec = recs.recommendations[0];\n        const avgScore = recs.recommendations\n          .reduce((sum, r) => sum + r.davarScore, 0) / recs.recommendations.length;\n        \n        recommendationQuality.push({\n          pick: pickNum,\n          topRecommendation: {\n            playerName: topRec.playerName,\n            davarScore: topRec.davarScore,\n            survivalProb: parseFloat(topRec.survivalPercent.replace('%', '')) / 100\n          },\n          avgCandidateScore: avgScore\n        });\n      }\n    }\n    \n    // Validate that recommendations are reasonable at each stage\n    for (const quality of recommendationQuality) {\n      expect(quality.topRecommendation.davarScore).toBeGreaterThan(-10); // Not unreasonably negative\n      expect(quality.topRecommendation.survivalProb).toBeLessThanOrEqual(1.0);\n      expect(quality.topRecommendation.survivalProb).toBeGreaterThanOrEqual(0.0);\n    }\n    \n    console.log('\\n=== Recommendation Quality Analysis ===');\n    recommendationQuality.forEach(q => {\n      console.log(`Pick ${q.pick}: ${q.topRecommendation.playerName} ` +\n                  `(DAVAR: ${q.topRecommendation.davarScore.toFixed(1)}, ` +\n                  `Survival: ${(q.topRecommendation.survivalProb * 100).toFixed(0)}%)`);\n    });\n  });\n  \n  test('position scarcity effects become more pronounced later in draft', () => {\n    const players = createPlayersMap(realisticPlayerPool);\n    const draftState = createSampleDraftState(12, 15, 0, 1);\n    \n    // Take most of the top RBs to create scarcity\n    const topRBs = [1, 3, 5, 10, 12, 15, 21, 25, 30]; // Christian McCaffrey, Bijan, etc.\n    topRBs.forEach(id => draftState.taken.add(id));\n    \n    draftState.currentPick = 37; // Round 4\n    \n    const recs = generateRecommendations(players, draftState, { topN: 10 });\n    \n    // Find remaining RBs in recommendations\n    const rbRecs = recs.recommendations.filter(r => r.position === 'RB');\n    \n    if (rbRecs.length > 0) {\n      // Remaining RBs should have relatively high DAVAR scores despite lower PPG\n      // due to scarcity effects\n      expect(rbRecs[0].davarScore).toBeGreaterThan(-5);\n      \n      console.log('\\n=== Scarcity Analysis ===');\n      console.log('Remaining RB recommendations after taking top RBs:');\n      rbRecs.slice(0, 3).forEach(rb => {\n        console.log(`  ${rb.playerName}: PPG ${rb.ppg}, DAVAR ${rb.davarScore}`);\n      });\n    }\n    \n    // Position drain should reflect scarcity\n    expect(recs.positionDrain.RB).toBeDefined();\n  });\n});"
+  firstRoundPicks.forEach(pick => {
+    const player = players.find(p => p.player_id === pick.player_id);
+    expect(player).toBeDefined();
+    
+    // First round should be top tier players
+    if (player) {
+      expect(player.projected_points).toBeGreaterThan(150);
+      // Should generally be skill position players (QB, RB, WR, TE)
+      expect(['QB', 'RB', 'WR', 'TE'].includes(player.position)).toBe(true);
+    }
+  });
+}
+
+function testPositionalDistribution(rosters: Array<{team_id: number, players: Player[]}>) {
+  rosters.forEach(roster => {
+    const positionCounts = roster.players.reduce((acc, player) => {
+      acc[player.position] = (acc[player.position] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // After 5 rounds, teams should have diverse positions
+    // but shouldn't over-invest in any single position
+    Object.values(positionCounts).forEach(count => {
+      expect(count).toBeLessThanOrEqual(3); // No more than 3 of same position
+    });
+
+    // Should have at least 2 different positions
+    expect(Object.keys(positionCounts).length).toBeGreaterThanOrEqual(2);
+  });
+}

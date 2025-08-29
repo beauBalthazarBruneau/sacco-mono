@@ -1,5 +1,8 @@
 import pandas as pd
-from backend_api.proto.demand import survival_probs, expected_position_drain_from_hazards
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from demand import survival_probs, expected_position_drain_from_hazards
 
 
 def test_survival_probs_simple():
@@ -25,7 +28,7 @@ def test_expected_position_drain_from_hazards():
         {3: 0.4}           # WR
     ]
 
-    from backend_api.proto.demand import expected_position_drain_from_hazards
+    # Function already imported above
     E = expected_position_drain_from_hazards(hazards, df)
     assert round(E['QB'], 3) == 0.2
     assert round(E['RB'], 3) == 0.3
