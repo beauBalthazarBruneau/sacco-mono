@@ -268,7 +268,7 @@ client_id = ""
 # Overrides the default auth redirectUrl.
 redirect_uri = ""
 
-[edge_functions]
+# [functions]
 # Configure one of the supported import map paths: `import_map_path`, `import_map`.
 # import_map_path = "./import_map.json"
 # import_map = "https://esm.sh/"

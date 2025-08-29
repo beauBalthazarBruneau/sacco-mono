@@ -1,0 +1,10 @@
+{
+  "imports": {
+    "algorithm/": "../backend-api/src/algorithm/",
+    "algorithm/draft": "../backend-api/src/algorithm/draft.ts",
+    "algorithm/models": "../backend-api/src/algorithm/models.ts",
+    "algorithm/scoring": "../backend-api/src/algorithm/scoring.ts",
+    "algorithm/survival": "../backend-api/src/algorithm/survival.ts",
+    "algorithm/utils": "../backend-api/src/algorithm/utils.ts"
+  }
+}
