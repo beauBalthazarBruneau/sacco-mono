@@ -173,12 +173,48 @@ export const getDraftSessions = async (
   }
 }
 
+// Ensure user profile exists
+export const ensureUserProfile = async (user: any) => {
+  if (!supabase) {
+    throw new Error('Supabase not configured')
+  }
+
+  try {
+    // Check if user profile exists
+    const { data: existingProfile } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('id', user.id)
+      .single()
+
+    // If profile doesn't exist, create it
+    if (!existingProfile) {
+      const { error } = await supabase
+        .from('user_profiles')
+        .insert({
+          id: user.id,
+          email: user.email,
+          created_at: new Date().toISOString()
+        })
+
+      if (error) {
+        console.error('Error creating user profile:', error)
+        throw error
+      }
+    }
+  } catch (err) {
+    console.error('Error ensuring user profile:', err)
+    throw err
+  }
+}
+
 export const createDraftSession = async (sessionData: Database['public']['Tables']['draft_sessions']['Insert']) => {
   if (!supabase) {
     return { data: null, error: { message: 'Supabase not configured' } }
   }
 
   try {
+    console.log('Supabase creating draft session with:', sessionData)
     const { data, error } = await supabase
       .from('draft_sessions')
       .insert(sessionData)

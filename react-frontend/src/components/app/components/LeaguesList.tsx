@@ -72,11 +72,15 @@ export const LeaguesList: React.FC = () => {
 
     try {
       setCreating(true)
+
+
       const sessionData = {
         ...newLeague,
-        user_id: user.id
+        user_id: user.id,
+        draft_date: newLeague.draft_date || null
       }
 
+      console.log('Creating league with data:', sessionData)
       const { data, error } = await createDraftSession(sessionData)
 
       if (error) {

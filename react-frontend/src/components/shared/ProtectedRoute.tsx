@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, loading } = useAuth()
+  const { user, loading, profileLoading } = useAuth()
 
   if (loading) {
     return (
@@ -24,16 +24,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       >
         <Container size="lg" style={{ textAlign: 'center' }}>
           <Loader size="lg" color="green" style={{ marginBottom: '2rem' }} />
-          <Title 
-            order={1} 
-            size="2rem" 
+          <Title
+            order={1}
+            size="2rem"
             fw={700}
-            style={{ 
+            style={{
               color: 'white',
               fontFamily: '"Montserrat", sans-serif'
             }}
           >
-            Loading...
+            {profileLoading ? 'Setting up your profile...' : 'Loading...'}
           </Title>
         </Container>
       </Box>
