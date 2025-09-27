@@ -1,273 +1,222 @@
-# Sacco Monorepo - AI Assistant Guide
+# CLAUDE.md
 
-This is a comprehensive guide for AI assistants working with the Sacco Fantasy Football Assistant monorepo.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🏗️ Project Overview
+## Essential Development Commands
 
-**Sacco** is a comprehensive fantasy football draft assistant consisting of:
-- **Chrome Extension**: Browser-based draft assistance tool
-- **React Frontend**: Web application interface 
-- **Backend API**: Express server (minimal implementation)
-- **Supabase**: Database, authentication, and backend services
-
-## 📁 Repository Structure
-
-```
-sacco-mono/
-├── chrome-extension/         # Chrome extension (Plasmo + React)
-├── react-frontend/          # React web app (Vite + TypeScript)
-├── backend-api/             # Express API server (minimal)
-├── supabase/               # Database schema & configuration
-├── package.json            # Monorepo workspace configuration
-├── README.md              # User documentation
-├── CLAUDE.md              # This AI assistant guide
-└── project_plan.md        # Project planning document
-```
-
-## 🛠️ Technology Stack
-
-### Frontend Technologies
-- **React 19.1.1** with TypeScript
-- **Vite** for build tooling
-- **Mantine UI** component library
-- **Framer Motion** for animations
-- **React Router** for navigation
-
-### Chrome Extension
-- **Plasmo Framework** for extension development
-- **Manifest V3** specification
-- **React** with TypeScript
-- **Mantine UI** components
-
-### Backend & Database
-- **Express.js** with TypeScript (minimal implementation)
-- **Supabase** for database, auth, and real-time features
-- **PostgreSQL** database with Row Level Security
-
-### Development Tools
-- **npm workspaces** for monorepo management
-- **concurrently** for running multiple services
-- **ESLint** for code linting
-- **TypeScript** throughout the stack
-
-## 🚀 Quick Start Commands
-
+### Monorepo Operations
 ```bash
-# Clone and setup
-cd /Users/beaubruneau/Documents/side_projects/sacco-mono
+# Install all dependencies
 npm run install:all
 
 # Development (all services)
-npm run dev
+npm run dev                    # Runs frontend + extension + backend concurrently
 
 # Individual services
-npm run dev:extension    # Chrome extension
-npm run dev:frontend     # React app on http://localhost:3000
-npm run dev:backend      # Express server
+npm run dev:frontend          # React app on http://localhost:5174
+npm run dev:extension         # Chrome extension development
+npm run dev:backend           # Express API server
 
-# Build all components
-npm run build
+# Build operations
+npm run build                 # Build all workspaces
+npm run build:frontend        # Build React frontend only
+npm run build:extension       # Build Chrome extension only
 
-# Individual builds
-npm run build:extension
-npm run build:frontend
-npm run build:backend
+# Quality checks
+npm run precommit:frontend    # Full frontend pipeline (type-check + lint + test + build)
+npm run precommit             # Currently runs frontend precommit only
 ```
 
-## 🧩 Component Details
+### Supabase Operations
+```bash
+# Local development
+supabase start                # Start local Supabase stack
+supabase stop                 # Stop local stack
+supabase db reset             # Reset DB with latest migrations
 
-### Chrome Extension (`chrome-extension/`)
-- **Purpose**: Browser-based fantasy football draft assistance
-- **Framework**: Plasmo with React components
-- **Permissions**: Side panel, storage, context menus, host permissions
-- **UI**: Mantine components with Tabler icons
-- **Integration**: Supabase for data and authentication
+# Schema management
+supabase migration new name   # Create new migration
+supabase db push              # Push local schema to remote
+supabase db pull              # Pull remote changes to local
+
+# Type generation
+supabase gen types typescript --local > supabase/types.ts
+```
+
+## Architecture Overview
+
+The Sacco Fantasy Football Assistant is a monorepo with three active components:
 
 ### React Frontend (`react-frontend/`)
-- **Purpose**: Web-based dashboard and management interface
-- **Stack**: React 19 + TypeScript + Vite
-- **UI**: Mantine Core with Emotion styling
-- **Routing**: React Router DOM v7
-- **Integration**: Supabase client for backend services
-
-### Backend API (`backend-api/`)
-- **Status**: Minimal implementation (placeholder scripts)
-- **Planned**: Express.js with TypeScript
-- **Purpose**: Custom API endpoints and business logic
-- **Integration**: Will connect to Supabase
+- **Stack**: React 19 + TypeScript + Vite + Mantine UI
+- **Auth**: Magic link authentication via Supabase
+- **Architecture**: Direct Supabase client integration with AuthContext
+- **Dev Server**: http://localhost:5174
+- **Testing**: Vitest with React Testing Library
 
 ### Supabase (`supabase/`)
-- **Purpose**: Primary backend services
-- **Features**: Database, authentication, real-time subscriptions
-- **Schema**: User profiles, preferences, draft sessions, player data
-- **Security**: Row Level Security (RLS) policies
-- **Development**: Local development with Supabase CLI
+- **Role**: Primary backend service providing database, auth, real-time features
+- **Database**: PostgreSQL 15 with comprehensive schema for fantasy football data
+- **Security**: Row Level Security (RLS) policies on all user data
+- **Key Tables**: `user_profiles`, `draft_sessions`, `draft_picks`, `player_rankings`
+- **Local Dev**: Full local stack with Studio UI on http://localhost:54323
 
-## 🔄 Development Workflow
+### GitHub Actions (`.github/`)
+- **CI/CD Pipeline**: Automated testing and building on push/PR
+- **Claude PR Review**: Automated code review using Claude API
+- **Frontend Focus**: Current automation primarily tests React frontend
 
-1. **Start all services**: `npm run dev`
-2. **Chrome extension**: Loads in development mode via Plasmo
-3. **React frontend**: Available at http://localhost:3000 with hot reload
-4. **Backend**: Currently placeholder (to be implemented)
-5. **Database**: Use Supabase local development or cloud instance
+## Key Architectural Patterns
 
-## 🎯 Key Features
+### Authentication Flow
+1. **Magic Link**: User enters email → Supabase sends magic link → redirect to `/auth/callback`
+2. **Global State**: `AuthContext` provides user session across React app
+3. **Protected Routes**: `ProtectedRoute` component wraps authenticated pages
+4. **RLS Security**: Database-level security ensures users only access their own data
 
-### Authentication & User Management
-- Supabase Auth with magic link authentication
-- User profiles and preferences storage
-- Row-level security for data protection
+### Data Architecture
+```typescript
+// Direct Supabase client pattern used throughout
+const { data, error } = await supabase
+  .from('draft_sessions')
+  .select('*')
+  .eq('user_id', user.id)
+```
 
-### Draft Assistance
-- Player rankings and ADP data
-- Draft session tracking
-- Real-time draft updates
-- Custom user strategies
+### Real-time Features
+```typescript
+// Live draft updates pattern
+const subscription = supabase
+  .channel('draft_updates')
+  .on('postgres_changes', {
+    event: 'INSERT',
+    schema: 'public',
+    table: 'draft_picks'
+  }, handleNewPick)
+  .subscribe()
+```
 
-### Multi-Platform Access
-- Chrome extension for in-browser drafting
-- Web app for comprehensive management
-- Shared data across platforms
+## Database Schema (Supabase)
 
-## 🔧 Configuration Files
+### Core Entity Relationships
+- `auth.users` (Supabase) → `user_profiles` → `user_preferences`
+- `user_profiles` → `draft_sessions` → `draft_picks`
+- `player_rankings` (public data for all users)
+- `payment_history` (Stripe integration tracking)
 
-### Root Level
-- `package.json`: Workspace and script configuration
-- `.gitignore`: Git ignore patterns for all components
+### Key Enums
+```sql
+subscription_tier: 'free' | 'basic' | 'premium'
+league_type: 'PPR' | 'Standard' | 'Half-PPR' | 'Superflex'
+player_position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
+draft_status: 'active' | 'completed' | 'cancelled'
+```
 
-### Environment Variables
-Each component has its own environment configuration:
-- `chrome-extension/.env`: Extension settings
-- `react-frontend/.env`: Frontend environment
-- `backend-api/.env`: API configuration
-- Root `.env`: Shared Supabase configuration
+### Security Model
+- **User Data**: RLS policies ensure `auth.uid() = user_id` for all personal data
+- **Public Data**: Player rankings and stats readable by all authenticated users
+- **Service Role**: Backend operations use service role key (never in client code)
 
-## 🧪 Testing Strategy
+## CI/CD Pipeline (.github/)
 
-- **Frontend**: Component testing with React Testing Library
-- **Extension**: Extension-specific testing with Plasmo
-- **Backend**: API endpoint testing (to be implemented)
-- **Integration**: End-to-end testing across components
+### Automated Testing (`ci.yml`)
+```yaml
+# Triggers: Push/PR to main/staging branches
+# Pipeline: Install → Lint → Type Check → Test → Build
+# Components: React frontend focus (extension build separate job)
+# Node Version: 20.x with npm caching
+```
 
-## 📦 Build & Deployment
+### Claude PR Review (`claude-pr-review.yml`)
+```yaml
+# Triggers: PR opened/updated to main/staging
+# Process: Get changed files → Send to Claude API → Post review comment
+# Focus Areas: Security, code quality, best practices
+# Model: claude-3-5-sonnet-20241022
+```
 
-### Chrome Extension
-- Build: `npm run build:extension`
-- Package: Available in `chrome-extension/build/`
-- Deploy: Chrome Web Store submission
+## Environment Configuration
 
-### React Frontend
-- Build: `npm run build:frontend`
-- Output: `react-frontend/dist/`
-- Deploy: Static hosting (Vercel, Netlify, etc.)
+### Required Environment Variables
+```env
+# Supabase (both local and production)
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
 
-### Backend API
-- Build: `npm run build:backend` (to be implemented)
-- Deploy: Cloud hosting (Railway, Heroku, etc.)
+# Claude API (for PR reviews)
+ANTHROPIC_API_KEY=your_anthropic_key
+```
 
-### Supabase
-- Migrations: `supabase db push`
-- Functions: `supabase functions deploy`
-- Config: Environment-specific settings
+### Local Development Setup
+1. Install dependencies: `npm run install:all`
+2. Start Supabase: `supabase start`
+3. Start frontend: `npm run dev:frontend`
+4. Access app: http://localhost:5174
+5. Access DB Studio: http://localhost:54323
 
-## 📋 Development Guidelines
+## Development Workflow Patterns
 
-### Code Organization
-- Follow existing patterns within each component
-- Maintain TypeScript strict mode compliance
-- Use consistent naming conventions
-- Document complex business logic
+### Adding New Features
+1. **Database Changes**: Create Supabase migration first
+2. **Type Generation**: Run `supabase gen types` after schema changes
+3. **Component Development**: Follow existing patterns in `react-frontend/src/components/`
+4. **Testing**: Add tests in `__tests__` directories
+5. **Quality Checks**: Run `npm run precommit:frontend` before commit
 
-### Component Communication
-- **Frontend ↔ Supabase**: Direct client connections
-- **Extension ↔ Supabase**: Direct client connections  
-- **Backend ↔ Supabase**: Service role connections
-- **Inter-component**: Via Supabase real-time features
+### Component Architecture Patterns
+- **Shared Components**: `components/shared/` for auth and utilities
+- **App Components**: `components/app/` for authenticated user features
+- **Landing Components**: `components/landing/` for marketing site
+- **Protected Routes**: Wrap authenticated pages with `<ProtectedRoute>`
 
-### Error Handling
-- Implement graceful error boundaries in React
-- Use Supabase error handling patterns
-- Provide user-friendly error messages
-- Log errors appropriately for debugging
+### Data Fetching Patterns
+```typescript
+// Standard pattern for data operations
+const { data: players, error } = await supabase
+  .from('player_rankings')
+  .select('*')
+  .eq('position', position)
+  .order('rank')
+  .range(offset, offset + limit - 1)
+```
 
-## 🔍 Debugging Tips
+## Common Development Tasks
 
-### Chrome Extension
-- Use Chrome DevTools in popup/sidepanel
-- Check background script console
-- Verify manifest permissions
-- Test in incognito mode
+### Schema Changes
+```bash
+# Create migration
+supabase migration new add_new_table
 
-### React Frontend
-- Browser DevTools with React Developer Tools
-- Network tab for API calls
-- Console for runtime errors
-- Vite dev server output
+# Edit migration file in supabase/migrations/
+# Apply locally
+supabase db reset
 
-### Supabase
-- Supabase Dashboard for database queries
-- Network requests in browser DevTools
-- Local Supabase logs with CLI
-- Authentication state debugging
+# Generate new types
+supabase gen types typescript --local > supabase/types.ts
+```
 
-## 📚 Key Dependencies
+### Testing Authentication
+1. Start local stack: `supabase start`
+2. Check email UI: http://localhost:54324 (Inbucket)
+3. Test magic link flow through the app
+4. Verify RLS policies work correctly
 
-### Shared Dependencies
-- `@supabase/supabase-js`: Database and auth client
-- `@mantine/core`: UI component library
-- `@tabler/icons-react`: Icon library
-- `react` & `react-dom`: UI framework
+### Deployment
+- **Frontend**: Static build deployed to hosting service
+- **Database**: Migrations pushed via `supabase db push`
+- **CI/CD**: GitHub Actions handle automated testing and building
 
-### Development Dependencies
-- `typescript`: Type safety
-- `eslint`: Code quality
-- `vite`: Build tool
-- `plasmo`: Extension framework
+## Integration Points
 
-## 🔐 Security Considerations
+### React Frontend ↔ Supabase
+- Direct client connections using anon key
+- Real-time subscriptions for live updates
+- RLS policies provide security layer
+- TypeScript types generated from schema
 
-- Environment variables for sensitive data
-- Row Level Security in Supabase
-- Chrome extension content security policies
-- HTTPS for all production endpoints
-- Token-based authentication
+### Chrome Extension Integration (Future)
+- Shared authentication state via Supabase
+- Same database schema and RLS policies
+- Real-time sync between extension and web app
 
-## 📈 Performance Guidelines
-
-- Lazy load components where appropriate
-- Optimize bundle sizes with tree shaking
-- Use React.memo for expensive computations
-- Cache frequently accessed data
-- Monitor Supabase query performance
-
-## 🤖 AI Assistant Notes
-
-When working with this codebase:
-
-1. **Respect the monorepo structure** - changes in one component may affect others
-2. **Check existing patterns** - follow established conventions
-3. **Consider all platforms** - changes may need to work across extension and web app
-4. **Supabase integration** - most data operations go through Supabase
-5. **TypeScript compliance** - maintain type safety throughout
-6. **Test cross-component** - ensure changes work in both extension and frontend
-
-## 🆘 Common Issues
-
-### Build Issues
-- Check Node.js version (>=18.0.0)
-- Clear `node_modules` and reinstall
-- Verify workspace dependencies
-
-### Extension Issues
-- Reload extension in Chrome
-- Check manifest permissions
-- Verify build output in `build/`
-
-### Database Issues
-- Check Supabase connection
-- Verify RLS policies
-- Reset local database if needed
-
----
-
-*This guide is maintained for AI assistants to effectively work with the Sacco monorepo codebase.*
+The architecture emphasizes simplicity with direct database integration rather than complex API layers, leveraging Supabase's built-in security and real-time capabilities.
