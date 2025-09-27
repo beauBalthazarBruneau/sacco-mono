@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { Box, Loader, Container, Title } from '@mantine/core'
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 interface ProtectedRouteProps {
   children: React.ReactNode

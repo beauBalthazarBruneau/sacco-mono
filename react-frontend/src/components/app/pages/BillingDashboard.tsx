@@ -20,10 +20,10 @@ import {
   IconReceipt,
   IconUser
 } from '@tabler/icons-react';
-import { useAuth } from '../hooks/useAuth';
-import { supabase } from '../lib/supabase';
-import { formatCurrency } from '../lib/stripe';
-import { TrialStatus } from './TrialStatus';
+import { useAuth } from '../../../hooks/useAuth';
+import { supabase } from '../../../lib/supabase';
+import { formatCurrency } from '../../../lib/stripe';
+import { TrialStatus } from '../components/TrialStatus';
 
 interface UserProfile {
   id: string;

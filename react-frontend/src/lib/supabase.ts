@@ -3,16 +3,28 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sjmljrgabepxdfhefyxo.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-})
+// Only create the client if we have a valid key
+let supabase: ReturnType<typeof createClient> | null = null
+
+if (supabaseAnonKey && supabaseAnonKey !== '') {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    }
+  })
+} else {
+  console.warn('Supabase not configured - authentication features will be disabled')
+}
+
+export { supabase }
 
 // Auth helper functions
 export const signInWithMagicLink = async (email: string) => {
+  if (!supabase) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
@@ -23,11 +35,17 @@ export const signInWithMagicLink = async (email: string) => {
 }
 
 export const signOut = async () => {
+  if (!supabase) {
+    return { error: { message: 'Supabase not configured' } }
+  }
   const { error } = await supabase.auth.signOut()
   return { error }
 }
 
 export const getCurrentUser = async () => {
+  if (!supabase) {
+    return { user: null, error: { message: 'Supabase not configured' } }
+  }
   const { data: { user }, error } = await supabase.auth.getUser()
   return { user, error }
 }
@@ -63,6 +81,10 @@ export const getPlayers = async (
   sortBy: 'adp' | 'ppr_points' = 'adp',
   sortOrder: 'asc' | 'desc' = 'asc'
 ): Promise<PlayersResponse> => {
+  if (!supabase) {
+    return { data: [], count: 0, error: 'Supabase not configured' }
+  }
+
   try {
     let query = supabase
       .from('player_rankings')

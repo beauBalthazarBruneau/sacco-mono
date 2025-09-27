@@ -1,4 +1,4 @@
-import type { Player } from '../../lib/supabase'
+import type { Player } from '../../../lib/supabase'
 
 const mockPlayer: Player = {
   id: '1',

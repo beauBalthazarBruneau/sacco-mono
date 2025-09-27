@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Text, Group, Badge, Stack, Box } from '@mantine/core'
-import type { Player } from '../lib/supabase'
+import type { Player } from '../../../lib/supabase'
 
 interface PlayerCardProps {
   player: Player

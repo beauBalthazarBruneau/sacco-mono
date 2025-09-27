@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Title, Text, Box, Button } from '@mantine/core'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 export const SignUp: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -10,7 +10,7 @@ export const SignUp: React.FC = () => {
   const isAuthenticated = searchParams.get('authenticated') === 'true' || !!user
 
   const handleGetStarted = () => {
-    navigate('/players')
+    navigate('/dashboard')
   }
 
   return (
@@ -74,7 +74,7 @@ export const SignUp: React.FC = () => {
                 fontFamily: '"Montserrat", sans-serif'
               }}
             >
-              Browse Player Database
+              Go to Dashboard
             </Button>
           </>
         ) : (

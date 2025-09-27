@@ -23,10 +23,10 @@ import {
   IconLogout,
   IconUser
 } from '@tabler/icons-react'
-import { useAuth } from '../hooks/useAuth'
-import { getPlayers, type Player } from '../lib/supabase'
-import { PlayerCard } from './PlayerCard'
-import { SearchFilters } from './SearchFilters'
+import { useAuth } from '../../../hooks/useAuth'
+import { getPlayers, type Player } from '../../../lib/supabase'
+import { PlayerCard } from '../components/PlayerCard'
+import { SearchFilters } from '../components/SearchFilters'
 
 export const PlayerBrowser: React.FC = () => {
   const { user, signOut } = useAuth()

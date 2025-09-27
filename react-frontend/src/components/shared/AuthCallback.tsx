@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { Container, Title, Text, Box, Loader } from '@mantine/core'
 
 export const AuthCallback: React.FC = () => {
@@ -21,8 +21,8 @@ export const AuthCallback: React.FC = () => {
         }
 
         if (data.session) {
-          // Successfully authenticated, redirect to signup with auth state
-          navigate('/signup?authenticated=true', { replace: true })
+          // Successfully authenticated, redirect to dashboard
+          navigate('/dashboard', { replace: true })
         } else {
           setError('No session found. Please try the magic link again.')
           setIsProcessing(false)

@@ -7,15 +7,15 @@ import {
 } from '@mantine/core'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { signInWithMagicLink } from '../lib/supabase'
+import { signInWithMagicLink } from '../../lib/supabase'
 
 // Import images
-import datenightImg from '../assets/landing_page_gallery/datenight.png'
-import calendarImg from '../assets/landing_page_gallery/calendar.webp'
-import highwayImg from '../assets/landing_page_gallery/highway.webp'
-import lemonadeImg from '../assets/landing_page_gallery/lemonade.webp'
-import satsImg from '../assets/landing_page_gallery/SATs.png'
-import wafflesImg from '../assets/landing_page_gallery/waffles.png'
+import datenightImg from '../../assets/landing_page_gallery/datenight.png'
+import calendarImg from '../../assets/landing_page_gallery/calendar.webp'
+import highwayImg from '../../assets/landing_page_gallery/highway.webp'
+import lemonadeImg from '../../assets/landing_page_gallery/lemonade.webp'
+import satsImg from '../../assets/landing_page_gallery/SATs.png'
+import wafflesImg from '../../assets/landing_page_gallery/waffles.png'
 
 export const HeroSection: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
