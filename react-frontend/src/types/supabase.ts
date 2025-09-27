@@ -156,117 +156,147 @@ export type Database = {
       player_rankings: {
         Row: {
           adp: number | null
-          half_ppr_points: number | null
-          half_ppr_points_per_game: number | null
+          categories_points: number | null
+          categories_rank: number | null
           id: string
           last_updated: string | null
           player_name: string
-          position: string | null
-          ppr_points: number | null
-          ppr_points_per_game: number | null
-          standard_points: number | null
-          standard_points_per_game: number | null
+          points_league_points: number | null
+          points_rank: number | null
+          position: Database["public"]["Enums"]["player_position"] | null
+          projected_assists: number | null
+          projected_blocks: number | null
+          projected_points: number | null
+          projected_rebounds: number | null
+          projected_steals: number | null
           team: string | null
         }
         Insert: {
           adp?: number | null
-          half_ppr_points?: number | null
-          half_ppr_points_per_game?: number | null
+          categories_points?: number | null
+          categories_rank?: number | null
           id?: string
           last_updated?: string | null
           player_name: string
-          position?: string | null
-          ppr_points?: number | null
-          ppr_points_per_game?: number | null
-          standard_points?: number | null
-          standard_points_per_game?: number | null
+          points_league_points?: number | null
+          points_rank?: number | null
+          position?: Database["public"]["Enums"]["player_position"] | null
+          projected_assists?: number | null
+          projected_blocks?: number | null
+          projected_points?: number | null
+          projected_rebounds?: number | null
+          projected_steals?: number | null
           team?: string | null
         }
         Update: {
           adp?: number | null
-          half_ppr_points?: number | null
-          half_ppr_points_per_game?: number | null
+          categories_points?: number | null
+          categories_rank?: number | null
           id?: string
           last_updated?: string | null
           player_name?: string
-          position?: string | null
-          ppr_points?: number | null
-          ppr_points_per_game?: number | null
-          standard_points?: number | null
-          standard_points_per_game?: number | null
+          points_league_points?: number | null
+          points_rank?: number | null
+          position?: Database["public"]["Enums"]["player_position"] | null
+          projected_assists?: number | null
+          projected_blocks?: number | null
+          projected_points?: number | null
+          projected_rebounds?: number | null
+          projected_steals?: number | null
           team?: string | null
         }
         Relationships: []
       }
       player_stats: {
         Row: {
+          assists: number | null
+          assists_per_game: number | null
+          blocks: number | null
           created_at: string | null
-          fantasy_points_half_ppr: number | null
-          fantasy_points_ppr: number | null
-          fantasy_points_standard: number | null
+          fantasy_points_categories: number | null
+          fantasy_points_points: number | null
+          field_goal_percentage: number | null
+          field_goals_attempted: number | null
+          field_goals_made: number | null
+          free_throw_percentage: number | null
+          free_throws_attempted: number | null
+          free_throws_made: number | null
           games_played: number | null
-          half_ppr_points_per_game: number | null
           id: string
-          passing_ints: number | null
-          passing_tds: number | null
-          passing_yards: number | null
+          minutes_played: number | null
           player_name: string
+          points: number | null
+          points_per_game: number | null
           position: Database["public"]["Enums"]["player_position"]
-          ppr_points_per_game: number | null
-          receiving_tds: number | null
-          receiving_yards: number | null
-          receptions: number | null
-          rushing_tds: number | null
-          rushing_yards: number | null
+          rebounds: number | null
+          rebounds_per_game: number | null
           season: number
-          standard_points_per_game: number | null
+          steals: number | null
           team: string | null
+          three_point_percentage: number | null
+          three_pointers_attempted: number | null
+          three_pointers_made: number | null
+          turnovers: number | null
         }
         Insert: {
+          assists?: number | null
+          assists_per_game?: number | null
+          blocks?: number | null
           created_at?: string | null
-          fantasy_points_half_ppr?: number | null
-          fantasy_points_ppr?: number | null
-          fantasy_points_standard?: number | null
+          fantasy_points_categories?: number | null
+          fantasy_points_points?: number | null
+          field_goal_percentage?: number | null
+          field_goals_attempted?: number | null
+          field_goals_made?: number | null
+          free_throw_percentage?: number | null
+          free_throws_attempted?: number | null
+          free_throws_made?: number | null
           games_played?: number | null
-          half_ppr_points_per_game?: number | null
           id?: string
-          passing_ints?: number | null
-          passing_tds?: number | null
-          passing_yards?: number | null
+          minutes_played?: number | null
           player_name: string
+          points?: number | null
+          points_per_game?: number | null
           position: Database["public"]["Enums"]["player_position"]
-          ppr_points_per_game?: number | null
-          receiving_tds?: number | null
-          receiving_yards?: number | null
-          receptions?: number | null
-          rushing_tds?: number | null
-          rushing_yards?: number | null
+          rebounds?: number | null
+          rebounds_per_game?: number | null
           season: number
-          standard_points_per_game?: number | null
+          steals?: number | null
           team?: string | null
+          three_point_percentage?: number | null
+          three_pointers_attempted?: number | null
+          three_pointers_made?: number | null
+          turnovers?: number | null
         }
         Update: {
+          assists?: number | null
+          assists_per_game?: number | null
+          blocks?: number | null
           created_at?: string | null
-          fantasy_points_half_ppr?: number | null
-          fantasy_points_ppr?: number | null
-          fantasy_points_standard?: number | null
+          fantasy_points_categories?: number | null
+          fantasy_points_points?: number | null
+          field_goal_percentage?: number | null
+          field_goals_attempted?: number | null
+          field_goals_made?: number | null
+          free_throw_percentage?: number | null
+          free_throws_attempted?: number | null
+          free_throws_made?: number | null
           games_played?: number | null
-          half_ppr_points_per_game?: number | null
           id?: string
-          passing_ints?: number | null
-          passing_tds?: number | null
-          passing_yards?: number | null
+          minutes_played?: number | null
           player_name?: string
+          points?: number | null
+          points_per_game?: number | null
           position?: Database["public"]["Enums"]["player_position"]
-          ppr_points_per_game?: number | null
-          receiving_tds?: number | null
-          receiving_yards?: number | null
-          receptions?: number | null
-          rushing_tds?: number | null
-          rushing_yards?: number | null
+          rebounds?: number | null
+          rebounds_per_game?: number | null
           season?: number
-          standard_points_per_game?: number | null
+          steals?: number | null
           team?: string | null
+          three_point_percentage?: number | null
+          three_pointers_attempted?: number | null
+          three_pointers_made?: number | null
+          turnovers?: number | null
         }
         Relationships: []
       }
@@ -437,15 +467,9 @@ export type Database = {
     }
     Enums: {
       draft_status: "active" | "completed" | "cancelled"
-      draft_strategy:
-        | "Best Available"
-        | "Position Need"
-        | "Zero RB"
-        | "Hero RB"
-        | "Late Round QB"
-        | "Streaming"
-      league_type: "PPR" | "Standard" | "Half-PPR" | "Superflex"
-      player_position: "QB" | "RB" | "WR" | "TE" | "K" | "DEF" | "DST"
+      draft_strategy: "Best Available" | "Position Need" | "Punt Strategy" | "Stars and Scrubs" | "Balanced Build" | "Category Focus"
+      league_type: "Points" | "Categories" | "Head2Head" | "Roto"
+      player_position: "PG" | "SG" | "SF" | "PF" | "C" | "G" | "F" | "UTIL"
       subscription_tier: "free" | "basic" | "premium"
     }
     CompositeTypes: {

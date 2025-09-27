@@ -1,6 +1,3 @@
-// TypeScript types for the Fantasy Football Draft Assistant database schema
-// Generated from the Supabase schema
-
 export type Json =
   | string
   | number
@@ -12,177 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      user_profiles: {
-        Row: {
-          id: string
-          email: string
-          username: string | null
-          subscription_tier: 'free' | 'basic' | 'premium'
-          subscription_expires_at: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id: string
-          email: string
-          username?: string | null
-          subscription_tier?: 'free' | 'basic' | 'premium'
-          subscription_expires_at?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          email?: string
-          username?: string | null
-          subscription_tier?: 'free' | 'basic' | 'premium'
-          subscription_expires_at?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      user_preferences: {
-        Row: {
-          id: string
-          user_id: string
-          league_type: 'PPR' | 'Standard' | 'Half-PPR' | 'Superflex'
-          team_count: number
-          draft_position: number | null
-          preferred_strategy: 'Best Available' | 'Position Need' | 'Zero RB' | 'Hero RB' | 'Late Round QB' | 'Streaming'
-          auto_pick_enabled: boolean
-          notifications_enabled: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          league_type?: 'PPR' | 'Standard' | 'Half-PPR' | 'Superflex'
-          team_count?: number
-          draft_position?: number | null
-          preferred_strategy?: 'Best Available' | 'Position Need' | 'Zero RB' | 'Hero RB' | 'Late Round QB' | 'Streaming'
-          auto_pick_enabled?: boolean
-          notifications_enabled?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          league_type?: 'PPR' | 'Standard' | 'Half-PPR' | 'Superflex'
-          team_count?: number
-          draft_position?: number | null
-          preferred_strategy?: 'Best Available' | 'Position Need' | 'Zero RB' | 'Hero RB' | 'Late Round QB' | 'Streaming'
-          auto_pick_enabled?: boolean
-          notifications_enabled?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_preferences_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      draft_sessions: {
-        Row: {
-          id: string
-          user_id: string
-          league_name: string
-          platform: string
-          draft_date: string | null
-          team_count: number
-          draft_position: number
-          status: 'active' | 'completed' | 'cancelled'
-          settings: Json
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          league_name: string
-          platform: string
-          draft_date?: string | null
-          team_count: number
-          draft_position: number
-          status?: 'active' | 'completed' | 'cancelled'
-          settings?: Json
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          league_name?: string
-          platform?: string
-          draft_date?: string | null
-          team_count?: number
-          draft_position?: number
-          status?: 'active' | 'completed' | 'cancelled'
-          settings?: Json
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "draft_sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_profiles"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       draft_picks: {
         Row: {
-          id: string
           draft_session_id: string
-          round: number
+          id: string
           pick_number: number
+          picked_at: string | null
           player_name: string
-          position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team: string | null
-          recommended: boolean
+          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
           recommendation_reason: string | null
-          picked_at: string
+          recommended: boolean | null
+          round: number
+          team: string | null
         }
         Insert: {
-          id?: string
           draft_session_id: string
-          round: number
+          id?: string
           pick_number: number
+          picked_at?: string | null
           player_name: string
-          position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team?: string | null
-          recommended?: boolean
+          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
           recommendation_reason?: string | null
-          picked_at?: string
+          recommended?: boolean | null
+          round: number
+          team?: string | null
         }
         Update: {
-          id?: string
           draft_session_id?: string
-          round?: number
+          id?: string
           pick_number?: number
+          picked_at?: string | null
           player_name?: string
-          position?: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team?: string | null
-          recommended?: boolean
+          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
           recommendation_reason?: string | null
-          picked_at?: string
+          recommended?: boolean | null
+          round?: number
+          team?: string | null
         }
         Relationships: [
           {
@@ -191,207 +53,95 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "draft_sessions"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
-      player_rankings: {
+      draft_sessions: {
         Row: {
+          created_at: string | null
+          draft_date: string | null
+          draft_position: number
           id: string
-          player_name: string
-          position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team: string | null
-          rank: number
-          tier: string | null
-          adp: number | null
-          ppr_points: number | null
-          standard_points: number | null
-          half_ppr_points: number | null
-          injury_status: string | null
-          news: string | null
-          last_updated: string
-        }
-        Insert: {
-          id?: string
-          player_name: string
-          position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team?: string | null
-          rank: number
-          tier?: string | null
-          adp?: number | null
-          ppr_points?: number | null
-          standard_points?: number | null
-          half_ppr_points?: number | null
-          injury_status?: string | null
-          news?: string | null
-          last_updated?: string
-        }
-        Update: {
-          id?: string
-          player_name?: string
-          position?: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team?: string | null
-          rank?: number
-          tier?: string | null
-          adp?: number | null
-          ppr_points?: number | null
-          standard_points?: number | null
-          half_ppr_points?: number | null
-          injury_status?: string | null
-          news?: string | null
-          last_updated?: string
-        }
-        Relationships: []
-      }
-      player_stats: {
-        Row: {
-          id: string
-          player_name: string
-          position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team: string | null
-          season: number
-          games_played: number | null
-          passing_yards: number | null
-          passing_tds: number | null
-          passing_ints: number | null
-          rushing_yards: number | null
-          rushing_tds: number | null
-          receiving_yards: number | null
-          receiving_tds: number | null
-          receptions: number | null
-          fantasy_points_ppr: number | null
-          fantasy_points_standard: number | null
-          fantasy_points_half_ppr: number | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          player_name: string
-          position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team?: string | null
-          season: number
-          games_played?: number | null
-          passing_yards?: number | null
-          passing_tds?: number | null
-          passing_ints?: number | null
-          rushing_yards?: number | null
-          rushing_tds?: number | null
-          receiving_yards?: number | null
-          receiving_tds?: number | null
-          receptions?: number | null
-          fantasy_points_ppr?: number | null
-          fantasy_points_standard?: number | null
-          fantasy_points_half_ppr?: number | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          player_name?: string
-          position?: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
-          team?: string | null
-          season?: number
-          games_played?: number | null
-          passing_yards?: number | null
-          passing_tds?: number | null
-          passing_ints?: number | null
-          rushing_yards?: number | null
-          rushing_tds?: number | null
-          receiving_yards?: number | null
-          receiving_tds?: number | null
-          receptions?: number | null
-          fantasy_points_ppr?: number | null
-          fantasy_points_standard?: number | null
-          fantasy_points_half_ppr?: number | null
-          created_at?: string
-        }
-        Relationships: []
-      }
-      user_analytics: {
-        Row: {
-          id: string
+          league_name: string
+          platform: string
+          settings: Json | null
+          status: 'active' | 'completed' | 'cancelled' | null
+          team_count: number
+          updated_at: string | null
           user_id: string
-          draft_session_id: string | null
-          total_drafts: number
-          successful_picks: number
-          total_picks: number
-          average_pick_quality: number
-          preferred_positions: Json
-          strategy_effectiveness: Json
-          created_at: string
-          updated_at: string
         }
         Insert: {
+          created_at?: string | null
+          draft_date?: string | null
+          draft_position: number
           id?: string
+          league_name: string
+          platform: string
+          settings?: Json | null
+          status?: 'active' | 'completed' | 'cancelled' | null
+          team_count: number
+          updated_at?: string | null
           user_id: string
-          draft_session_id?: string | null
-          total_drafts?: number
-          successful_picks?: number
-          total_picks?: number
-          average_pick_quality?: number
-          preferred_positions?: Json
-          strategy_effectiveness?: Json
-          created_at?: string
-          updated_at?: string
         }
         Update: {
+          created_at?: string | null
+          draft_date?: string | null
+          draft_position?: number
           id?: string
+          league_name?: string
+          platform?: string
+          settings?: Json | null
+          status?: 'active' | 'completed' | 'cancelled' | null
+          team_count?: number
+          updated_at?: string | null
           user_id?: string
-          draft_session_id?: string | null
-          total_drafts?: number
-          successful_picks?: number
-          total_picks?: number
-          average_pick_quality?: number
-          preferred_positions?: Json
-          strategy_effectiveness?: Json
-          created_at?: string
-          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_analytics_user_id_fkey"
+            foreignKeyName: "draft_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_profiles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "user_analytics_draft_session_id_fkey"
-            columns: ["draft_session_id"]
-            isOneToOne: false
-            referencedRelation: "draft_sessions"
-            referencedColumns: ["id"]
-          }
         ]
       }
       payment_history: {
         Row: {
-          id: string
-          user_id: string
-          stripe_payment_intent_id: string | null
           amount: number
-          currency: string
-          subscription_tier: 'free' | 'basic' | 'premium'
+          created_at: string | null
+          currency: string | null
+          id: string
           status: string
-          created_at: string
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_subscription_id: string | null
+          subscription_tier: 'free' | 'basic' | 'premium'
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          stripe_payment_intent_id?: string | null
           amount: number
-          currency?: string
-          subscription_tier: 'free' | 'basic' | 'premium'
+          created_at?: string | null
+          currency?: string | null
+          id?: string
           status: string
-          created_at?: string
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_tier: 'free' | 'basic' | 'premium'
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          stripe_payment_intent_id?: string | null
           amount?: number
-          currency?: string
-          subscription_tier?: 'free' | 'basic' | 'premium'
+          created_at?: string | null
+          currency?: string | null
+          id?: string
           status?: string
-          created_at?: string
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_tier?: 'free' | 'basic' | 'premium'
+          user_id?: string
         }
         Relationships: [
           {
@@ -400,8 +150,301 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "user_profiles"
             referencedColumns: ["id"]
-          }
+          },
         ]
+      }
+      player_rankings: {
+        Row: {
+          adp: number | null
+          categories_points: number | null
+          categories_rank: number | null
+          id: string
+          last_updated: string | null
+          player_name: string
+          points_league_points: number | null
+          points_rank: number | null
+          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
+          projected_assists: number | null
+          projected_blocks: number | null
+          projected_points: number | null
+          projected_rebounds: number | null
+          projected_steals: number | null
+          team: string | null
+        }
+        Insert: {
+          adp?: number | null
+          categories_points?: number | null
+          categories_rank?: number | null
+          id?: string
+          last_updated?: string | null
+          player_name: string
+          points_league_points?: number | null
+          points_rank?: number | null
+          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
+          projected_assists?: number | null
+          projected_blocks?: number | null
+          projected_points?: number | null
+          projected_rebounds?: number | null
+          projected_steals?: number | null
+          team?: string | null
+        }
+        Update: {
+          adp?: number | null
+          categories_points?: number | null
+          categories_rank?: number | null
+          id?: string
+          last_updated?: string | null
+          player_name?: string
+          points_league_points?: number | null
+          points_rank?: number | null
+          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
+          projected_assists?: number | null
+          projected_blocks?: number | null
+          projected_points?: number | null
+          projected_rebounds?: number | null
+          projected_steals?: number | null
+          team?: string | null
+        }
+        Relationships: []
+      }
+      player_stats: {
+        Row: {
+          assists: number | null
+          assists_per_game: number | null
+          blocks: number | null
+          created_at: string | null
+          fantasy_points_categories: number | null
+          fantasy_points_points: number | null
+          field_goal_percentage: number | null
+          field_goals_attempted: number | null
+          field_goals_made: number | null
+          free_throw_percentage: number | null
+          free_throws_attempted: number | null
+          free_throws_made: number | null
+          games_played: number | null
+          id: string
+          minutes_played: number | null
+          player_name: string
+          points: number | null
+          points_per_game: number | null
+          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          rebounds: number | null
+          rebounds_per_game: number | null
+          season: number
+          steals: number | null
+          team: string | null
+          three_point_percentage: number | null
+          three_pointers_attempted: number | null
+          three_pointers_made: number | null
+          turnovers: number | null
+        }
+        Insert: {
+          assists?: number | null
+          assists_per_game?: number | null
+          blocks?: number | null
+          created_at?: string | null
+          fantasy_points_categories?: number | null
+          fantasy_points_points?: number | null
+          field_goal_percentage?: number | null
+          field_goals_attempted?: number | null
+          field_goals_made?: number | null
+          free_throw_percentage?: number | null
+          free_throws_attempted?: number | null
+          free_throws_made?: number | null
+          games_played?: number | null
+          id?: string
+          minutes_played?: number | null
+          player_name: string
+          points?: number | null
+          points_per_game?: number | null
+          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          rebounds?: number | null
+          rebounds_per_game?: number | null
+          season: number
+          steals?: number | null
+          team?: string | null
+          three_point_percentage?: number | null
+          three_pointers_attempted?: number | null
+          three_pointers_made?: number | null
+          turnovers?: number | null
+        }
+        Update: {
+          assists?: number | null
+          assists_per_game?: number | null
+          blocks?: number | null
+          created_at?: string | null
+          fantasy_points_categories?: number | null
+          fantasy_points_points?: number | null
+          field_goal_percentage?: number | null
+          field_goals_attempted?: number | null
+          field_goals_made?: number | null
+          free_throw_percentage?: number | null
+          free_throws_attempted?: number | null
+          free_throws_made?: number | null
+          games_played?: number | null
+          id?: string
+          minutes_played?: number | null
+          player_name?: string
+          points?: number | null
+          points_per_game?: number | null
+          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          rebounds?: number | null
+          rebounds_per_game?: number | null
+          season?: number
+          steals?: number | null
+          team?: string | null
+          three_point_percentage?: number | null
+          three_pointers_attempted?: number | null
+          three_pointers_made?: number | null
+          turnovers?: number | null
+        }
+        Relationships: []
+      }
+      user_analytics: {
+        Row: {
+          average_pick_quality: number | null
+          created_at: string | null
+          draft_session_id: string | null
+          id: string
+          preferred_positions: Json | null
+          strategy_effectiveness: Json | null
+          successful_picks: number | null
+          total_drafts: number | null
+          total_picks: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          average_pick_quality?: number | null
+          created_at?: string | null
+          draft_session_id?: string | null
+          id?: string
+          preferred_positions?: Json | null
+          strategy_effectiveness?: Json | null
+          successful_picks?: number | null
+          total_drafts?: number | null
+          total_picks?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          average_pick_quality?: number | null
+          created_at?: string | null
+          draft_session_id?: string | null
+          id?: string
+          preferred_positions?: Json | null
+          strategy_effectiveness?: Json | null
+          successful_picks?: number | null
+          total_drafts?: number | null
+          total_picks?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_analytics_draft_session_id_fkey"
+            columns: ["draft_session_id"]
+            isOneToOne: false
+            referencedRelation: "draft_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_preferences: {
+        Row: {
+          auto_pick_enabled: boolean | null
+          created_at: string | null
+          draft_position: number | null
+          id: string
+          league_type: 'Points' | 'Categories' | 'Head2Head' | 'Roto' | null
+          notifications_enabled: boolean | null
+          preferred_strategy: 'Best Available' | 'Position Need' | 'Punt Strategy' | 'Stars and Scrubs' | 'Balanced Build' | 'Category Focus' | null
+          team_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_pick_enabled?: boolean | null
+          created_at?: string | null
+          draft_position?: number | null
+          id?: string
+          league_type?: 'Points' | 'Categories' | 'Head2Head' | 'Roto' | null
+          notifications_enabled?: boolean | null
+          preferred_strategy?: 'Best Available' | 'Position Need' | 'Punt Strategy' | 'Stars and Scrubs' | 'Balanced Build' | 'Category Focus' | null
+          team_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_pick_enabled?: boolean | null
+          created_at?: string | null
+          draft_position?: number | null
+          id?: string
+          league_type?: 'Points' | 'Categories' | 'Head2Head' | 'Roto' | null
+          notifications_enabled?: boolean | null
+          preferred_strategy?: 'Best Available' | 'Position Need' | 'Punt Strategy' | 'Stars and Scrubs' | 'Balanced Build' | 'Category Focus' | null
+          team_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          created_at: string | null
+          draft_picks_limit: number | null
+          draft_picks_used: number | null
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscription_expires_at: string | null
+          subscription_tier: 'free' | 'basic' | 'premium' | null
+          trial_started_at: string | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          draft_picks_limit?: number | null
+          draft_picks_used?: number | null
+          email: string
+          id: string
+          stripe_customer_id?: string | null
+          subscription_expires_at?: string | null
+          subscription_tier?: 'free' | 'basic' | 'premium' | null
+          trial_started_at?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          draft_picks_limit?: number | null
+          draft_picks_used?: number | null
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscription_expires_at?: string | null
+          subscription_tier?: 'free' | 'basic' | 'premium' | null
+          trial_started_at?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -411,11 +454,11 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      subscription_tier: 'free' | 'basic' | 'premium'
-      league_type: 'PPR' | 'Standard' | 'Half-PPR' | 'Superflex'
-      draft_strategy: 'Best Available' | 'Position Need' | 'Zero RB' | 'Hero RB' | 'Late Round QB' | 'Streaming'
-      draft_status: 'active' | 'completed' | 'cancelled'
-      player_position: 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF' | 'DST'
+      draft_status: "active" | "completed" | "cancelled"
+      draft_strategy: "Best Available" | "Position Need" | "Punt Strategy" | "Stars and Scrubs" | "Balanced Build" | "Category Focus"
+      league_type: "Points" | "Categories" | "Head2Head" | "Roto"
+      player_position: "PG" | "SG" | "SF" | "PF" | "C" | "G" | "F" | "UTIL"
+      subscription_tier: "free" | "basic" | "premium"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -465,7 +508,7 @@ export type DraftStrategy = Database['public']['Enums']['draft_strategy']
 export type DraftStatus = Database['public']['Enums']['draft_status']
 export type PlayerPosition = Database['public']['Enums']['player_position']
 
-// API Response types
+// Basketball-specific API Response types
 export interface DraftRecommendation {
   player: PlayerRanking
   reason: string

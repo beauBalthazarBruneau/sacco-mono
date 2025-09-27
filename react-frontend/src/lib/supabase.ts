@@ -51,19 +51,22 @@ export const getCurrentUser = async () => {
   return { user, error }
 }
 
-// Player data types (matching actual database schema)
+// Basketball Player data types (matching actual database schema)
 export interface Player {
   id: string
   player_name: string
-  position: string | null // Database uses text, not enum for player_rankings
+  position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
   team: string | null
   adp: number | null
-  ppr_points: number | null
-  standard_points: number | null
-  half_ppr_points: number | null
-  ppr_points_per_game: number | null
-  standard_points_per_game: number | null
-  half_ppr_points_per_game: number | null
+  categories_points: number | null
+  points_league_points: number | null
+  categories_rank: number | null
+  points_rank: number | null
+  projected_points: number | null
+  projected_rebounds: number | null
+  projected_assists: number | null
+  projected_steals: number | null
+  projected_blocks: number | null
   last_updated: string | null
 }
 
@@ -79,7 +82,7 @@ export const getPlayers = async (
   limit: number = 25,
   search?: string,
   position?: string,
-  sortBy: 'adp' | 'ppr_points' = 'adp',
+  sortBy: 'adp' | 'categories_points' | 'points_league_points' | 'categories_rank' | 'points_rank' = 'adp',
   sortOrder: 'asc' | 'desc' = 'asc'
 ): Promise<PlayersResponse> => {
   if (!supabase) {
