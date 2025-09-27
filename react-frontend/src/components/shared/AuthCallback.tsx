@@ -10,6 +10,12 @@ export const AuthCallback: React.FC = () => {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
+      if (!supabase) {
+        setError('Authentication service not available.')
+        setIsProcessing(false)
+        return
+      }
+
       try {
         // Handle the magic link callback
         const { data, error } = await supabase.auth.getSession()

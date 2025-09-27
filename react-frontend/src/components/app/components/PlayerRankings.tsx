@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Card,
   Title,
@@ -7,68 +7,119 @@ import {
   Box,
   Divider,
   ThemeIcon,
-  Group
+  Group,
+  Loader,
+  Center,
+  Badge
 } from '@mantine/core'
 import { IconTrendingUp } from '@tabler/icons-react'
-
-interface PlayerRanking {
-  id: string
-  name: string
-  rank: number
-}
-
-const mockRankings: PlayerRanking[] = [
-  { id: '1', name: 'Josh Allen', rank: 1 },
-  { id: '2', name: 'Christian McCaffrey', rank: 2 },
-  { id: '3', name: 'Cooper Kupp', rank: 3 },
-  { id: '4', name: 'Travis Kelce', rank: 4 },
-  { id: '5', name: 'Austin Ekeler', rank: 5 },
-  { id: '6', name: 'Tyreek Hill', rank: 6 },
-  { id: '7', name: 'Davante Adams', rank: 7 },
-  { id: '8', name: 'Derrick Henry', rank: 8 },
-  { id: '9', name: 'Stefon Diggs', rank: 9 },
-  { id: '10', name: 'Nick Chubb', rank: 10 },
-  { id: '11', name: 'Saquon Barkley', rank: 11 },
-  { id: '12', name: 'Mike Evans', rank: 12 },
-  { id: '13', name: 'Alvin Kamara', rank: 13 },
-  { id: '14', name: 'DK Metcalf', rank: 14 },
-  { id: '15', name: 'Dalvin Cook', rank: 15 }
-]
+import { getPlayers, type Player } from '../../../lib/supabase'
 
 export const PlayerRankings: React.FC = () => {
+  const [players, setPlayers] = useState<Player[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchTopPlayers = async () => {
+      try {
+        setLoading(true)
+        const response = await getPlayers(0, 15, '', '', 'adp', 'asc')
+
+        if (response.error) {
+          setError(response.error)
+        } else {
+          setPlayers(response.data)
+        }
+      } catch (err) {
+        setError('Failed to load player rankings')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTopPlayers()
+  }, [])
+
+  const getPositionColor = (position: string | null) => {
+    if (!position) return 'gray'
+    switch (position.toUpperCase()) {
+      case 'QB': return 'red'
+      case 'RB': return 'green'
+      case 'WR': return 'blue'
+      case 'TE': return 'orange'
+      case 'K': return 'yellow'
+      case 'DEF':
+      case 'DST': return 'purple'
+      default: return 'gray'
+    }
+  }
+
   return (
     <Card withBorder padding="lg" bg="var(--mantine-color-dark-6)">
       <Stack gap="lg">
         {/* Header */}
         <Group gap="md">
-          <ThemeIcon 
-            size={32} 
-            radius="md" 
+          <ThemeIcon
+            size={32}
+            radius="md"
             variant="gradient"
             gradient={{ from: 'green.6', to: 'green.7' }}
           >
             <IconTrendingUp size={20} />
           </ThemeIcon>
           <Title order={3} size="h4">
-            Player Rankings
+            Top Player Rankings
           </Title>
         </Group>
 
         {/* Rankings List */}
-        <Stack gap={0}>
-          {mockRankings.map((player, index) => (
-            <Box key={player.id}>
-              <Box py="md">
-                <Text size="md" fw={500}>
-                  {player.name} #{player.rank}
-                </Text>
+        {loading ? (
+          <Center py="xl">
+            <Loader size="md" />
+          </Center>
+        ) : error ? (
+          <Center py="xl">
+            <Text c="red" size="sm">{error}</Text>
+          </Center>
+        ) : (
+          <Stack gap={0}>
+            {players.map((player, index) => (
+              <Box key={player.id}>
+                <Box py="md">
+                  <Group justify="space-between" align="center">
+                    <Box>
+                      <Group gap="xs" align="center">
+                        <Text size="md" fw={500}>
+                          {player.player_name}
+                        </Text>
+                        {player.position && (
+                          <Badge
+                            size="sm"
+                            color={getPositionColor(player.position)}
+                            variant="light"
+                          >
+                            {player.position.toUpperCase()}
+                          </Badge>
+                        )}
+                      </Group>
+                      <Text size="xs" c="dimmed">
+                        {player.team && `${player.team} • `}
+                        ADP: {player.adp ? player.adp.toFixed(1) : 'N/A'}
+                      </Text>
+                    </Box>
+                    <Text size="sm" fw={600} c="green">
+                      #{index + 1}
+                    </Text>
+                  </Group>
+                </Box>
+                {index < players.length - 1 && (
+                  <Divider color="var(--mantine-color-dark-4)" />
+                )}
               </Box>
-              {index < mockRankings.length - 1 && (
-                <Divider color="var(--mantine-color-dark-4)" />
-              )}
-            </Box>
-          ))}
-        </Stack>
+            ))}
+          </Stack>
+        )}
       </Stack>
     </Card>
   )

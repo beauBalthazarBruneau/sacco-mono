@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from '../types/supabase'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sjmljrgabepxdfhefyxo.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
 // Only create the client if we have a valid key
-let supabase: ReturnType<typeof createClient> | null = null
+let supabase: ReturnType<typeof createClient<Database>> | null = null
 
 if (supabaseAnonKey && supabaseAnonKey !== '') {
-  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
@@ -50,11 +51,11 @@ export const getCurrentUser = async () => {
   return { user, error }
 }
 
-// Player data types
+// Player data types (matching actual database schema)
 export interface Player {
   id: string
   player_name: string
-  position: 'QB' | 'RB' | 'WR' | 'TE'
+  position: string | null // Database uses text, not enum for player_rankings
   team: string | null
   adp: number | null
   ppr_points: number | null
@@ -119,5 +120,74 @@ export const getPlayers = async (
   } catch (err) {
     console.error('Unexpected error fetching players:', err)
     return { data: [], count: 0, error: 'Unexpected error occurred' }
+  }
+}
+
+// Use database types directly
+export type DraftSession = {
+  id: string
+  user_id: string
+  league_name: string
+  platform: string
+  draft_date: string | null
+  team_count: number
+  draft_position: number
+  status: 'active' | 'completed' | 'cancelled' | null
+  settings: any | null
+  created_at: string | null
+  updated_at: string | null
+}
+
+export interface DraftSessionsResponse {
+  data: DraftSession[]
+  count: number
+  error: string | null
+}
+
+// Draft sessions service functions
+export const getDraftSessions = async (
+  userId: string,
+  limit: number = 50
+): Promise<DraftSessionsResponse> => {
+  if (!supabase) {
+    return { data: [], count: 0, error: 'Supabase not configured' }
+  }
+
+  try {
+    const { data, error, count } = await supabase
+      .from('draft_sessions')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.error('Error fetching draft sessions:', error)
+      return { data: [], count: 0, error: error.message }
+    }
+
+    return { data: data || [], count: count || 0, error: null }
+  } catch (err) {
+    console.error('Unexpected error fetching draft sessions:', err)
+    return { data: [], count: 0, error: 'Unexpected error occurred' }
+  }
+}
+
+export const createDraftSession = async (sessionData: Database['public']['Tables']['draft_sessions']['Insert']) => {
+  if (!supabase) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('draft_sessions')
+      .insert(sessionData)
+      .select()
+      .single()
+
+    return { data, error }
+  } catch (err) {
+    console.error('Error creating draft session:', err)
+    return { data: null, error: { message: 'Failed to create draft session' } }
   }
 }

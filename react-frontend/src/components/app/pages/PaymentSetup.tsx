@@ -37,6 +37,8 @@ export function PaymentSetup() {
   }, [user, navigate]);
 
   const createPaymentIntent = async () => {
+    if (!supabase) return;
+
     try {
       setLoading(true);
       setError('');

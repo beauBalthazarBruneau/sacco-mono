@@ -4,7 +4,7 @@ import { theme } from './lib/mantine'
 import { AuthProvider } from './contexts/AuthContext'
 import { LandingPage, BlogPost } from './components/landing'
 import { SignUp, AuthCallback, ProtectedRoute } from './components/shared'
-import { Dashboard, PlayerBrowser, BillingDashboard, PaymentSetup } from './components/app'
+import { Dashboard, PlayerBrowser } from './components/app'
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -28,22 +28,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PlayerBrowser />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/billing" 
-              element={
-                <ProtectedRoute>
-                  <BillingDashboard />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/billing/payment-setup" 
-              element={
-                <ProtectedRoute>
-                  <PaymentSetup />
                 </ProtectedRoute>
               } 
             />

@@ -6,12 +6,16 @@ interface PlayerCardProps {
   player: Player
 }
 
-const getPositionColor = (position: string) => {
-  switch (position) {
+const getPositionColor = (position: string | null) => {
+  if (!position) return 'gray'
+  switch (position.toUpperCase()) {
     case 'QB': return 'red'
     case 'RB': return 'green'
     case 'WR': return 'blue'
     case 'TE': return 'orange'
+    case 'K': return 'yellow'
+    case 'DEF':
+    case 'DST': return 'purple'
     default: return 'gray'
   }
 }
@@ -55,14 +59,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
               {player.player_name}
             </Text>
           </Box>
-          <Badge 
-            color={getPositionColor(player.position)}
-            variant="filled"
-            size="sm"
-            style={{ flexShrink: 0 }}
-          >
-            {player.position}
-          </Badge>
+          {player.position && (
+            <Badge
+              color={getPositionColor(player.position)}
+              variant="filled"
+              size="sm"
+              style={{ flexShrink: 0 }}
+            >
+              {player.position.toUpperCase()}
+            </Badge>
+          )}
         </Group>
 
         {/* Team and ADP */}

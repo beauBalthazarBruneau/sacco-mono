@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Stack, Title, Text, Grid, Box, Group, Button } from '@mantine/core'
+import { Container, Stack, Title, Grid, Box, Group, Button } from '@mantine/core'
 import { IconSettings } from '@tabler/icons-react'
 import { LeaguesList, PlayerRankings } from '../components'
 
