@@ -14,6 +14,10 @@ export class DraftUsageService {
    * Check if user can use another draft pick
    */
   static async checkUsage(userId: string): Promise<UsageCheckResult> {
+    if (!supabase) {
+      throw new Error('Database service not available');
+    }
+
     const { data: profile, error } = await supabase
       .from('user_profiles')
       .select('draft_picks_used, draft_picks_limit, subscription_tier')
@@ -24,7 +28,10 @@ export class DraftUsageService {
       throw new Error('Failed to fetch user profile');
     }
 
-    const { draft_picks_used, draft_picks_limit, subscription_tier } = profile;
+    const draft_picks_used = profile.draft_picks_used ?? 0;
+    const draft_picks_limit = profile.draft_picks_limit ?? FREE_TRIAL_PICKS;
+    const subscription_tier = profile.subscription_tier ?? 'free';
+
     const canUsePick = draft_picks_used < draft_picks_limit;
     const needsPayment = subscription_tier === 'free' && draft_picks_used >= FREE_TRIAL_PICKS;
 
@@ -41,9 +48,13 @@ export class DraftUsageService {
    * Increment draft pick usage for a user
    */
   static async incrementUsage(userId: string): Promise<void> {
+    if (!supabase) {
+      throw new Error('Database service not available');
+    }
+
     // First check if user can use a pick
     const usage = await this.checkUsage(userId);
-    
+
     if (!usage.canUsePick) {
       throw new Error('Draft pick limit reached. Payment required to continue.');
     }
@@ -51,7 +62,7 @@ export class DraftUsageService {
     // Increment usage
     const { error } = await supabase
       .from('user_profiles')
-      .update({ 
+      .update({
         draft_picks_used: usage.picksUsed + 1,
         trial_started_at: usage.picksUsed === 0 ? new Date().toISOString() : undefined
       })
@@ -66,6 +77,10 @@ export class DraftUsageService {
    * Initialize free trial for a new user
    */
   static async initializeFreeTrial(userId: string): Promise<void> {
+    if (!supabase) {
+      throw new Error('Database service not available');
+    }
+
     const { error } = await supabase
       .from('user_profiles')
       .update({
@@ -85,6 +100,10 @@ export class DraftUsageService {
    * Upgrade user after successful payment
    */
   static async upgradeToPaid(userId: string, newLimit: number = 50): Promise<void> {
+    if (!supabase) {
+      throw new Error('Database service not available');
+    }
+
     const { error } = await supabase
       .from('user_profiles')
       .update({

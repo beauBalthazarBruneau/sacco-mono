@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import '../styles/blog.css'
+import '../../styles/blog.css'
 import { 
   Container, 
   Title, 
@@ -23,7 +23,7 @@ import {
   IconBookmark
 } from '@tabler/icons-react'
 import { motion } from 'framer-motion'
-import { getBlogPostBySlug, getRelatedBlogPosts } from '../utils/blog'
+import { getBlogPostBySlug, getRelatedBlogPosts } from '../../utils/blog'
 import { BlogPostSEO } from './SEO/BlogPostSEO'
 
 export const BlogPost: React.FC = () => {

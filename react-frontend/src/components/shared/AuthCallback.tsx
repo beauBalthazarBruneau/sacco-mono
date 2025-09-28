@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { Container, Title, Text, Box, Loader } from '@mantine/core'
 
 export const AuthCallback: React.FC = () => {
@@ -9,21 +9,44 @@ export const AuthCallback: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    console.log('AuthCallback component mounted')
+    console.log('Current URL:', window.location.href)
+
     const handleAuthCallback = async () => {
+      console.log('Starting auth callback handler')
+
+      if (!supabase) {
+        console.error('Supabase not available')
+        setError('Authentication service not available.')
+        setIsProcessing(false)
+        return
+      }
+
+      // Add a small delay to ensure Supabase has processed the URL
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
       try {
-        // Handle the magic link callback
+        console.log('Checking for session...')
         const { data, error } = await supabase.auth.getSession()
-        
+
+        console.log('Session check result:', {
+          hasSession: !!data.session,
+          hasUser: !!data.session?.user,
+          error: error?.message
+        })
+
         if (error) {
-          setError('Authentication failed. Please try again.')
+          console.error('Session error:', error)
+          setError(`Authentication failed: ${error.message}`)
           setIsProcessing(false)
           return
         }
 
         if (data.session) {
-          // Successfully authenticated, redirect to signup with auth state
-          navigate('/signup?authenticated=true', { replace: true })
+          console.log('Session found, navigating to dashboard')
+          navigate('/dashboard', { replace: true })
         } else {
+          console.log('No session found')
           setError('No session found. Please try the magic link again.')
           setIsProcessing(false)
         }

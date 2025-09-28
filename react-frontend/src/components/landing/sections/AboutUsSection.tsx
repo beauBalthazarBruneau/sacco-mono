@@ -3,7 +3,7 @@ import { Container, Title, Text, Card, Button, SimpleGrid, Box, Avatar, Stack, G
 import { IconBrain, IconCode, IconTrophy, IconRocket } from '@tabler/icons-react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { signInWithMagicLink } from '../../lib/supabase'
+import { signInWithMagicLink } from '../../../lib/supabase'
 
 export const AboutUsSection: React.FC = () => {
   const [email, setEmail] = useState('')

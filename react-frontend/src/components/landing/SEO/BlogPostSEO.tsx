@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import type { BlogPost } from '../../types/blog'
+import type { BlogPost } from '../../../types/blog'
 
 interface BlogPostSEOProps {
   post: BlogPost

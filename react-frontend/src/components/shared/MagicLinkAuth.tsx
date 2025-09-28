@@ -12,7 +12,7 @@ import {
   ThemeIcon
 } from '@mantine/core'
 import { IconLock, IconMail, IconAlertCircle, IconCheck } from '@tabler/icons-react'
-import { signInWithMagicLink } from '../lib/supabase'
+import { signInWithMagicLink } from '../../lib/supabase'
 
 interface MagicLinkAuthProps {
   onSuccess?: () => void

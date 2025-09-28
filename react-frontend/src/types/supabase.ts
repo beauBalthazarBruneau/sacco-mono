@@ -16,7 +16,7 @@ export type Database = {
           pick_number: number
           picked_at: string | null
           player_name: string
-          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          position: Database["public"]["Enums"]["player_position"]
           recommendation_reason: string | null
           recommended: boolean | null
           round: number
@@ -28,7 +28,7 @@ export type Database = {
           pick_number: number
           picked_at?: string | null
           player_name: string
-          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          position: Database["public"]["Enums"]["player_position"]
           recommendation_reason?: string | null
           recommended?: boolean | null
           round: number
@@ -40,7 +40,7 @@ export type Database = {
           pick_number?: number
           picked_at?: string | null
           player_name?: string
-          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          position?: Database["public"]["Enums"]["player_position"]
           recommendation_reason?: string | null
           recommended?: boolean | null
           round?: number
@@ -65,7 +65,7 @@ export type Database = {
           league_name: string
           platform: string
           settings: Json | null
-          status: 'active' | 'completed' | 'cancelled' | null
+          status: Database["public"]["Enums"]["draft_status"] | null
           team_count: number
           updated_at: string | null
           user_id: string
@@ -78,7 +78,7 @@ export type Database = {
           league_name: string
           platform: string
           settings?: Json | null
-          status?: 'active' | 'completed' | 'cancelled' | null
+          status?: Database["public"]["Enums"]["draft_status"] | null
           team_count: number
           updated_at?: string | null
           user_id: string
@@ -91,7 +91,7 @@ export type Database = {
           league_name?: string
           platform?: string
           settings?: Json | null
-          status?: 'active' | 'completed' | 'cancelled' | null
+          status?: Database["public"]["Enums"]["draft_status"] | null
           team_count?: number
           updated_at?: string | null
           user_id?: string
@@ -116,7 +116,7 @@ export type Database = {
           stripe_invoice_id: string | null
           stripe_payment_intent_id: string | null
           stripe_subscription_id: string | null
-          subscription_tier: 'free' | 'basic' | 'premium'
+          subscription_tier: Database["public"]["Enums"]["subscription_tier"]
           user_id: string
         }
         Insert: {
@@ -128,7 +128,7 @@ export type Database = {
           stripe_invoice_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_subscription_id?: string | null
-          subscription_tier: 'free' | 'basic' | 'premium'
+          subscription_tier: Database["public"]["Enums"]["subscription_tier"]
           user_id: string
         }
         Update: {
@@ -140,7 +140,7 @@ export type Database = {
           stripe_invoice_id?: string | null
           stripe_payment_intent_id?: string | null
           stripe_subscription_id?: string | null
-          subscription_tier?: 'free' | 'basic' | 'premium'
+          subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
           user_id?: string
         }
         Relationships: [
@@ -163,7 +163,7 @@ export type Database = {
           player_name: string
           points_league_points: number | null
           points_rank: number | null
-          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
+          position: Database["public"]["Enums"]["player_position"] | null
           projected_assists: number | null
           projected_blocks: number | null
           projected_points: number | null
@@ -180,7 +180,7 @@ export type Database = {
           player_name: string
           points_league_points?: number | null
           points_rank?: number | null
-          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
+          position?: Database["public"]["Enums"]["player_position"] | null
           projected_assists?: number | null
           projected_blocks?: number | null
           projected_points?: number | null
@@ -197,7 +197,7 @@ export type Database = {
           player_name?: string
           points_league_points?: number | null
           points_rank?: number | null
-          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL' | null
+          position?: Database["public"]["Enums"]["player_position"] | null
           projected_assists?: number | null
           projected_blocks?: number | null
           projected_points?: number | null
@@ -227,7 +227,7 @@ export type Database = {
           player_name: string
           points: number | null
           points_per_game: number | null
-          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          position: Database["public"]["Enums"]["player_position"]
           rebounds: number | null
           rebounds_per_game: number | null
           season: number
@@ -257,7 +257,7 @@ export type Database = {
           player_name: string
           points?: number | null
           points_per_game?: number | null
-          position: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          position: Database["public"]["Enums"]["player_position"]
           rebounds?: number | null
           rebounds_per_game?: number | null
           season: number
@@ -287,7 +287,7 @@ export type Database = {
           player_name?: string
           points?: number | null
           points_per_game?: number | null
-          position?: 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'
+          position?: Database["public"]["Enums"]["player_position"]
           rebounds?: number | null
           rebounds_per_game?: number | null
           season?: number
@@ -363,9 +363,11 @@ export type Database = {
           created_at: string | null
           draft_position: number | null
           id: string
-          league_type: 'Points' | 'Categories' | 'Head2Head' | 'Roto' | null
+          league_type: Database["public"]["Enums"]["league_type"] | null
           notifications_enabled: boolean | null
-          preferred_strategy: 'Best Available' | 'Position Need' | 'Punt Strategy' | 'Stars and Scrubs' | 'Balanced Build' | 'Category Focus' | null
+          preferred_strategy:
+            | Database["public"]["Enums"]["draft_strategy"]
+            | null
           team_count: number | null
           updated_at: string | null
           user_id: string
@@ -375,9 +377,11 @@ export type Database = {
           created_at?: string | null
           draft_position?: number | null
           id?: string
-          league_type?: 'Points' | 'Categories' | 'Head2Head' | 'Roto' | null
+          league_type?: Database["public"]["Enums"]["league_type"] | null
           notifications_enabled?: boolean | null
-          preferred_strategy?: 'Best Available' | 'Position Need' | 'Punt Strategy' | 'Stars and Scrubs' | 'Balanced Build' | 'Category Focus' | null
+          preferred_strategy?:
+            | Database["public"]["Enums"]["draft_strategy"]
+            | null
           team_count?: number | null
           updated_at?: string | null
           user_id: string
@@ -387,9 +391,11 @@ export type Database = {
           created_at?: string | null
           draft_position?: number | null
           id?: string
-          league_type?: 'Points' | 'Categories' | 'Head2Head' | 'Roto' | null
+          league_type?: Database["public"]["Enums"]["league_type"] | null
           notifications_enabled?: boolean | null
-          preferred_strategy?: 'Best Available' | 'Position Need' | 'Punt Strategy' | 'Stars and Scrubs' | 'Balanced Build' | 'Category Focus' | null
+          preferred_strategy?:
+            | Database["public"]["Enums"]["draft_strategy"]
+            | null
           team_count?: number | null
           updated_at?: string | null
           user_id?: string
@@ -413,7 +419,9 @@ export type Database = {
           id: string
           stripe_customer_id: string | null
           subscription_expires_at: string | null
-          subscription_tier: 'free' | 'basic' | 'premium' | null
+          subscription_tier:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
           trial_started_at: string | null
           updated_at: string | null
           username: string | null
@@ -426,7 +434,9 @@ export type Database = {
           id: string
           stripe_customer_id?: string | null
           subscription_expires_at?: string | null
-          subscription_tier?: 'free' | 'basic' | 'premium' | null
+          subscription_tier?:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
           trial_started_at?: string | null
           updated_at?: string | null
           username?: string | null
@@ -439,7 +449,9 @@ export type Database = {
           id?: string
           stripe_customer_id?: string | null
           subscription_expires_at?: string | null
-          subscription_tier?: 'free' | 'basic' | 'premium' | null
+          subscription_tier?:
+            | Database["public"]["Enums"]["subscription_tier"]
+            | null
           trial_started_at?: string | null
           updated_at?: string | null
           username?: string | null
@@ -465,85 +477,3 @@ export type Database = {
     }
   }
 }
-
-// Helper types for common operations
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
-export type Inserts<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
-export type Updates<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']
-
-// Specific table types
-export type UserProfile = Tables<'user_profiles'>
-export type UserPreferences = Tables<'user_preferences'>
-export type DraftSession = Tables<'draft_sessions'>
-export type DraftPick = Tables<'draft_picks'>
-export type PlayerRanking = Tables<'player_rankings'>
-export type PlayerStats = Tables<'player_stats'>
-export type UserAnalytics = Tables<'user_analytics'>
-export type PaymentHistory = Tables<'payment_history'>
-
-// Insert types
-export type UserProfileInsert = Inserts<'user_profiles'>
-export type UserPreferencesInsert = Inserts<'user_preferences'>
-export type DraftSessionInsert = Inserts<'draft_sessions'>
-export type DraftPickInsert = Inserts<'draft_picks'>
-export type PlayerRankingInsert = Inserts<'player_rankings'>
-export type PlayerStatsInsert = Inserts<'player_stats'>
-export type UserAnalyticsInsert = Inserts<'user_analytics'>
-export type PaymentHistoryInsert = Inserts<'payment_history'>
-
-// Update types
-export type UserProfileUpdate = Updates<'user_profiles'>
-export type UserPreferencesUpdate = Updates<'user_preferences'>
-export type DraftSessionUpdate = Updates<'draft_sessions'>
-export type DraftPickUpdate = Updates<'draft_picks'>
-export type PlayerRankingUpdate = Updates<'player_rankings'>
-export type PlayerStatsUpdate = Updates<'player_stats'>
-export type UserAnalyticsUpdate = Updates<'user_analytics'>
-export type PaymentHistoryUpdate = Updates<'payment_history'>
-
-// Enum types
-export type SubscriptionTier = Database['public']['Enums']['subscription_tier']
-export type LeagueType = Database['public']['Enums']['league_type']
-export type DraftStrategy = Database['public']['Enums']['draft_strategy']
-export type DraftStatus = Database['public']['Enums']['draft_status']
-export type PlayerPosition = Database['public']['Enums']['player_position']
-
-// Basketball-specific API Response types
-export interface DraftRecommendation {
-  player: PlayerRanking
-  reason: string
-  confidence: number
-  strategy: DraftStrategy
-}
-
-export interface DraftAnalysis {
-  sessionId: string
-  currentRound: number
-  currentPick: number
-  teamNeeds: Record<PlayerPosition, number>
-  recommendations: DraftRecommendation[]
-  bestAvailable: PlayerRanking[]
-}
-
-export interface UserDraftHistory {
-  sessions: (DraftSession & {
-    picks: DraftPick[]
-    analytics: {
-      totalPicks: number
-      successfulPicks: number
-      averageQuality: number
-    }
-  })[]
-}
-
-// Utility types
-export type WithRelations<T, R extends Record<string, any>> = T & R
-
-export type DraftSessionWithPicks = WithRelations<DraftSession, {
-  picks: DraftPick[]
-}>
-
-export type UserProfileWithPreferences = WithRelations<UserProfile, {
-  preferences: UserPreferences
-  analytics: UserAnalytics
-}>

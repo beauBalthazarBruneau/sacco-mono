@@ -23,10 +23,10 @@ import {
   IconLogout,
   IconUser
 } from '@tabler/icons-react'
-import { useAuth } from '../hooks/useAuth'
-import { getPlayers, type Player } from '../lib/supabase'
-import { PlayerCard } from './PlayerCard'
-import { SearchFilters } from './SearchFilters'
+import { useAuth } from '../../../hooks/useAuth'
+import { getPlayers, type Player } from '../../../lib/supabase'
+import { PlayerCard } from '../components/PlayerCard'
+import { SearchFilters } from '../components/SearchFilters'
 
 export const PlayerBrowser: React.FC = () => {
   const { user, signOut } = useAuth()
@@ -37,7 +37,7 @@ export const PlayerBrowser: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0)
   const [search, setSearch] = useState('')
   const [position, setPosition] = useState('ALL')
-  const [sortBy, setSortBy] = useState<'adp' | 'ppr_points'>('adp')
+  const [sortBy, setSortBy] = useState<'adp' | 'categories_points' | 'categories_rank' | 'points_league_points' | 'points_rank'>('adp')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   const playersPerPage = 25
@@ -88,7 +88,7 @@ export const PlayerBrowser: React.FC = () => {
     setCurrentPage(1) // Reset to first page when filtering
   }, [])
 
-  const handleSortChange = useCallback((newSortBy: 'adp' | 'ppr_points', newSortOrder: 'asc' | 'desc') => {
+  const handleSortChange = useCallback((newSortBy: 'adp' | 'categories_points' | 'categories_rank' | 'points_league_points' | 'points_rank', newSortOrder: 'asc' | 'desc') => {
     setSortBy(newSortBy)
     setSortOrder(newSortOrder)
     setCurrentPage(1) // Reset to first page when sorting

@@ -2,14 +2,9 @@ import { MantineProvider } from '@mantine/core'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { theme } from './lib/mantine'
 import { AuthProvider } from './contexts/AuthContext'
-import { LandingPage } from './components/LandingPage'
-import { SignUp } from './components/SignUp'
-import { AuthCallback } from './components/AuthCallback'
-import { PlayerBrowser } from './components/PlayerBrowser'
-import { BlogPost } from './components/BlogPost'
-import { ProtectedRoute } from './components/ProtectedRoute'
-import { BillingDashboard } from './components/BillingDashboard'
-import { PaymentSetup } from './components/PaymentSetup'
+import { LandingPage, BlogPost } from './components/landing'
+import { SignUp, AuthCallback, ProtectedRoute } from './components/shared'
+import { Dashboard, PlayerBrowser, DraftSession } from './components/app'
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -21,28 +16,28 @@ function App() {
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route 
-              path="/players" 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route
+              path="/players"
               element={
                 <ProtectedRoute>
                   <PlayerBrowser />
                 </ProtectedRoute>
-              } 
+              }
             />
-            <Route 
-              path="/billing" 
+            <Route
+              path="/draft/:sessionId"
               element={
                 <ProtectedRoute>
-                  <BillingDashboard />
+                  <DraftSession />
                 </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/billing/payment-setup" 
-              element={
-                <ProtectedRoute>
-                  <PaymentSetup />
-                </ProtectedRoute>
-              } 
+              }
             />
           </Routes>
         </Router>

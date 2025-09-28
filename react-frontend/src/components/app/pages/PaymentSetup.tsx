@@ -14,10 +14,10 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { getStripe, formatCurrency, DRAFT_PICKS_FEE } from '../lib/stripe';
-import { useAuth } from '../hooks/useAuth';
-import { supabase } from '../lib/supabase';
-import { PaymentForm } from './PaymentForm';
+import { getStripe, formatCurrency, DRAFT_PICKS_FEE } from '../../../lib/stripe';
+import { useAuth } from '../../../hooks/useAuth';
+import { supabase } from '../../../lib/supabase';
+import { PaymentForm } from '../components/PaymentForm';
 
 export function PaymentSetup() {
   const [clientSecret, setClientSecret] = useState<string>('');
@@ -37,6 +37,8 @@ export function PaymentSetup() {
   }, [user, navigate]);
 
   const createPaymentIntent = async () => {
+    if (!supabase) return;
+
     try {
       setLoading(true);
       setError('');

@@ -3,8 +3,8 @@ import { Container, Title, Text, Card, Button, Box, Badge, Stack, Group, ActionI
 import { IconArrowLeft, IconArrowRight, IconCalendar, IconUser, IconExternalLink } from '@tabler/icons-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
-import { signInWithMagicLink } from '../../lib/supabase'
-import { getRecentBlogPosts } from '../../utils/blog'
+import { signInWithMagicLink } from '../../../lib/supabase'
+import { getRecentBlogPosts } from '../../../utils/blog'
 
 export const BlogSection: React.FC = () => {
   const [email, setEmail] = useState('')
