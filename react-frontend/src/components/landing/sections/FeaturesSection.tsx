@@ -7,23 +7,23 @@ export const FeaturesSection: React.FC = () => {
   const features = [
     {
       icon: IconTrophy,
-      title: 'Win Your League',
+      title: 'Context-Aware Draft Assistant',
       description: 'Advanced algorithms and real-time data analysis to give you the competitive edge you need to dominate your fantasy league.'
     },
     {
       icon: IconBrain,
-      title: 'Smart Draft Assistant',
-      description: 'AI-powered draft recommendations based on player value, team needs, and advanced statistical modeling.'
+      title: 'Opportunity Cost',
+      description: 'Using economic theory, we recommend the best available player (BAP) for each pick, based on all other teams.'
     },
     {
       icon: IconChartLine,
-      title: 'Player Analytics',
-      description: 'Deep dive into player performance metrics, injury reports, and matchup analysis to make informed decisions.'
+      title: 'Survival Rates',
+      description: 'Know how long a player will last in your league, updated with every pick.'
     },
     {
       icon: IconUsers,
-      title: 'Community Insights',
-      description: 'Connect with other fantasy managers and share strategies, tips, and insights to improve your game.'
+      title: 'No AI Slop',
+      description: 'Sacco uses hard math and data so you can avoid the AI bullshit.'
     }
   ]
 
@@ -49,29 +49,28 @@ export const FeaturesSection: React.FC = () => {
             ta="center"
             style={{
               fontSize: '3.5rem',
-              fontWeight: 800,
+              fontWeight: 500,
               color: 'white',
-              marginBottom: '1rem',
+              marginBottom: '2rem',
               fontFamily: '"Montserrat", sans-serif'
             }}
           >
-            Why Sacco Dominates
+            Let's be honest, you can't win your fantasy league on draft day.
           </Title>
-          
-          <Text
+          <Title
+            order={2}
             ta="center"
-            size="xl"
             style={{
-              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '3.5rem',
+              fontWeight: 800,
+              color: 'white',
               marginBottom: '4rem',
-              fontSize: '1.25rem',
-              maxWidth: '600px',
-              margin: '0 auto 4rem auto'
+              fontFamily: '"Montserrat", sans-serif'
             }}
           >
-            Stop relying on gut feelings and outdated advice. Our platform combines cutting-edge analytics 
-            with real-time insights to transform you from league loser to fantasy champion.
-          </Text>
+            But you can absolutely lose.
+          </Title>
+        
         </motion.div>
 
         <SimpleGrid cols={{ base: 1, md: 2, lg: 4 }} spacing="xl">

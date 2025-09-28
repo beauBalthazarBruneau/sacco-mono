@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Container, Title, Text, Card, Button, SimpleGrid, Box, Badge, Stack, Group } from '@mantine/core'
+import { Container, Title, Text, Card, Button, Box, Badge, Stack, Group, SimpleGrid } from '@mantine/core'
 import { IconCheck } from '@tabler/icons-react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { signInWithMagicLink } from '../../../lib/supabase'
+import saccoPricing from '../../../assets/landing_page_gallery/sacco-pricing.jpg'
 
 export const PricingSection: React.FC = () => {
   const [email, setEmail] = useState('')
@@ -28,58 +29,23 @@ export const PricingSection: React.FC = () => {
     }
   }
 
-  const plans = [
-    {
-      name: 'Free Trial',
-      price: '$0',
-      period: '3 draft picks',
-      description: 'Perfect for testing our AI-powered recommendations',
-      features: [
-        '3 free draft picks with AI guidance',
-        'Basic player analytics',
-        'Matchup insights',
-        'Chrome extension access'
-      ],
-      cta: 'Start Free Trial',
-      popular: false,
-      badge: 'Try Risk-Free'
-    },
-    {
-      name: 'Pro Monthly',
-      price: '$19',
-      period: 'per month',
-      description: 'Complete fantasy football domination toolkit',
-      features: [
-        'Unlimited AI draft assistance',
-        'Advanced player analytics',
-        'Waiver wire recommendations',
-        'Trade analyzer',
-        'Injury impact analysis',
-        'Weekly lineup optimization',
-        'Priority customer support'
-      ],
-      cta: 'Go Pro Monthly',
-      popular: true,
-      badge: 'Most Popular'
-    },
-    {
-      name: 'Pro Annual',
-      price: '$149',
-      period: 'per year',
-      description: 'Best value for serious fantasy managers',
-      features: [
-        'Everything in Pro Monthly',
-        '4 months FREE (save $79)',
-        'Exclusive draft strategy guides',
-        'Early access to new features',
-        'Personal fantasy consultant',
-        'League analysis reports'
-      ],
-      cta: 'Go Pro Annual',
-      popular: false,
-      badge: 'Best Value'
-    }
-  ]
+  const plan = {
+    name: 'Sacco Draft Assistant',
+    price: '$10',
+    period: 'one-time payment',
+    description: 'Start with 3 FREE picks, then pay only if you want more',
+    features: [
+      '3 FREE draft picks before any payment',
+      'Works with any fantasy platform',
+      'Advanced player analytics and rankings',
+      'Unlimited picks after payment',
+      'Full refund if you finish last in your league',
+      'No subscription, no recurring fees'
+    ],
+    cta: 'Start Free Trial',
+    popular: true,
+    badge: 'Risk-Free Guarantee'
+  }
 
   return (
     <section
@@ -110,7 +76,7 @@ export const PricingSection: React.FC = () => {
               fontFamily: '"Montserrat", sans-serif'
             }}
           >
-            Simple, Transparent Pricing
+            No subscription, just buy us a six pack.
           </Title>
           
           <Text
@@ -121,35 +87,76 @@ export const PricingSection: React.FC = () => {
               marginBottom: '1rem',
               fontSize: '1.25rem',
               maxWidth: '600px',
-              margin: '0 auto 1rem auto'
+              fontWeight: 600,
+              margin: '0 auto 4rem auto'
             }}
           >
-            Start with a free trial. Upgrade when you're ready to dominate every league.
+            Full refund if you finish last in your league.
           </Text>
 
-          <Text
-            ta="center"
-            style={{
-              color: '#38bd7d',
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              marginBottom: '4rem',
-              fontFamily: '"Montserrat", sans-serif'
-            }}
-          >
-            💰 <strong>Full refund if you still finish last in your league!</strong>
-          </Text>
+
         </motion.div>
 
-        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
-              viewport={{ once: true }}
-            >
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" style={{ alignItems: 'center' }}>
+          {/* Left Column - Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            <Box>
+              <Title
+                order={3}
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  color: 'white',
+                  fontFamily: '"Montserrat", sans-serif',
+                  marginBottom: '1.5rem'
+                }}
+              >
+                We're Beau & Rui
+              </Title>
+              
+              <Box style={{ position: 'relative' }}>
+                <img
+                  src={saccoPricing}
+                  alt="Beau & Rui - The team behind Sacco"
+                  style={{
+                    width: '200px',
+                    height: 'auto',
+                    borderRadius: '12px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                    float: 'right',
+                    margin: '0 0 1rem 1.5rem',
+                    shapeOutside: 'margin-box'
+                  }}
+                />
+                
+                <Text
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '1.5rem',
+                    lineHeight: 1.6,
+                    marginBottom: '0',
+                    textAlign: 'justify'
+                  }}
+                >
+                  We're two engineers who came up with Sacco at 3AM one night after a few too many beers. Rui is getting his PhD and Beau vibe codes. So we decided to make Rui's mathematical approach to fantasy accessible to everyone. Sacco basically takes an economic approach to fantasy, where we treat draft picks like a free market, analyzing demand and supply of outstanding players. We're not trying to get rich, but we like beer!
+                </Text>
+              </Box>
+            </Box>
+          </motion.div>
+
+          {/* Right Column - Pricing Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true }}
+            style={{ display: 'flex', justifyContent: 'center' }}
+          >
               <Card
                 style={{
                   backgroundColor: plan.popular ? 'rgba(56, 189, 125, 0.1)' : 'rgba(255, 255, 255, 0.05)',
@@ -177,24 +184,20 @@ export const PricingSection: React.FC = () => {
                   }
                 }}
               >
-                {plan.popular && (
-                  <Badge
-                    style={{
-                      position: 'absolute',
-                      top: '-12px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      backgroundColor: '#38bd7d',
-                      color: 'white',
-                      fontSize: '0.9rem',
-                      padding: '8px 16px'
-                    }}
-                  >
-                    {plan.badge}
-                  </Badge>
-                )}
+                {plan.popular}
 
                 <Stack gap="lg" style={{ height: '100%' }}>
+                <Title
+                      order={3}
+                      style={{
+                        color: 'white',
+                        fontSize: '1.8rem',
+                        fontWeight: 700,
+                        fontFamily: '"Montserrat", sans-serif'
+                      }}
+                    >
+                      {plan.name}
+                    </Title>
                   <Box>
                     <Badge
                       variant="outline"
@@ -204,19 +207,16 @@ export const PricingSection: React.FC = () => {
                     >
                       {plan.badge}
                     </Badge>
-                    
-                    <Title
-                      order={3}
-                      style={{
-                        color: 'white',
-                        fontSize: '1.8rem',
-                        fontWeight: 700,
-                        marginBottom: '0.5rem',
-                        fontFamily: '"Montserrat", sans-serif'
-                      }}
+                    <Badge
+                      variant="outline"
+                      color="white"
+                      size="sm"
+                      style={{ marginBottom: '1rem', marginLeft: '1rem' }}
                     >
-                      {plan.name}
-                    </Title>
+                      Unlimited drafts & leagues for one season
+                    </Badge>
+                    
+
                     
                     <Group align="baseline" gap="xs" mb="sm">
                       <Text
@@ -272,72 +272,47 @@ export const PricingSection: React.FC = () => {
                   </Stack>
 
                   <Box mt="auto">
-                    {plan.name === 'Free Trial' ? (
-                      <Stack gap="sm">
-                        <input
-                          type="email"
-                          placeholder="Enter your email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleSignUp()}
-                          style={{
-                            padding: '12px 16px',
-                            fontSize: '1rem',
-                            borderRadius: '8px',
-                            border: '2px solid rgba(255, 255, 255, 0.2)',
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            color: 'white',
-                            fontFamily: '"Montserrat", sans-serif',
-                            width: '100%',
-                            outline: 'none'
-                          }}
-                        />
-                        <Button
-                          fullWidth
-                          size="lg"
-                          onClick={handleSignUp}
-                          disabled={isLoading || !email}
-                          style={{
-                            backgroundColor: '#38bd7d',
-                            border: 'none',
-                            fontWeight: 700,
-                            fontSize: '1.1rem',
-                            fontFamily: '"Montserrat", sans-serif',
-                            borderRadius: '8px',
-                            padding: '16px'
-                          }}
-                        >
-                          {isLoading ? 'Starting Trial...' : plan.cta}
-                        </Button>
-                      </Stack>
-                    ) : (
+                    <Stack gap="sm">
+                      <input
+                        type="email"
+                        placeholder="Enter your email to start free trial"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSignUp()}
+                        style={{
+                          padding: '12px 16px',
+                          fontSize: '1rem',
+                          borderRadius: '8px',
+                          border: '2px solid rgba(255, 255, 255, 0.2)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          color: 'white',
+                          fontFamily: '"Montserrat", sans-serif',
+                          width: '100%',
+                          outline: 'none'
+                        }}
+                      />
                       <Button
                         fullWidth
                         size="lg"
-                        variant={plan.popular ? "filled" : "outline"}
+                        onClick={handleSignUp}
+                        disabled={isLoading || !email}
                         style={{
-                          backgroundColor: plan.popular ? '#38bd7d' : 'transparent',
-                          borderColor: '#38bd7d',
-                          color: plan.popular ? 'white' : '#38bd7d',
+                          backgroundColor: '#38bd7d',
+                          border: 'none',
                           fontWeight: 700,
                           fontSize: '1.1rem',
                           fontFamily: '"Montserrat", sans-serif',
                           borderRadius: '8px',
                           padding: '16px'
                         }}
-                        onClick={() => {
-                          // For now, just scroll to free trial or navigate to sign up
-                          window.scrollTo({ top: 0, behavior: 'smooth' })
-                        }}
                       >
-                        {plan.cta}
+                        {isLoading ? 'Starting Free Trial...' : 'Get 3 FREE Picks'}
                       </Button>
-                    )}
+                    </Stack>
                   </Box>
                 </Stack>
               </Card>
-            </motion.div>
-          ))}
+          </motion.div>
         </SimpleGrid>
 
         <motion.div
@@ -355,7 +330,7 @@ export const PricingSection: React.FC = () => {
               fontStyle: 'italic'
             }}
           >
-            All plans include a 30-day money-back guarantee. Cancel anytime.
+            Start with 3 free picks. No payment required until you decide to continue.
           </Text>
         </motion.div>
       </Container>

@@ -44,8 +44,8 @@ export const LandingPage: React.FC = () => {
       <FeaturesSection />
       <HowItWorksSection />
       <PricingSection />
-      <AboutUsSection />
-      <TestimonialsSection />
+      {/* <AboutUsSection /> */}
+      {/* <TestimonialsSection /> */}
       <BlogSection />
     </main>
   )

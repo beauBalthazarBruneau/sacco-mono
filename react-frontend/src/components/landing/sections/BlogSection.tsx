@@ -75,7 +75,7 @@ export const BlogSection: React.FC = () => {
               fontFamily: '"Montserrat", sans-serif'
             }}
           >
-            Fantasy Football Insights
+            Fantasy Insights
           </Title>
           
           <Text
@@ -323,8 +323,8 @@ export const BlogSection: React.FC = () => {
                   lineHeight: 1.5
                 }}
               >
-                Join thousands of fantasy managers who are using our AI-powered insights 
-                to dominate their leagues. Start your free trial today.
+                Join thousands of fantasy managers who are using our draft insights 
+                to dominate their leagues. Try it out today.
               </Text>
 
               <Box style={{ width: '100%', maxWidth: '400px' }}>
