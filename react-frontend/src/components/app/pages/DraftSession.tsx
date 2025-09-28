@@ -73,7 +73,9 @@ export const DraftSession: React.FC = () => {
       .subscribe()
 
     return () => {
-      supabase.removeChannel(channel)
+      if (supabase) {
+        supabase.removeChannel(channel)
+      }
     }
   }, [sessionId])
 

@@ -68,6 +68,10 @@ export interface Player {
   projected_steals: number | null
   projected_blocks: number | null
   last_updated: string | null
+  // Fantasy points for different scoring systems
+  ppr_points: number | null
+  standard_points: number | null
+  half_ppr_points: number | null
 }
 
 export interface PlayersResponse {
@@ -101,7 +105,10 @@ export const getPlayers = async (
 
     // Apply position filter
     if (position && position !== 'ALL') {
-      query = query.eq('position', position)
+      const validPositions: Array<'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'> = ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL']
+      if (validPositions.includes(position as any)) {
+        query = query.eq('position', position as 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL')
+      }
     }
 
     // Apply sorting
@@ -119,7 +126,15 @@ export const getPlayers = async (
       return { data: [], count: 0, error: error.message }
     }
 
-    return { data: data || [], count: count || 0, error: null }
+    // Add default values for missing fantasy points fields
+    const playersWithDefaults = (data || []).map(player => ({
+      ...player,
+      ppr_points: null,
+      standard_points: null,
+      half_ppr_points: null
+    }))
+
+    return { data: playersWithDefaults, count: count || 0, error: null }
   } catch (err) {
     console.error('Unexpected error fetching players:', err)
     return { data: [], count: 0, error: 'Unexpected error occurred' }
@@ -286,7 +301,7 @@ export const getDraftPicks = async (sessionId: string): Promise<DraftPicksRespon
 }
 
 // Get draft picks for a specific user in a session
-export const getUserDraftPicks = async (sessionId: string, userId: string): Promise<DraftPicksResponse> => {
+export const getUserDraftPicks = async (sessionId: string, _userId: string): Promise<DraftPicksResponse> => {
   if (!supabase) {
     return { data: [], count: 0, error: 'Supabase not configured' }
   }

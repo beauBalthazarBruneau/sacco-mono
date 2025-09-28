@@ -5,11 +5,11 @@ import { IconSearch, IconX } from '@tabler/icons-react'
 interface SearchFiltersProps {
   search: string
   position: string
-  sortBy: 'adp' | 'ppr_points'
+  sortBy: 'adp' | 'categories_points' | 'categories_rank' | 'points_league_points' | 'points_rank'
   sortOrder: 'asc' | 'desc'
   onSearchChange: (value: string) => void
   onPositionChange: (value: string) => void
-  onSortChange: (sortBy: 'adp' | 'ppr_points', sortOrder: 'asc' | 'desc') => void
+  onSortChange: (sortBy: 'adp' | 'categories_points' | 'categories_rank' | 'points_league_points' | 'points_rank', sortOrder: 'asc' | 'desc') => void
   isLoading?: boolean
 }
 
@@ -54,8 +54,10 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   const sortOptions = [
     { value: 'adp_asc', label: 'ADP (Best to Worst)' },
     { value: 'adp_desc', label: 'ADP (Worst to Best)' },
-    { value: 'ppr_points_desc', label: 'PPR Points (High to Low)' },
-    { value: 'ppr_points_asc', label: 'PPR Points (Low to High)' }
+    { value: 'categories_points_desc', label: 'Categories Points (High to Low)' },
+    { value: 'categories_points_asc', label: 'Categories Points (Low to High)' },
+    { value: 'points_league_points_desc', label: 'Points League Points (High to Low)' },
+    { value: 'points_league_points_asc', label: 'Points League Points (Low to High)' }
   ]
 
   const currentSortValue = `${sortBy}_${sortOrder}`
@@ -65,7 +67,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     
     const parts = value.split('_')
     const newSortOrder = parts[parts.length - 1] as 'asc' | 'desc'
-    const newSortBy = parts.slice(0, -1).join('_') as 'adp' | 'ppr_points'
+    const newSortBy = parts.slice(0, -1).join('_') as 'adp' | 'categories_points' | 'categories_rank' | 'points_league_points' | 'points_rank'
     onSortChange(newSortBy, newSortOrder)
   }
 

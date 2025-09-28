@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Stack, TextInput, Table, Text, Badge, Group, ScrollArea, ActionIcon, Button, Center } from '@mantine/core'
+import { Card, Stack, TextInput, Table, Text, Badge, Group, ScrollArea, Button, Center } from '@mantine/core'
 import { IconSearch, IconChevronUp, IconChevronDown } from '@tabler/icons-react'
 import { getPlayers, createDraftPick, type Player, type DraftPick } from '../../../lib/supabase'
 import { useAuth } from '../../../hooks/useAuth'

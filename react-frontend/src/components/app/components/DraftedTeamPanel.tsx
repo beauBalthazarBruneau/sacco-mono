@@ -17,8 +17,6 @@ interface Position {
 }
 
 export const DraftedTeamPanel: React.FC<DraftedTeamPanelProps> = ({
-  sessionId,
-  userId,
   draftPicks,
   userDraftPosition,
   teamCount
