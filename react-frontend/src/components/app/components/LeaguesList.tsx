@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Card,
   Title,
@@ -15,23 +16,28 @@ import {
   Modal,
   TextInput,
   NumberInput,
-  Select
+  Select,
+  Menu
 } from '@mantine/core'
 import {
   IconPlus,
   IconDots,
-  IconTrophy
+  IconTrophy,
+  IconPlayerPlay
 } from '@tabler/icons-react'
 import { getDraftSessions, createDraftSession, type DraftSession } from '../../../lib/supabase'
 import { useAuth } from '../../../hooks/useAuth'
 
 export const LeaguesList: React.FC = () => {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [draftSessions, setDraftSessions] = useState<DraftSession[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modalOpened, setModalOpened] = useState(false)
   const [creating, setCreating] = useState(false)
+  const [draftModalOpened, setDraftModalOpened] = useState(false)
+  const [selectedSession, setSelectedSession] = useState<DraftSession | null>(null)
 
   // Form state for new league
   const [newLeague, setNewLeague] = useState({
@@ -125,6 +131,18 @@ export const LeaguesList: React.FC = () => {
     }
   }
 
+  const handleStartDraft = (session: DraftSession) => {
+    setSelectedSession(session)
+    setDraftModalOpened(true)
+  }
+
+  const confirmStartDraft = () => {
+    if (selectedSession) {
+      setDraftModalOpened(false)
+      navigate(`/draft/${selectedSession.id}`)
+    }
+  }
+
   return (
     <>
       <Card withBorder padding="lg" bg="var(--mantine-color-dark-6)">
@@ -194,9 +212,21 @@ export const LeaguesList: React.FC = () => {
                           Draft: {formatDraftDate(session.draft_date)}
                         </Text>
                       </Box>
-                      <ActionIcon variant="subtle" color="gray">
-                        <IconDots size={16} />
-                      </ActionIcon>
+                      <Menu shadow="md" width={200}>
+                        <Menu.Target>
+                          <ActionIcon variant="subtle" color="gray">
+                            <IconDots size={16} />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          <Menu.Item
+                            leftSection={<IconPlayerPlay size={14} />}
+                            onClick={() => handleStartDraft(session)}
+                          >
+                            Start Draft
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
                     </Group>
                   </Card>
                 ))
@@ -289,6 +319,60 @@ export const LeaguesList: React.FC = () => {
               disabled={!newLeague.league_name.trim()}
             >
               Create League
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+
+      {/* Draft Confirmation Modal */}
+      <Modal
+        opened={draftModalOpened}
+        onClose={() => setDraftModalOpened(false)}
+        title="Start Draft"
+        size="md"
+      >
+        <Stack gap="md">
+          <Text size="sm">
+            Are you ready to start the draft for{' '}
+            <Text component="span" fw={600}>
+              {selectedSession?.league_name}
+            </Text>
+            ?
+          </Text>
+
+          {selectedSession && (
+            <Card withBorder padding="md" bg="var(--mantine-color-dark-7)">
+              <Stack gap="xs">
+                <Group justify="space-between">
+                  <Text size="sm" c="dimmed">Teams:</Text>
+                  <Text size="sm">{selectedSession.team_count}</Text>
+                </Group>
+                <Group justify="space-between">
+                  <Text size="sm" c="dimmed">Your Position:</Text>
+                  <Text size="sm">#{selectedSession.draft_position}</Text>
+                </Group>
+                <Group justify="space-between">
+                  <Text size="sm" c="dimmed">Platform:</Text>
+                  <Text size="sm">{selectedSession.platform}</Text>
+                </Group>
+              </Stack>
+            </Card>
+          )}
+
+          <Group justify="flex-end" mt="md">
+            <Button
+              variant="outline"
+              onClick={() => setDraftModalOpened(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmStartDraft}
+              leftSection={<IconPlayerPlay size={16} />}
+              variant="gradient"
+              gradient={{ from: 'green.6', to: 'green.7' }}
+            >
+              Start Draft
             </Button>
           </Group>
         </Stack>
