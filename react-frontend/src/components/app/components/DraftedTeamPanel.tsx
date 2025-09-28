@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Card, Stack, Title, Text, Group, Checkbox, Badge, Divider } from '@mantine/core'
+import { type DraftPick } from '../../../lib/supabase'
 
-interface DraftedPlayer {
-  id: number
-  name: string
-  position: string
+interface DraftedTeamPanelProps {
+  sessionId: string
+  userId: string
+  draftPicks: DraftPick[]
+  userDraftPosition: number
+  teamCount: number
 }
 
 interface Position {
@@ -13,23 +16,59 @@ interface Position {
   filled: number
 }
 
-export const DraftedTeamPanel: React.FC = () => {
-  // Mock data based on the prototype
-  const positions: Position[] = [
-    { name: 'PG', needed: 2, filled: 1 },
-    { name: 'SG', needed: 2, filled: 0 },
-    { name: 'SF', needed: 2, filled: 0 },
-    { name: 'PF', needed: 2, filled: 0 },
-    { name: 'C', needed: 2, filled: 1 },
-    { name: 'G', needed: 1, filled: 0 },
-    { name: 'F', needed: 1, filled: 0 },
-    { name: 'UTIL', needed: 2, filled: 0 },
-  ]
+export const DraftedTeamPanel: React.FC<DraftedTeamPanelProps> = ({
+  sessionId,
+  userId,
+  draftPicks,
+  userDraftPosition,
+  teamCount
+}) => {
+  // Calculate user's draft picks based on draft position and snake draft logic
+  const userPicks = useMemo(() => {
+    const userPickNumbers: number[] = []
 
-  const draftedPlayers: DraftedPlayer[] = [
-    { id: 1, name: 'Nikola Jokic', position: 'C' },
-    { id: 2, name: 'Tyrese Haliburton', position: 'PG' },
-  ]
+    for (let round = 1; round <= Math.ceil(draftPicks.length / teamCount) + 2; round++) {
+      let pickInRound: number
+      if (round % 2 === 1) {
+        // Odd rounds: normal order
+        pickInRound = userDraftPosition
+      } else {
+        // Even rounds: reverse order
+        pickInRound = teamCount - userDraftPosition + 1
+      }
+
+      const globalPick = (round - 1) * teamCount + pickInRound
+      userPickNumbers.push(globalPick)
+    }
+
+    return draftPicks.filter(pick => userPickNumbers.includes(pick.pick_number))
+  }, [draftPicks, userDraftPosition, teamCount])
+
+  // Calculate position needs and fills
+  const positions: Position[] = useMemo(() => {
+    const positionCounts = {
+      'PG': 0, 'SG': 0, 'SF': 0, 'PF': 0, 'C': 0,
+      'G': 0, 'F': 0, 'UTIL': 0
+    }
+
+    userPicks.forEach(pick => {
+      const pos = pick.position
+      if (pos && pos in positionCounts) {
+        positionCounts[pos as keyof typeof positionCounts]++
+      }
+    })
+
+    return [
+      { name: 'PG', needed: 2, filled: positionCounts.PG },
+      { name: 'SG', needed: 2, filled: positionCounts.SG },
+      { name: 'SF', needed: 2, filled: positionCounts.SF },
+      { name: 'PF', needed: 2, filled: positionCounts.PF },
+      { name: 'C', needed: 2, filled: positionCounts.C },
+      { name: 'G', needed: 1, filled: positionCounts.G },
+      { name: 'F', needed: 1, filled: positionCounts.F },
+      { name: 'UTIL', needed: 2, filled: positionCounts.UTIL },
+    ]
+  }, [userPicks])
 
   const getPositionColor = (position: string) => {
     switch (position) {
@@ -82,19 +121,19 @@ export const DraftedTeamPanel: React.FC = () => {
             Drafted Players
           </Text>
 
-          {draftedPlayers.length === 0 ? (
+          {userPicks.length === 0 ? (
             <Text size="sm" c="dimmed" ta="center" py="md">
               No players drafted yet
             </Text>
           ) : (
             <Stack gap="sm">
-              {draftedPlayers.map((player) => (
-                <Group key={player.id} justify="space-between" align="center">
+              {userPicks.map((pick) => (
+                <Group key={pick.id} justify="space-between" align="center">
                   <Text size="sm" fw={500}>
-                    {player.name}
+                    {pick.player_name}
                   </Text>
-                  <Badge size="sm" color={getPositionColor(player.position)} variant="light">
-                    {player.position}
+                  <Badge size="sm" color={getPositionColor(pick.position)} variant="light">
+                    {pick.position}
                   </Badge>
                 </Group>
               ))}

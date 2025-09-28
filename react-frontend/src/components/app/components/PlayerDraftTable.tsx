@@ -1,58 +1,158 @@
-import React, { useState } from 'react'
-import { Card, Stack, TextInput, Table, Text, Badge, Group, ScrollArea, ActionIcon } from '@mantine/core'
+import React, { useState, useEffect } from 'react'
+import { Card, Stack, TextInput, Table, Text, Badge, Group, ScrollArea, ActionIcon, Button, Center } from '@mantine/core'
 import { IconSearch, IconChevronUp, IconChevronDown } from '@tabler/icons-react'
+import { getPlayers, createDraftPick, type Player, type DraftPick } from '../../../lib/supabase'
+import { useAuth } from '../../../hooks/useAuth'
 
-interface Player {
-  id: number
-  name: string
-  position: string
-  rank: number
-  ppg: number
-  survivePercent: number
-  oppCost: number
-  davar: number
-  idx: number
-  isDrafted: boolean
+interface PlayerDraftTableProps {
+  sessionId: string
+  draftPicks: DraftPick[]
+  onPlayerDrafted: (pick: DraftPick) => void
+  currentDraftPosition: number
+  teamCount: number
 }
 
-// Mock player data based on the prototype
-const mockPlayers: Player[] = [
-  { id: 1, name: 'Nikola Jokic', position: 'C', rank: 1, ppg: 26.4, survivePercent: 92, oppCost: 1.2, davar: 8.4, idx: 1.0, isDrafted: true },
-  { id: 2, name: 'Luka Doncic', position: 'PG', rank: 2, ppg: 32.1, survivePercent: 89, oppCost: 1.1, davar: 7.9, idx: 1.1, isDrafted: true },
-  { id: 3, name: 'Shai Gilgeous-Alexander', position: 'PG', rank: 3, ppg: 30.8, survivePercent: 88, oppCost: 1.0, davar: 7.6, idx: 1.2, isDrafted: false },
-  { id: 4, name: 'Giannis Antetokounmpo', position: 'PF', rank: 4, ppg: 30.2, survivePercent: 85, oppCost: 0.9, davar: 7.4, idx: 1.3, isDrafted: true },
-  { id: 5, name: 'Anthony Davis', position: 'C', rank: 5, ppg: 25.9, survivePercent: 76, oppCost: 0.8, davar: 7.1, idx: 1.4, isDrafted: false },
-  { id: 6, name: 'Jayson Tatum', position: 'SF', rank: 6, ppg: 27.8, survivePercent: 91, oppCost: 0.7, davar: 6.9, idx: 1.5, isDrafted: false },
-  { id: 7, name: 'Anthony Edwards', position: 'SG', rank: 7, ppg: 26.6, survivePercent: 87, oppCost: 0.6, davar: 6.7, idx: 1.6, isDrafted: false },
-  { id: 8, name: 'Tyrese Haliburton', position: 'PG', rank: 8, ppg: 20.1, survivePercent: 81, oppCost: 0.5, davar: 6.5, idx: 1.7, isDrafted: true },
-  { id: 9, name: 'Victor Wembanyama', position: 'C', rank: 9, ppg: 21.4, survivePercent: 79, oppCost: 0.4, davar: 6.3, idx: 1.8, isDrafted: false },
-  { id: 10, name: 'Donovan Mitchell', position: 'SG', rank: 10, ppg: 28.3, survivePercent: 88, oppCost: 0.3, davar: 6.1, idx: 1.9, isDrafted: false },
-  { id: 11, name: 'Karl-Anthony Towns', position: 'C', rank: 11, ppg: 22.0, survivePercent: 74, oppCost: 0.2, davar: 5.9, idx: 2.0, isDrafted: false },
-  { id: 12, name: 'LeBron James', position: 'SF', rank: 12, ppg: 25.7, survivePercent: 82, oppCost: 0.1, davar: 5.7, idx: 2.1, isDrafted: false },
-  { id: 13, name: 'Damian Lillard', position: 'PG', rank: 13, ppg: 24.3, survivePercent: 86, oppCost: 0.0, davar: 5.5, idx: 2.2, isDrafted: false },
-  { id: 14, name: 'Paolo Banchero', position: 'PF', rank: 14, ppg: 22.6, survivePercent: 83, oppCost: -0.1, davar: 5.3, idx: 2.3, isDrafted: false },
-]
-
-const getPositionColor = (position: string) => {
+const getPositionColor = (position: string | null) => {
+  if (!position) return 'gray'
   switch (position) {
     case 'PG': return 'blue'
     case 'SG': return 'cyan'
     case 'SF': return 'green'
     case 'PF': return 'orange'
     case 'C': return 'red'
+    case 'G': return 'grape'
+    case 'F': return 'lime'
+    case 'UTIL': return 'gray'
     default: return 'gray'
   }
 }
 
-export const PlayerDraftTable: React.FC = () => {
+export const PlayerDraftTable: React.FC<PlayerDraftTableProps> = ({
+  sessionId,
+  draftPicks,
+  onPlayerDrafted,
+  currentDraftPosition,
+  teamCount
+}) => {
+  const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortField, setSortField] = useState<keyof Player | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [players, setPlayers] = useState<Player[]>([])
+  const [loading, setLoading] = useState(true)
+  const [drafting, setDrafting] = useState<string | null>(null)
 
-  const filteredPlayers = mockPlayers.filter(player =>
-    player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    player.position.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Calculate which team is currently drafting
+  const getCurrentDraftingTeam = () => {
+    const currentPick = draftPicks.length + 1
+    const currentRound = Math.ceil(currentPick / teamCount)
+
+    if (currentRound % 2 === 1) {
+      // Odd rounds: normal order
+      return ((currentPick - 1) % teamCount) + 1
+    } else {
+      // Even rounds: reverse order
+      return teamCount - ((currentPick - 1) % teamCount)
+    }
+  }
+
+  const currentDraftingTeam = getCurrentDraftingTeam()
+
+  // Get drafted player names to filter them out
+  const draftedPlayerNames = draftPicks.map(pick => pick.player_name)
+
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        setLoading(true)
+        const response = await getPlayers(0, 100, searchTerm, undefined, 'adp', 'asc')
+        if (response.error) {
+          console.error('Error fetching players:', response.error)
+        } else {
+          setPlayers(response.data)
+        }
+      } catch (err) {
+        console.error('Error fetching players:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPlayers()
+  }, [searchTerm])
+
+  const handleDraftPlayer = async (player: Player) => {
+    if (!user || drafting) return
+
+    try {
+      setDrafting(player.id)
+
+      const currentPick = draftPicks.length + 1
+      const currentRound = Math.ceil(currentPick / teamCount)
+
+      const pickData = {
+        draft_session_id: sessionId,
+        player_name: player.player_name,
+        position: player.position || 'UTIL',
+        pick_number: currentPick,
+        round: currentRound,
+        team: `Team ${currentDraftingTeam}`,
+        recommended: currentDraftingTeam === currentDraftPosition
+      }
+
+      const result = await createDraftPick(pickData)
+      if (result.error) {
+        console.error('Error drafting player:', result.error)
+      } else if (result.data) {
+        onPlayerDrafted(result.data)
+      }
+    } catch (err) {
+      console.error('Error drafting player:', err)
+    } finally {
+      setDrafting(null)
+    }
+  }
+
+  const handleMarkAsDrafted = async (player: Player) => {
+    if (!user || drafting) return
+
+    try {
+      setDrafting(player.id)
+
+      const currentPick = draftPicks.length + 1
+      const currentRound = Math.ceil(currentPick / teamCount)
+
+      const pickData = {
+        draft_session_id: sessionId,
+        player_name: player.player_name,
+        position: player.position || 'UTIL',
+        pick_number: currentPick,
+        round: currentRound,
+        team: `Team ${currentDraftingTeam}`,
+        recommended: false // This is someone else's pick
+      }
+
+      const result = await createDraftPick(pickData)
+      if (result.error) {
+        console.error('Error marking player as drafted:', result.error)
+      } else if (result.data) {
+        onPlayerDrafted(result.data)
+      }
+    } catch (err) {
+      console.error('Error marking player as drafted:', err)
+    } finally {
+      setDrafting(null)
+    }
+  }
+
+  // Filter available players (not drafted) and by search term
+  const filteredPlayers = players.filter(player => {
+    const isDrafted = draftedPlayerNames.includes(player.player_name)
+    const matchesSearch = player.player_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (player.position && player.position.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    return !isDrafted && matchesSearch
+  })
 
   const handleSort = (field: keyof Player) => {
     if (sortField === field) {
@@ -88,8 +188,14 @@ export const PlayerDraftTable: React.FC = () => {
   })
 
   return (
-    <Card withBorder padding="lg" bg="var(--mantine-color-dark-6)">
-      <Stack gap="md">
+    <>
+      <style>{`
+        .player-row:hover .drafted-button {
+          display: block !important;
+        }
+      `}</style>
+      <Card withBorder padding="lg" bg="var(--mantine-color-dark-6)">
+        <Stack gap="md">
         {/* Search */}
         <TextInput
           placeholder="Search players..."
@@ -105,11 +211,11 @@ export const PlayerDraftTable: React.FC = () => {
               <Table.Tr>
                 <Table.Th
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('name')}
+                  onClick={() => handleSort('player_name')}
                 >
                   <Group gap="xs" justify="space-between">
                     <Text size="sm" fw={600}>Player</Text>
-                    {getSortIcon('name')}
+                    {getSortIcon('player_name')}
                   </Group>
                 </Table.Th>
                 <Table.Th
@@ -123,104 +229,111 @@ export const PlayerDraftTable: React.FC = () => {
                 </Table.Th>
                 <Table.Th
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('rank')}
+                  onClick={() => handleSort('adp')}
                 >
                   <Group gap="xs" justify="space-between">
-                    <Text size="sm" fw={600}>Rank</Text>
-                    {getSortIcon('rank')}
+                    <Text size="sm" fw={600}>ADP</Text>
+                    {getSortIcon('adp')}
                   </Group>
                 </Table.Th>
                 <Table.Th
                   style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('ppg')}
+                  onClick={() => handleSort('projected_points')}
                 >
                   <Group gap="xs" justify="space-between">
-                    <Text size="sm" fw={600}>PPG</Text>
-                    {getSortIcon('ppg')}
+                    <Text size="sm" fw={600}>Proj Pts</Text>
+                    {getSortIcon('projected_points')}
                   </Group>
                 </Table.Th>
-                <Table.Th
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('survivePercent')}
-                >
-                  <Group gap="xs" justify="space-between">
-                    <Text size="sm" fw={600}>Survive %</Text>
-                    {getSortIcon('survivePercent')}
-                  </Group>
+                <Table.Th>
+                  <Text size="sm" fw={600}>Team</Text>
                 </Table.Th>
-                <Table.Th
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('oppCost')}
-                >
-                  <Group gap="xs" justify="space-between">
-                    <Text size="sm" fw={600}>Opp Cost</Text>
-                    {getSortIcon('oppCost')}
-                  </Group>
-                </Table.Th>
-                <Table.Th
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('davar')}
-                >
-                  <Group gap="xs" justify="space-between">
-                    <Text size="sm" fw={600}>DAVAR</Text>
-                    {getSortIcon('davar')}
-                  </Group>
-                </Table.Th>
-                <Table.Th
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleSort('idx')}
-                >
-                  <Group gap="xs" justify="space-between">
-                    <Text size="sm" fw={600}>Idx</Text>
-                    {getSortIcon('idx')}
-                  </Group>
+                <Table.Th style={{ width: '100px' }}>
+                  <Text size="sm" fw={600}>Actions</Text>
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {sortedPlayers.map((player) => (
-                <Table.Tr
-                  key={player.id}
-                  style={{
-                    textDecoration: player.isDrafted ? 'line-through' : 'none',
-                    opacity: player.isDrafted ? 0.6 : 1,
-                    cursor: player.isDrafted ? 'default' : 'pointer'
-                  }}
-                >
-                  <Table.Td>
-                    <Text size="sm" fw={500}>
-                      {player.name}
-                    </Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Badge size="sm" color={getPositionColor(player.position)} variant="light">
-                      {player.position}
-                    </Badge>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm">{player.rank}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm">{player.ppg.toFixed(1)}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm">{player.survivePercent}%</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm">{player.oppCost.toFixed(1)}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm">{player.davar.toFixed(1)}</Text>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text size="sm">{player.idx.toFixed(1)}</Text>
+              {loading ? (
+                <Table.Tr>
+                  <Table.Td colSpan={6}>
+                    <Center py="xl">
+                      <Text c="dimmed" size="sm">Loading players...</Text>
+                    </Center>
                   </Table.Td>
                 </Table.Tr>
-              ))}
+              ) : sortedPlayers.length === 0 ? (
+                <Table.Tr>
+                  <Table.Td colSpan={6}>
+                    <Center py="xl">
+                      <Text c="dimmed" size="sm">No available players found</Text>
+                    </Center>
+                  </Table.Td>
+                </Table.Tr>
+              ) : (
+                sortedPlayers.map((player) => (
+                  <Table.Tr
+                    key={player.id}
+                    style={{
+                      cursor: 'pointer',
+                      position: 'relative'
+                    }}
+                    className="player-row"
+                  >
+                    <Table.Td>
+                      <Text size="sm" fw={500}>
+                        {player.player_name}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Badge size="sm" color={getPositionColor(player.position)} variant="light">
+                        {player.position || 'N/A'}
+                      </Badge>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">{player.adp ? player.adp.toFixed(1) : 'N/A'}</Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">{player.projected_points ? player.projected_points.toFixed(1) : 'N/A'}</Text>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text size="sm">{player.team || 'FA'}</Text>
+                    </Table.Td>
+                    <Table.Td>
+                      {currentDraftingTeam === currentDraftPosition ? (
+                        <Button
+                          size="xs"
+                          variant="light"
+                          color="green"
+                          loading={drafting === player.id}
+                          onClick={() => handleDraftPlayer(player)}
+                          disabled={!!drafting}
+                        >
+                          Draft
+                        </Button>
+                      ) : (
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          color="red"
+                          loading={drafting === player.id}
+                          onClick={() => handleMarkAsDrafted(player)}
+                          disabled={!!drafting}
+                          className="drafted-button"
+                          style={{ display: 'none' }}
+                        >
+                          Drafted
+                        </Button>
+                      )}
+                    </Table.Td>
+                  </Table.Tr>
+                ))
+              )}
             </Table.Tbody>
           </Table>
         </ScrollArea>
       </Stack>
     </Card>
+    </>
   )
 }

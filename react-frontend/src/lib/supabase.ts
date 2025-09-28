@@ -230,3 +230,104 @@ export const createDraftSession = async (sessionData: Database['public']['Tables
     return { data: null, error: { message: 'Failed to create draft session' } }
   }
 }
+
+// Get single draft session by ID
+export const getDraftSession = async (sessionId: string) => {
+  if (!supabase) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('draft_sessions')
+      .select('*')
+      .eq('id', sessionId)
+      .single()
+
+    return { data, error }
+  } catch (err) {
+    console.error('Error fetching draft session:', err)
+    return { data: null, error: { message: 'Failed to fetch draft session' } }
+  }
+}
+
+// Draft Picks types and functions
+export type DraftPick = Database['public']['Tables']['draft_picks']['Row']
+
+export interface DraftPicksResponse {
+  data: DraftPick[]
+  count: number
+  error: string | null
+}
+
+// Get all draft picks for a session
+export const getDraftPicks = async (sessionId: string): Promise<DraftPicksResponse> => {
+  if (!supabase) {
+    return { data: [], count: 0, error: 'Supabase not configured' }
+  }
+
+  try {
+    const { data, error, count } = await supabase
+      .from('draft_picks')
+      .select('*', { count: 'exact' })
+      .eq('draft_session_id', sessionId)
+      .order('pick_number', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching draft picks:', error)
+      return { data: [], count: 0, error: error.message }
+    }
+
+    return { data: data || [], count: count || 0, error: null }
+  } catch (err) {
+    console.error('Unexpected error fetching draft picks:', err)
+    return { data: [], count: 0, error: 'Unexpected error occurred' }
+  }
+}
+
+// Get draft picks for a specific user in a session
+export const getUserDraftPicks = async (sessionId: string, userId: string): Promise<DraftPicksResponse> => {
+  if (!supabase) {
+    return { data: [], count: 0, error: 'Supabase not configured' }
+  }
+
+  try {
+    // For now, we'll identify user picks by comparing team with draft position
+    // This is simplified - in a real app you might have a user_id field on draft_picks
+    const { data, error, count } = await supabase
+      .from('draft_picks')
+      .select('*', { count: 'exact' })
+      .eq('draft_session_id', sessionId)
+      .order('pick_number', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching user draft picks:', error)
+      return { data: [], count: 0, error: error.message }
+    }
+
+    return { data: data || [], count: count || 0, error: null }
+  } catch (err) {
+    console.error('Unexpected error fetching user draft picks:', err)
+    return { data: [], count: 0, error: 'Unexpected error occurred' }
+  }
+}
+
+// Create a new draft pick
+export const createDraftPick = async (pickData: Database['public']['Tables']['draft_picks']['Insert']) => {
+  if (!supabase) {
+    return { data: null, error: { message: 'Supabase not configured' } }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('draft_picks')
+      .insert(pickData)
+      .select()
+      .single()
+
+    return { data, error }
+  } catch (err) {
+    console.error('Error creating draft pick:', err)
+    return { data: null, error: { message: 'Failed to create draft pick' } }
+  }
+}
