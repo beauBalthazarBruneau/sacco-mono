@@ -63,7 +63,7 @@ export const LeaguesList: React.FC = () => {
         } else {
           setDraftSessions(response.data)
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load draft sessions')
       } finally {
         setLoading(false)

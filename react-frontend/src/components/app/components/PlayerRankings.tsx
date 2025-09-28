@@ -31,7 +31,7 @@ export const PlayerRankings: React.FC = () => {
         } else {
           setPlayers(response.data)
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load player rankings')
       } finally {
         setLoading(false)

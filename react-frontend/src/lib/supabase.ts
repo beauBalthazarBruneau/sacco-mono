@@ -106,7 +106,7 @@ export const getPlayers = async (
     // Apply position filter
     if (position && position !== 'ALL') {
       const validPositions: Array<'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL'> = ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL']
-      if (validPositions.includes(position as any)) {
+      if (validPositions.includes(position as 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL')) {
         query = query.eq('position', position as 'PG' | 'SG' | 'SF' | 'PF' | 'C' | 'G' | 'F' | 'UTIL')
       }
     }
@@ -151,7 +151,7 @@ export type DraftSession = {
   team_count: number
   draft_position: number
   status: 'active' | 'completed' | 'cancelled' | null
-  settings: any | null
+  settings: Record<string, unknown> | null
   created_at: string | null
   updated_at: string | null
 }
@@ -192,7 +192,7 @@ export const getDraftSessions = async (
 }
 
 // Ensure user profile exists
-export const ensureUserProfile = async (user: any) => {
+export const ensureUserProfile = async (user: { id: string; email?: string }) => {
   if (!supabase) {
     throw new Error('Supabase not configured')
   }
@@ -301,7 +301,7 @@ export const getDraftPicks = async (sessionId: string): Promise<DraftPicksRespon
 }
 
 // Get draft picks for a specific user in a session
-export const getUserDraftPicks = async (sessionId: string, _userId: string): Promise<DraftPicksResponse> => {
+export const getUserDraftPicks = async (sessionId: string): Promise<DraftPicksResponse> => {
   if (!supabase) {
     return { data: [], count: 0, error: 'Supabase not configured' }
   }
