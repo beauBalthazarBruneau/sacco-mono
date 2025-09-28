@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import type { Database } from '../types/supabase'
+import type { Database, Json } from '../types/supabase'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://sjmljrgabepxdfhefyxo.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
@@ -151,7 +151,7 @@ export type DraftSession = {
   team_count: number
   draft_position: number
   status: 'active' | 'completed' | 'cancelled' | null
-  settings: Record<string, unknown> | null
+  settings: Json | null
   created_at: string | null
   updated_at: string | null
 }
@@ -211,7 +211,7 @@ export const ensureUserProfile = async (user: { id: string; email?: string }) =>
         .from('user_profiles')
         .insert({
           id: user.id,
-          email: user.email,
+          email: user.email || '',
           created_at: new Date().toISOString()
         })
 
