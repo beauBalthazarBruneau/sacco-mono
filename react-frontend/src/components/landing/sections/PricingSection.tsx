@@ -137,7 +137,7 @@ export const PricingSection: React.FC = () => {
                 <Text
                   style={{
                     color: 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '1.5rem',
+                    fontSize: '1.25rem',
                     lineHeight: 1.6,
                     marginBottom: '0',
                     textAlign: 'justify'
