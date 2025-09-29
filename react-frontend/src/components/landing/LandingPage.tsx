@@ -1,16 +1,17 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { HeroSection } from './HeroSection'
+import { MobileHeroSection } from './MobileHeroSection'
 import { FeaturesSection } from './sections/FeaturesSection'
 import { HowItWorksSection } from './sections/HowItWorksSection'
-import { TestimonialsSection } from './sections/TestimonialsSection'
 import { PricingSection } from './sections/PricingSection'
-import { AboutUsSection } from './sections/AboutUsSection'
 import { BlogSection } from './sections/BlogSection'
 
 export const LandingPage: React.FC = () => {
-  React.useEffect(() => {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
     // SEO meta tags
-    document.title = 'Sacco - AI-Powered Fantasy Football Draft Assistant | Win Your League'
+    document.title = 'Sacco - Fantasy Football Draft Assistant | Win Your League'
     
     const metaDescription = document.querySelector('meta[name="description"]')
     if (metaDescription) {
@@ -31,6 +32,18 @@ export const LandingPage: React.FC = () => {
       meta.content = 'fantasy football, draft assistant, AI, fantasy sports, chrome extension, draft strategy, player analytics, Georgia Tech engineers'
       document.head.appendChild(meta)
     }
+
+    // Mobile detection
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile)
+    }
   }, [])
 
   return (
@@ -40,12 +53,12 @@ export const LandingPage: React.FC = () => {
         overflowX: 'hidden'
       }}
     >
-      <HeroSection />
+      {isMobile ? <MobileHeroSection /> : <HeroSection />}
       <FeaturesSection />
       <HowItWorksSection />
       <PricingSection />
-      <AboutUsSection />
-      <TestimonialsSection />
+      {/* <AboutUsSection /> */}
+      {/* <TestimonialsSection /> */}
       <BlogSection />
     </main>
   )

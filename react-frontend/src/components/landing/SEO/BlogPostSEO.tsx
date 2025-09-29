@@ -49,7 +49,7 @@ const setStructuredData = (data: object) => {
 
 export const BlogPostSEO: React.FC<BlogPostSEOProps> = ({ 
   post, 
-  baseUrl = 'https://sacco.ai' 
+  baseUrl = 'https://stopsuckingatfantasy.coms' 
 }) => {
   useEffect(() => {
     const postUrl = `${baseUrl}/blog/${post.slug}`
@@ -91,7 +91,7 @@ export const BlogPostSEO: React.FC<BlogPostSEOProps> = ({
     
     // Structured data
     const structuredData = {
-      "@context": "https://schema.org",
+      "@context": "https://stopsuckingatfantasy.com",
       "@type": "BlogPosting",
       "headline": post.title,
       "description": post.excerpt,
@@ -126,7 +126,7 @@ export const BlogPostSEO: React.FC<BlogPostSEOProps> = ({
     
     // Cleanup function to reset title when component unmounts
     return () => {
-      document.title = 'Sacco - AI-Powered Fantasy Football Draft Assistant | Win Your League'
+      document.title = 'Sacco - Fantasy Football Draft Assistant | Win Your League'
     }
   }, [post, baseUrl])
 

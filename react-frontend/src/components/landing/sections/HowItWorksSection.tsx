@@ -7,26 +7,26 @@ export const HowItWorksSection: React.FC = () => {
   const steps = [
     {
       icon: IconDownload,
-      title: 'Install the Extension',
-      description: 'Get our Chrome extension and connect to your favorite fantasy platform instantly.',
+      title: 'Create an account',
+      description: 'Put in your email and we\'ll send you a magic link to sign in.',
       color: '#38bd7d'
     },
     {
       icon: IconBrain,
-      title: 'AI Analysis',
-      description: 'Our advanced algorithms analyze millions of data points in real-time.',
+      title: 'Add your leagues',
+      description: 'Plan your drafts and get notifications for when your draft is coming ups.',
       color: '#4dabf7'
     },
     {
       icon: IconTrophy,
-      title: 'Make Smart Picks',
-      description: 'Get personalized recommendations for every draft pick and waiver decision.',
+      title: 'Get real-time recommendations',
+      description: 'Based on each draft pick, we update the "market" for each player, giving you the best available player (BAP) for each pick.',
       color: '#ff6b6b'
     },
     {
       icon: IconRocket,
-      title: 'Dominate Your League',
-      description: 'Watch as your strategic advantage transforms you into a fantasy champion.',
+      title: 'Get the best team in the league',
+      description: 'We can\'t guarantee you\'ll win, but we can guarantee you\'ll have the best team in the league.',
       color: '#ffd43b'
     }
   ]
@@ -73,8 +73,7 @@ export const HowItWorksSection: React.FC = () => {
               margin: '0 auto 4rem auto'
             }}
           >
-            From installation to championship in four simple steps. 
-            Let our AI do the heavy lifting while you enjoy the victories.
+            From sign up to draft-ready in four simple steps. 
           </Text>
         </motion.div>
 
