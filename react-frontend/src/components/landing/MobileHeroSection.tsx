@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { 
-  Container, 
   Title, 
   Button, 
-  Box,
-  Text
+  Box
 } from '@mantine/core'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
@@ -26,6 +24,7 @@ export const MobileHeroSection: React.FC = () => {
   const [showEmailInput, setShowEmailInput] = useState(false)
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
   const [touchStart, setTouchStart] = useState<TouchPosition | null>(null)
   const [touchEnd, setTouchEnd] = useState<TouchPosition | null>(null)
   const navigate = useNavigate()
@@ -41,11 +40,38 @@ export const MobileHeroSection: React.FC = () => {
 
   // Prevent body scrolling when mobile hero is active
   useEffect(() => {
+    // Prevent all scrolling
     document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.width = '100%'
+    document.body.style.height = '100%'
+    
     return () => {
-      document.body.style.overflow = 'unset'
+      // Restore scrolling only after title is shown
+      if (showTitle) {
+        document.body.style.overflow = 'unset'
+        document.body.style.position = 'unset'
+        document.body.style.width = 'unset'
+        document.body.style.height = 'unset'
+      }
     }
-  }, [])
+  }, [showTitle])
+
+  // Hide mobile hero after title is shown for a few seconds
+  useEffect(() => {
+    if (showTitle) {
+      const timer = setTimeout(() => {
+        setIsComplete(true)
+        // Restore body scrolling
+        document.body.style.overflow = 'unset'
+        document.body.style.position = 'unset'
+        document.body.style.width = 'unset'
+        document.body.style.height = 'unset'
+      }, 3000) // Show title for 3 seconds then allow scrolling
+
+      return () => clearTimeout(timer)
+    }
+  }, [showTitle])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     e.preventDefault() // Prevent page scrolling
@@ -107,6 +133,11 @@ export const MobileHeroSection: React.FC = () => {
     }
   }
 
+  // Hide the mobile hero after completion
+  if (isComplete) {
+    return null
+  }
+
   return (
     <Box
       ref={containerRef}
@@ -122,7 +153,8 @@ export const MobileHeroSection: React.FC = () => {
         touchAction: 'pan-y', // Only allow vertical panning
         boxSizing: 'border-box',
         margin: 0,
-        padding: 0
+        padding: 0,
+        zIndex: 9999 // Ensure it's above everything
       }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -182,73 +214,6 @@ export const MobileHeroSection: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Swipe Instructions */}
-      {!showTitle && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          style={{
-            position: 'absolute',
-            bottom: '15%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 3,
-            textAlign: 'center'
-          }}
-        >
-          <Text
-            size="lg"
-            fw={600}
-            style={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              fontFamily: '"Montserrat", sans-serif',
-              marginBottom: '8px'
-            }}
-          >
-            Swipe up to reveal
-          </Text>
-          <Text
-            size="sm"
-            style={{
-              color: 'rgba(255, 255, 255, 0.7)',
-              fontFamily: '"Montserrat", sans-serif'
-            }}
-          >
-            {currentImageIndex + 1} of {images.length}
-          </Text>
-        </motion.div>
-      )}
-
-      {/* Progress Indicator */}
-      {!showTitle && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '10%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 3,
-            display: 'flex',
-            gap: '8px'
-          }}
-        >
-          {images.map((_, index) => (
-            <div
-              key={index}
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                backgroundColor: index <= currentImageIndex 
-                  ? 'rgba(255, 255, 255, 0.8)' 
-                  : 'rgba(255, 255, 255, 0.3)',
-                transition: 'all 0.3s ease'
-              }}
-            />
-          ))}
-        </div>
-      )}
 
       {/* Main Title - Revealed after all images are swiped */}
       <AnimatePresence>
@@ -258,10 +223,15 @@ export const MobileHeroSection: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             style={{
-              position: 'relative',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
               zIndex: 4,
               textAlign: 'center',
-              padding: '0 20px'
+              padding: '0 20px',
+              width: '100%',
+              maxWidth: '400px'
             }}
           >
             <Title 
@@ -271,7 +241,6 @@ export const MobileHeroSection: React.FC = () => {
                 fontSize: 'clamp(2.5rem, 8vw, 4rem)',
                 lineHeight: 1.1,
                 color: 'white',
-                marginBottom: '2rem',
                 textShadow: '0 8px 32px rgba(12, 12, 12, 0.8), 0 4px 16px rgba(12, 12, 12, 0.6)',
                 fontFamily: '"Montserrat", sans-serif'
               }}
@@ -288,10 +257,10 @@ export const MobileHeroSection: React.FC = () => {
               margin: '0 auto'
             }}>
               <motion.div
-                initial={{ opacity: 0, x: 50, width: 0 }}
+                initial={{ opacity: 0, y: 50, width: 0 }}
                 animate={{ 
                   opacity: showEmailInput ? 1 : 0, 
-                  x: showEmailInput ? 0 : 50,
+                  y: showEmailInput ? 0 : 50,
                   width: showEmailInput ? '100%' : 0
                 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}

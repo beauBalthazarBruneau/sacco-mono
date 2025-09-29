@@ -8,7 +8,6 @@ import {
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { signInWithMagicLink } from '../../lib/supabase'
-import { MobileHeroSection } from './MobileHeroSection'
 
 // Import images
 import datenightImg from '../../assets/landing_page_gallery/datenight.png'
@@ -23,7 +22,6 @@ export const HeroSection: React.FC = () => {
   const [showEmailInput, setShowEmailInput] = useState(false)
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -31,17 +29,9 @@ export const HeroSection: React.FC = () => {
       setMousePosition({ x: event.clientX, y: event.clientY })
     }
 
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
-    }
-
-    checkMobile()
     window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('resize', checkMobile)
-    
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('resize', checkMobile)
     }
   }, [])
 
@@ -69,11 +59,6 @@ export const HeroSection: React.FC = () => {
     } else {
       setShowEmailInput(true)
     }
-  }
-
-  // Use mobile version for mobile devices
-  if (isMobile) {
-    return <MobileHeroSection />
   }
 
   return (
